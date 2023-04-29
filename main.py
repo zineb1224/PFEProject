@@ -1,5 +1,3 @@
-import pandas as pd
-import numpy as np
 from sklearn import datasets
 cancer = datasets.load_breast_cancer()
 #print(cancer.data[:5])
