@@ -1,10 +1,12 @@
 # Importer les bibliothèques nécessaires
 import pandas as pd
+from sklearn import svm
 from sklearn.preprocessing import StandardScaler
 
 class MaladiesCardiaques:
     def __init__(self, train_file, test_file):
         # Charger les données d'entraînement et de test
+        self.model = svm.SVC()
         self.X_train, self.y_train = self.load_data(train_file)
         self.X_test, self.y_test = self.load_data(test_file)
 
@@ -22,3 +24,9 @@ class MaladiesCardiaques:
         y = data.iloc[:, -1]
 
         return X, y
+
+    def fit(self, x_train, y_train):
+        self.model.fit(x_train, y_train)
+
+    def predict(self, x_test):
+        return self.model.predict(x_test)
