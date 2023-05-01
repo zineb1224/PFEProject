@@ -3,6 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from tkinter import *
 from models.SVMModelSpam import SVMModelSpam, import_data
+from models.SVMMODELMALADIE import SVMMODELMALADIE
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc
 
@@ -40,6 +41,26 @@ print("Precision:", precision)
 print("Recall:", recall)
 print("F1 score:", f1)
 print("AUC score:", auc_score)
+
+
+
+#model maladie
+
+
+def main():
+    # Création d'une instance de la classe HeartDiseasePredictionModel
+    model = SVMMODELMALADIE()
+
+    # Entraînement du modèle avec le fichier de données d'entraînement
+    model.train('maladie.csv')
+
+    # Prédiction sur les données à prédire à partir du fichier correspondant
+    predictions = model.predict('maladie_to_predict.csv')
+
+    # Affichage des prédictions
+    print('Prédictions de maladies cardiaques :')
+    print(predictions)
+
 
 
 
