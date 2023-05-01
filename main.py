@@ -93,14 +93,12 @@ age_label.grid(column=0, row=0)
 
 age_entry = tk.Entry(window)
 age_entry.grid(column=1, row=0)
-print('pour age')
 
 sex_label = tk.Label(window, text="Sexe:")
 sex_label.grid(column=0, row=1)
 
 sex_entry = tk.Entry(window)
 sex_entry.grid(column=1, row=1)
-print('your sexe')
 
 chol_label = tk.Label(window, text="Taux de cholestérol:")
 chol_label.grid(column=0, row=2)
