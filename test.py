@@ -9,6 +9,7 @@ from sklearn.metrics import accuracy_score
 from models.SVMMODELMALADIE import MaladiesCardiaques
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc
+
 # Création de l'instance de la classe MaladiesCardiaques
 mc = MaladiesCardiaques("train.csv", "test.csv")
 model = SVC(kernel='linear', C=1, random_state=42)
