@@ -1,6 +1,7 @@
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 # Créez la fenêtre principale Tkinter
 root = tk.Tk()
@@ -18,3 +19,25 @@ canvas.get_tk_widget().pack()
 
 # Lancez la boucle principale de la fenêtre Tkinter
 tk.mainloop()
+
+
+
+
+
+# Calcul des résultats
+precision = 0.85
+recall = 0.92
+f1_score = 0.88
+
+# Tracé du graphe
+plt.figure(figsize=(8, 6))
+plt.bar(['Précision', 'Rappel', 'F1-score'], [precision, recall, f1_score], color=['pink', 'black', 'orange'])
+plt.ylim(0, 1)
+plt.title('Résultats de la prédiction des maladies cardiaques')
+plt.xlabel('Métrique')
+plt.ylabel('Score')
+plt.show()
+
+
+
+
