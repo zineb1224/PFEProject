@@ -36,16 +36,9 @@ mail_pred = svmmodelSpam.predict(features_test)
 # Évaluer les performances du modèle
 accuracy = accuracy_score(labels_test, mail_pred)
 precision = precision_score(labels_test, mail_pred)
-recall = recall_score(labels_test, mail_pred)
-f1 = f1_score(labels_test, mail_pred)
-fpr, tpr, _ = roc_curve(labels_test, mail_pred)
-auc_score = auc(fpr, tpr)
 
 print("Accuracy:", accuracy)
 print("Precision:", precision)
-print("Recall:", recall)
-print("F1 score:", f1)
-print("AUC score:", auc_score)
 
 confusion = confusion_matrix(labels_test, mail_pred)
 
