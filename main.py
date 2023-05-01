@@ -47,8 +47,7 @@ print("AUC score:", auc_score)
 #model maladie
 
 
-def main():
-    # Création d'une instance de la classe HeartDiseasePredictionModel
+    # Création d'une instance de la classe
     model = SVMMODELMALADIE()
 
     # Entraînement du modèle avec le fichier de données d'entraînement
@@ -58,8 +57,8 @@ def main():
     predictions = model.predict('maladie_to_predict.csv')
 
     # Affichage des prédictions
-    print('Prédictions de maladies cardiaques :')
-    print(predictions)
+    print('Prédictions de maladies cardiaques :',predictions)
+
 
 
 
