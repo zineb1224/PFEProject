@@ -46,21 +46,18 @@ print("F1 score:", f1)
 print("AUC score:", auc_score)
 
 
-
-
 #model maladie
 # Créer une instance de la classe MaladiesCardiaques
-mc = MaladiesCardiaques("train.csv", "test.csv")
+modelmaladie = MaladiesCardiaques("train.csv", "test.csv")
 
 # Créer le modèle SVM et l'entraîner sur les données d'entraînement
-model = SVC(kernel='linear', C=1, random_state=42)
-model.fit(mc.X_train, mc.y_train)
+modelmaladie.fit(modelmaladie.X_train, modelmaladie.y_train)
 
 # Faire des prédictions sur les données de test
-y_pred = model.predict(mc.X_test)
+maladie_pred = modelmaladie.predict(modelmaladie.X_test)
 
 # Évaluer la précision du modèle
-accuracy = accuracy_score(mc.y_test, y_pred)
+accuracy = accuracy_score(modelmaladie.y_test, maladie_pred)
 print("Accuracy:", accuracy)
 
 
