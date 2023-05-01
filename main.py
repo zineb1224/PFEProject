@@ -1,5 +1,7 @@
 import pandas as pd
 import tkinter as tk
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from tkinter import *
@@ -48,11 +50,25 @@ print("AUC score:", auc_score)
 confusion = confusion_matrix(labels_test, mail_pred)
 
 # Afficher la matrice de confusion sous forme de heatmap
+
+# Créer la fenêtre Tkinter
+root = tk.Tk()
+root.title("Matrice de confusion")
+
+# Créer la heatmap à l'aide de seaborn et matplotlib
+fig, ax = plt.subplots(figsize=(5, 4))
 sns.heatmap(confusion, annot=True, cmap="Blues")
 plt.title("Matrice de confusion")
 plt.xlabel("Prédictions")
 plt.ylabel("Vraies valeurs")
-plt.show()
+
+# Ajouter la heatmap au widget Canvas de Tkinter
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas.draw()
+canvas.get_tk_widget().pack()
+
+# Lancer la boucle principale de Tkinter
+root.mainloop()
 
 
 #model maladie
