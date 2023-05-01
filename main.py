@@ -4,11 +4,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from tkinter import *
 from models.SVMModelSpam import SVMModelSpam, import_data
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score
 from models.SVMMODELMALADIE import MaladiesCardiaques
 import numpy as np
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc ,confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 svmmodelSpam = SVMModelSpam()
 
@@ -44,6 +44,15 @@ print("Precision:", precision)
 print("Recall:", recall)
 print("F1 score:", f1)
 print("AUC score:", auc_score)
+
+confusion = confusion_matrix(labels_test, mail_pred)
+
+# Afficher la matrice de confusion sous forme de heatmap
+sns.heatmap(confusion, annot=True, cmap="Blues")
+plt.title("Matrice de confusion")
+plt.xlabel("Prédictions")
+plt.ylabel("Vraies valeurs")
+plt.show()
 
 
 #model maladie
