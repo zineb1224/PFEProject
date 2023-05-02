@@ -61,8 +61,36 @@ canvas.draw()
 canvas.get_tk_widget().pack()
 
 # Lancer la boucle principale de Tkinter
-root.mainloop()
+#root.mainloop()
 
+# Obtenez les limites du graphique
+x_min, x_max = emails[:, 0].min() - 1, emails[:, 0].max() + 1
+y_min, y_max = emails[:, 0].min() - 1, emails[:, 0].max() + 1
+xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
+
+# Prédisez la classe pour chaque point dans le plan
+Z = svmmodelSpam.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+
+# Tracez la frontière de décision SVM et les supports de vecteur
+plt.contourf(xx, yy, Z, cmap=plt.cm.Paired, alpha=0.8)
+plt.scatter(X[:, 0], X[:, 1], c=labels, cmap=plt.cm.Paired)
+
+# Tracez les vecteurs de support
+support_vectors = svmmodelSpam.support_vectors_
+plt.scatter(support_vectors[:, 0], support_vectors[:, 1], s=80, facecolors='none', edgecolors='k')
+
+# Tracez la marge
+plt.plot(svmmodelSpam.coef_[0][0]*xx + svmmodelSpam.intercept_, 'k--')
+plt.plot(svmmodelSpam.coef_[0][0]*xx + svmmodelSpam.intercept_+1, 'r--')
+plt.plot(svmmodelSpam.coef_[0][0]*xx + svmmodelSpam.intercept_-1, 'r--')
+
+# Étiquetez les axes
+plt.xlabel('Première caractéristique')
+plt.ylabel('Deuxième caractéristique')
+
+# Afficher le graphique
+plt.show()
 
 #model maladie
 # Créer une instance de la classe MaladiesCardiaques
