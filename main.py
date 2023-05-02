@@ -1,6 +1,5 @@
 import pandas as pd
 import tkinter as tk
-
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
@@ -93,8 +92,15 @@ plt.ylabel('Deuxième caractéristique')
 plt.show()
 
 #model maladie
+
 # Créer une instance de la classe MaladiesCardiaques
 modelmaladie = MaladiesCardiaques("train.csv", "test.csv")
+
+# Train the model
+modelmaladie.train()
+
+# Plot the accuracy over time
+modelmaladie.plot_accuracy()
 
 # Créer le modèle SVM et l'entraîner sur les données d'entraînement
 modelmaladie.fit(modelmaladie.X_train, modelmaladie.y_train)
