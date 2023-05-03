@@ -79,7 +79,7 @@ def train_model():
     y_pred = clf.predict(X_test)
 
     # Entrée pour le paramètre test_size
-    test_size_entry = ttk.Entry(root)
+    test_size_entry = tk.Entry(root)
     test_size_entry.insert(tk.END, "0.2")
     test_size_entry.grid(row=2, column=1)
 
