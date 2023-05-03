@@ -1,15 +1,20 @@
-
 # Importer les bibliothèques nécessaires
 import pandas as pd
 from sklearn import svm
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
+import os
 
 
 class MaladiesCardiaques:
 
     def __init__(self, train_file, test_file):
+        # Check if files exist
+        if not os.path.isfile(train_file):
+            raise ValueError(f"File {train_file} does not exist.")
+        if not os.path.isfile(test_file):
+            raise ValueError(f"File {test_file} does not exist.")
+
         # Charger les données d'entraînement et de test
         self.model = svm.SVC()
         self.X_train, self.y_train = self.load_data(train_file)
@@ -23,10 +28,14 @@ class MaladiesCardiaques:
         self.test_accuracy = []
 
     @staticmethod
-    def load_data(file):
-        # Charger les données à partir du fichier CSV
-        data = pd.read_csv(file)
 
+    def load_data(file):
+        # Check if file exists
+        if not os.path.isfile('datasets/maladie.csv'):
+            raise ValueError(f"File {'datasets/maladie.csv'} does not exist.")
+
+        # Charger les données à partir du fichier CSV
+        data = pd.read_csv('datasets/maladie.csv')
         # Séparer les fonctionnalités et les étiquettes
         x = data.iloc[:, :-1]
         y = data.iloc[:, -1]
@@ -48,39 +57,9 @@ class MaladiesCardiaques:
             self.test_accuracy.append(test_acc)
 
     def plot_accuracy(self):
-        self.train()
         plt.plot(self.train_accuracy, label='Training accuracy')
         plt.plot(self.test_accuracy, label='Test accuracy')
         plt.xlabel('Iteration')
         plt.ylabel('Accuracy')
         plt.legend()
         plt.show()
-
-
-# Créer une instance de la classe MaladiesCardiaques
-modelmaladie = MaladiesCardiaques("datasets/maladie_test.csv", "datasets/maladie_train.csv")
-
-# Train the model
-modelmaladie.train()
-
-# Plot the accuracy over time
-modelmaladie.plot_accuracy()
-
-# Créer le modèle SVM et l'entraîner sur les données d'entraînement
-modelmaladie.fit(modelmaladie.X_train, modelmaladie.y_train)
-
-# Faire des prédictions sur les données de test
-maladie_pred = modelmaladie.predict(modelmaladie.X_test)
-
-# Évaluer la précision du modèle
-accuracy = accuracy_score(modelmaladie.y_test, maladie_pred)
-
-# Créer un graphique pour afficher les données de test et les prédictions
-plt.figure()
-plt.plot(modelmaladie.X_test, modelmaladie.y_test, 'bo', label='Test Data')
-plt.plot(modelmaladie.X_test, maladie_pred, 'rx', label='Predictions')
-plt.xlabel('Feature 1')
-plt.ylabel('Target')
-plt.title('Test Data and Predictions')
-plt.legend()
-plt.show()
