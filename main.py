@@ -11,6 +11,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# model spam email
 svmmodelSpam = SVMModelSpam()
 
 # Chargement des données
