@@ -24,16 +24,16 @@ listbox.pack()
 
 bg_color = "#f4f4f4"
 
-e1 = tk.Label(f1, text="test size: ").pack(padx=50, pady=50)
+e1 = tk.Label(f1, text="test size: ").pack(padx=50, pady=10)
 testSize = tk.Entry(f1,width=40, bg=bg_color, fg="black" ,font=("Helvetica", 14) , bd=0, highlightthickness=1, highlightcolor="gray")
-testSize.pack(padx=40, pady=5 , ipady=5)
-e2 = tk.Label(f1, text="parametre C: ").pack(padx=50, pady=50)
+testSize.pack(padx=40, pady=2 , ipady=5)
+e2 = tk.Label(f1, text="parametre C: ").pack(padx=50, pady=10)
 paramC = tk.Entry(f1, width=40, bg=bg_color, fg="black" ,font=("Helvetica", 14) , bd=0, highlightthickness=1, highlightcolor="gray")
 paramC.config(highlightbackground="white")
-paramC.pack(padx=40, pady=5 , ipady=5)
-e3 = tk.Label(f1, text="parametre Kernel: ").pack(padx=50, pady=50)
+paramC.pack(padx=40, pady=2 , ipady=5)
+e3 = tk.Label(f1, text="parametre Kernel: ").pack(padx=50, pady=10)
 paramKernel = tk.Entry(f1, width=40, bg=bg_color, fg="black" ,font=("Helvetica", 14), bd=0, highlightthickness=1, highlightcolor="gray")
-paramKernel.pack(padx=40, pady=5 , ipady=5)
+paramKernel.pack(padx=40, pady=2 , ipady=5)
 
 btn = tk.Button(f1, height=1, width=10, text="Lire", command=getValeur)
 btn.pack()
