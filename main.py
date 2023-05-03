@@ -61,7 +61,7 @@ canvas.draw()
 canvas.get_tk_widget().pack()
 
 # Lancer la boucle principale de Tkinter
-#root.mainloop()
+
 
 # Obtenez les limites du graphique
 x_min, x_max = emails[:, 0].min() - 1, emails[:, 0].max() + 1
