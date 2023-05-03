@@ -82,6 +82,22 @@ maladie_pred = modelmaladie.predict(modelmaladie.X_test)
 
 # Évaluer la précision du modèle
 accuracy = accuracy_score(modelmaladie.y_test, maladie_pred)
+
+# Affichage du graphique d'entraînement
+
+plt.plot(modelmaladie.X_train, modelmaladie.y_train, 'ro', label='Training data')
+plt.plot(modelmaladie.X_train, modelmaladie.predict(modelmaladie.X_train), label='Predictions')
+plt.title('Training data')
+plt.legend()
+plt.show()
+
+# Affichage du graphique de test
+plt.plot(modelmaladie.X_test, modelmaladie.y_test, 'ro', label='Testing data')
+plt.plot(modelmaladie.X_test, modelmaladie.predict(modelmaladie.X_test), label='Predictions')
+plt.title('Testing data')
+plt.legend()
+plt.show()
+
 print("Accuracy:", accuracy)
 
 
