@@ -53,13 +53,14 @@ class MaladieApp:
 
         # Sélectionner le modèle en fonction du choix de l'utilisateur
         if self.model_choice.get() == "1":
-            model = MaladiesCardiaques()
+            modelmaladie = MaladiesCardiaques("train.csv", "test.csv")
+            modelmaladie.fit(modelmaladie.X_train, modelmaladie.y_train)
         else:
             model = SVMModelSpam()
 
         # Prédire la maladie
         data = [[age, sex, cp]]
-        prediction = model.predict(data)
+        prediction = modelmaladie.predict(data)
 
         # Afficher le résultat de la prédiction
         if prediction[0] == 1:
