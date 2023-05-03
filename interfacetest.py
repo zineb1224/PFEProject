@@ -1,9 +1,32 @@
 # objet : fenêtre avec deux frames
 import tkinter as tk
+from tkinter import *
 
 def getValeur() :
     val = testSize.get()
     print(val)
+
+
+#creation de splash screen
+splash_root = tk.Tk()
+
+# Créez un canevas pour ajouter une image
+splash_canvas = Canvas(splash_root, width=300, height=200)
+splash_canvas.pack()
+
+# Ajoutez une image
+splash_image = PhotoImage(file='imgs/splash_bg.gif')
+splash_canvas.create_image(0, 0, anchor=NW, image=splash_image)
+
+# Ajoutez un message de chargement
+splash_label = Label(splash_root, text="Chargement en cours...")
+splash_label.pack()
+
+# Définissez le temps d'affichage du splash screen en millisecondes
+splash_time = 5000
+
+# Fermez la fenêtre du splash screen après le temps d'affichage
+splash_root.after(splash_time, splash_root.destroy)
 
 # Création d'un objet "fenêtre"
 appSVM = tk.Tk()  # nouvelle instance de Tk
