@@ -4,7 +4,7 @@ from matplotlib.figure import Figure
 import numpy as np
 import matplotlib.pyplot as plt
 from main import modelmaladie
-from models.SVMMODELMALADIE import MaladiesCardiaques
+from models.SVMModelMaladie import MaladiesCardiaques
 
 class App(tk.Frame):
     def __init__(self, master=None):

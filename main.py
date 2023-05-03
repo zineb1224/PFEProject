@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from tkinter import *
 from models.SVMModelSpam import SVMModelSpam, import_data
-from models.SVMMODELMALADIE import MaladiesCardiaques
+from models.SVMModelMaladie import MaladiesCardiaques
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc ,confusion_matrix
 import matplotlib.pyplot as plt
@@ -64,7 +64,7 @@ canvas.get_tk_widget().pack()
 
 
 # Obtenez les limites du graphique
-x_min, x_max = emails[:, 0].min() - 1, emails[:, 0].max() + 1
+x_min, x_max = features_train[:, 0].min() - 1, features_train[:, 0].max() + 1
 y_min, y_max = emails[:, 0].min() - 1, emails[:, 0].max() + 1
 xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
 
@@ -121,10 +121,14 @@ plt.legend()
 plt.show()
 
 # Affichage du graphique de test
+# Plot testing data
 plt.plot(modelmaladie.X_test, modelmaladie.y_test, 'ro', label='Testing data')
+# Plot model predictions
 plt.plot(modelmaladie.X_test, modelmaladie.predict(modelmaladie.X_test), label='Predictions')
-plt.title('Testing data')
+# Set plot title and legend
+plt.title('Model predictions on testing data')
 plt.legend()
+# Show plot
 plt.show()
 
 print("Accuracy:", accuracy)
