@@ -65,8 +65,11 @@ f2 = tk.LabelFrame(appSVM, bd=2, text="", bg=bg_color_frame, relief="groove")
 f1.pack(side=tk.LEFT, padx=20, pady=20)
 f2.pack(side=tk.RIGHT, padx=20, pady=20)
 
+datalabel = tk.Label(f1, text="choisir le dataset : ", bg=bg_color_frame,font=("Helvetica", 14))
+datalabel.pack(padx=50, pady=10)
+
 # Créer une liste déroulante
-listbox = tk.Listbox(f1, width=80)
+listbox = tk.Listbox(f1, width=60)
 listbox.insert(1, "Dataset Spam Email")
 listbox.insert(2, "Dataset Maladies Cardiaques")
 listbox.pack()
