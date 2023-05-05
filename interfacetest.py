@@ -24,6 +24,22 @@ def tracer_graphe():
     canvas.draw()
     canvas.get_tk_widget().pack()
 
+# Fonction appelée lors de la sélection d'une option dans la ComboBox
+def update_label(*args):
+    selected_value = combo_box.get()
+    if selected_value=="Dataset Spam Email" :
+        descriptiontxt.configure(text="Le fichier csv contient 5172 lignes, chaque ligne"
+                                      " pour chaque e-mail. Il y a 3002 colonnes. La première colonne indique le nom de l'e-mail."
+                                      " Le nom a été défini avec des chiffres et non avec le nom des destinataires pour protéger la confidentialité. "
+                                      "La dernière colonne contient les libellés de prédiction : 1 pour spam, 0 pour non spam."
+                                      " Les 3000 colonnes restantes sont les 3000 mots les plus courants dans tous les e-mails,"
+                                      " après exclusion des caractères/mots non alphabétiques. Pour chaque ligne, "
+                                      "le nombre de chaque mot (colonne) dans cet e-mail (ligne) est stocké dans les cellules respectives. "
+                                       )
+    elif selected_value=="Dataset Maladies Cardiaques" :
+        descriptiontxt.configure(text="description de maladie cardiaque ")
+
+
 #creation de splash screen
 splash_root = tk.Tk()
 # Centrer la fenêtre au milieu de l'écran
@@ -83,26 +99,12 @@ datalabel.pack(padx=50, pady=10)
 
 # Créer une liste déroulante
 datasets = ["Dataset Spam Email" , "Dataset Maladies Cardiaques" ]
-combo_box = ttk.Combobox(f1, values=datasets,font=("Helvetica", 13), width=35)
-combo_box.pack(padx=50, pady=5)
+combo_box = ttk.Combobox(f1, values=datasets,font=("Helvetica", 12), width=35)
 
 # Configuration des couleurs de fond et de texte pour la ComboBox
-combo_box.configure(background="#F5F5F5", foreground="black" )
+combo_box.configure(background="#F5F5F5", foreground="black")
+combo_box.pack(padx=50, pady=5)
 
-# Fonction appelée lors de la sélection d'une option dans la ComboBox
-def update_label(*args):
-    selected_value = combo_box.get()
-    if selected_value=="Dataset Spam Email" :
-        descriptiontxt.configure(text="Le fichier csv contient 5172 lignes, chaque ligne"
-                                      " pour chaque e-mail. Il y a 3002 colonnes. La première colonne indique le nom de l'e-mail."
-                                      " Le nom a été défini avec des chiffres et non avec le nom des destinataires pour protéger la confidentialité. "
-                                      "La dernière colonne contient les libellés de prédiction : 1 pour spam, 0 pour non spam."
-                                      " Les 3000 colonnes restantes sont les 3000 mots les plus courants dans tous les e-mails,"
-                                      " après exclusion des caractères/mots non alphabétiques. Pour chaque ligne, "
-                                      "le nombre de chaque mot (colonne) dans cet e-mail (ligne) est stocké dans les cellules respectives. "
-                                       )
-    elif selected_value=="Dataset Maladies Cardiaques" :
-        descriptiontxt.configure(text="description de maladie cardiaque ")
 
 description = tk.Label(f1, text="description : ",bg=bg_color_frame, font=("Helvetica", 13))
 description.pack(padx=20, pady=5)
@@ -138,19 +140,19 @@ style.map("Custom.TEntry",
 tstsize = tk.Label(f1, text="test size: ", bg=bg_color_frame,font=("Helvetica", 13))
 tstsize.pack(padx=50, pady=10)
 
-testSize = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 13))
+testSize = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 11))
 testSize.pack(pady=8,ipady=10)
 
 parac = tk.Label(f1, text="parametre C: ",bg=bg_color_frame, font=("Helvetica", 13))
 parac.pack(padx=50, pady=10)
 
-paramC = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 13))
+paramC = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 11))
 paramC.pack(pady=8,ipady=10)
 
 paramk = tk.Label(f1, text="parametre Kernel: ",bg=bg_color_frame, font=("Helvetica", 13))
 paramk.pack(padx=50, pady=10)
 
-paramKernel = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 13))
+paramKernel = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 11))
 paramKernel.pack(pady=8,ipady=10)
 
 #creation de boutton pour entrainer le modele
