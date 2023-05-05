@@ -155,8 +155,11 @@ paramk.pack(padx=50, pady=10)
 paramKernel = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 11))
 paramKernel.pack(pady=8,ipady=10)
 
+# Charger l'image et la convertir pour Tkinter
+icon_training = PhotoImage(file="imgs/training_80px.gif")
+
 #creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=tracer_graphe)
+btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=tracer_graphe,image=icon_training, compound='left')
 btnTraining.pack(padx=20,pady=5)
 
 # Création d'un cadre dans la fenêtre Tkinter pour y afficher le graphe
