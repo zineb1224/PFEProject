@@ -3,11 +3,23 @@ import tkinter as tk
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import ttk
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 def getValeur() :
     val = testSize.get()
     print(val)
 
+# Fonction pour tracer le graphe
+def tracer_graphe():
+    x = np.linspace(0, 10, 100)
+    y = np.sin(x)
+    fig = plt.figure(figsize=(5, 4), dpi=100)
+    fig.add_subplot(111).plot(x, y)
+    canvas = FigureCanvasTkAgg(fig, master=f2)
+    canvas.draw()
+    canvas.get_tk_widget().pack()
 
 #creation de splash screen
 splash_root = tk.Tk()
@@ -63,7 +75,7 @@ f2 = tk.LabelFrame(appSVM, bd=2, text="", bg=bg_color_frame, relief="groove")
 f1.pack(side=tk.LEFT, padx=20, pady=20)
 f2.pack(side=tk.RIGHT, padx=20, pady=20)
 
-datalabel = tk.Label(f1, text="choisir le dataset : ", bg=bg_color_frame,font=("Helvetica", 14))
+datalabel = tk.Label(f1, text="choisir le dataset : ", bg=bg_color_frame,font=("Helvetica", 13))
 datalabel.pack(padx=50, pady=10)
 
 # Créer une liste déroulante
@@ -119,7 +131,11 @@ paramk.pack(padx=50, pady=10)
 paramKernel = tk.Entry(f1, width=40, bg=bg_color, fg="black" ,font=("Helvetica", 13), bd=0, highlightthickness=1, highlightcolor="gray")
 paramKernel.pack(padx=40, pady=2 , ipady=5)
 
-btn = tk.Button(f1, height=1, width=10, text="Lire", command=getValeur)
-btn.pack()
+#creation de boutton pour entrainer le modele
+btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=tracer_graphe)
+btnTraining.pack(padx=20,pady=5)
 
+#creation de boutton pour tester le modele
+btnTesting = tk.Button(f2 , height=4, width=26, text="Testing" , font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=tracer_graphe)
+btnTesting.pack(padx=20,pady=5)
 appSVM.mainloop()
