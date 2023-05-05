@@ -20,10 +20,6 @@ canvas.get_tk_widget().pack()
 # Lancez la boucle principale de la fenêtre Tkinter
 tk.mainloop()
 
-
-
-
-
 # Calcul des résultats
 precision = 0.85
 recall = 0.92
@@ -39,36 +35,4 @@ plt.ylabel('Score')
 plt.show()
 
 
-
-
-from sklearn.metrics import confusion_matrix
-
-# Prédiction sur l'ensemble de test
-y_pred = model.predict(X_test)
-# Convertir les probabilités en classes (0 ou 1)
-y_pred_classes = np.round(y_pred)
-# Convertir les classes réelles en entiers (0 ou 1)
-y_true = y_test
-
-# Définir les noms de classe
-class_names = ['non malade', 'malade']
-
-# Calculer la matrice de confusion
-confusion_mtx = confusion_matrix(y_true, y_pred_classes)
-
-# Afficher la matrice de confusion sous forme de graphique
-plt.imshow(confusion_mtx, interpolation='nearest', cmap=plt.cm.Blues)
-plt.title('Matrice de confusion')
-plt.colorbar()
-ticks = np.arange(len(class_names))
-plt.xticks(ticks, class_names, rotation=45)
-plt.yticks(ticks, class_names)
-plt.ylabel('Classe réelle')
-plt.xlabel('Classe prédite')
-for i in range(len(class_names)):
-    for j in range(len(class_names)):
-        plt.text(j, i, confusion_mtx[i, j],
-                 horizontalalignment="center",
-                 color="white" if confusion_mtx[i, j] > confusion_mtx.max() / 2 else "black")
-plt.show()
 

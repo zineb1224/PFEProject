@@ -6,6 +6,8 @@ from tkinter import ttk
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+
 
 def getValeur() :
     val = testSize.get()
@@ -13,11 +15,12 @@ def getValeur() :
 
 # Fonction pour tracer le graphe
 def tracer_graphe():
-    x = np.linspace(0, 10, 100)
-    y = np.sin(x)
-    fig = plt.figure(figsize=(5, 4), dpi=100)
-    fig.add_subplot(111).plot(x, y)
-    canvas = FigureCanvasTkAgg(fig, master=f2)
+    # Créez un widget Figure de Matplotlib
+    fig = Figure(figsize=(5, 4), dpi=100)
+    ax = fig.add_subplot(111)
+    ax.plot([1, 2, 3, 4, 5], [10, 5, 20, 15, 25])
+    # Créez un widget Canvas Tkinter pour afficher la figure
+    canvas = FigureCanvasTkAgg(fig, master=frame_graphe)
     canvas.draw()
     canvas.get_tk_widget().pack()
 
@@ -111,31 +114,55 @@ descriptiontxt.pack(padx=5, pady=5)
 # Configuration de la ComboBox pour appeler la fonction update_label lors de la sélection d'une option
 combo_box.bind("<<ComboboxSelected>>", update_label)
 
-bg_color = "#fefefe"
+bg_color = "#fdfdfd"
+
+# Création d'un style personnalisé pour Entry
+style = ttk.Style()
+
+# Configuration de la bordure et du relief pour l'Entry
+style.configure("Custom.TEntry", borderwidth=0, relief="solid")
+
+# Configuration de la bordure arrondie pour l'Entry
+style.map("Custom.TEntry",
+          foreground=[("focus", "black"), ("!focus", "gray")],
+          background=[("focus", bg_color), ("!focus", bg_color)],
+          bordercolor=[("focus", "gray"), ("!focus", "gray")],
+          borderwidth=[("focus", 2), ("!focus", 2)],
+          relief=[("focus", "solid"), ("!focus", "solid")],
+          focuscolor=[("focus", "white"), ("!focus", "white")],
+          highlightthickness=[("focus", 2), ("!focus", 0)],
+          padx=[("focus", 6), ("!focus", 6)],
+          pady=[("focus", 6), ("!focus", 6)],
+          )
 
 tstsize = tk.Label(f1, text="test size: ", bg=bg_color_frame,font=("Helvetica", 13))
 tstsize.pack(padx=50, pady=10)
 
-testSize = tk.Entry(f1,width=40, bg=bg_color, fg="black" ,font=("Helvetica", 13) , bd=0, highlightthickness=1, highlightcolor="gray")
-testSize.pack(padx=40, pady=2 , ipady=5)
+testSize = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 13))
+testSize.pack(pady=8,ipady=10)
 
 parac = tk.Label(f1, text="parametre C: ",bg=bg_color_frame, font=("Helvetica", 13))
 parac.pack(padx=50, pady=10)
 
-paramC = tk.Entry(f1, width=40, bg=bg_color, fg="black" ,font=("Helvetica", 13) , bd=0, highlightthickness=1, highlightcolor="gray")
-paramC.pack(padx=40, pady=2 , ipady=5)
+paramC = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 13))
+paramC.pack(pady=8,ipady=10)
 
 paramk = tk.Label(f1, text="parametre Kernel: ",bg=bg_color_frame, font=("Helvetica", 13))
 paramk.pack(padx=50, pady=10)
 
-paramKernel = tk.Entry(f1, width=40, bg=bg_color, fg="black" ,font=("Helvetica", 13), bd=0, highlightthickness=1, highlightcolor="gray")
-paramKernel.pack(padx=40, pady=2 , ipady=5)
+paramKernel = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 13))
+paramKernel.pack(pady=8,ipady=10)
 
 #creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=tracer_graphe)
+btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=tracer_graphe)
 btnTraining.pack(padx=20,pady=5)
+
+# Création d'un cadre dans la fenêtre Tkinter pour y afficher le graphe
+frame_graphe = tk.LabelFrame(f2, bd=0, bg="#f3f3f3", relief="groove")
+frame_graphe.pack()
 
 #creation de boutton pour tester le modele
 btnTesting = tk.Button(f2 , height=4, width=26, text="Testing" , font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=tracer_graphe)
 btnTesting.pack(padx=20,pady=5)
+
 appSVM.mainloop()
