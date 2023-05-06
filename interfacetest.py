@@ -141,25 +141,25 @@ tstsize = tk.Label(f1, text="test size: ", bg=bg_color_frame,font=("Helvetica", 
 tstsize.pack(padx=50, pady=10)
 
 testSize = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 11))
-testSize.pack(pady=8,ipady=10)
+testSize.pack(pady=8,ipady=5)
 
 parac = tk.Label(f1, text="parametre C: ",bg=bg_color_frame, font=("Helvetica", 13))
 parac.pack(padx=50, pady=10)
 
 paramC = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 11))
-paramC.pack(pady=8,ipady=10)
+paramC.pack(pady=8,ipady=5)
 
 paramk = tk.Label(f1, text="parametre Kernel: ",bg=bg_color_frame, font=("Helvetica", 13))
 paramk.pack(padx=50, pady=10)
 
 paramKernel = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 11))
-paramKernel.pack(pady=8,ipady=10)
+paramKernel.pack(pady=8,ipady=5)
 
 # Charger l'image et la convertir pour Tkinter
-icon_training = PhotoImage(file="imgs/training_80px.gif")
+#icon_training = PhotoImage(file="imgs/training_80px.gif")
 
 #creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=tracer_graphe,image=icon_training, compound='left')
+btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=tracer_graphe)
 btnTraining.pack(padx=20,pady=5)
 
 # Création d'un cadre dans la fenêtre Tkinter pour y afficher le graphe
