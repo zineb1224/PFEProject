@@ -1,17 +1,18 @@
-from tkinter import *
 import tkinter as tk
 
-appSVM = tk.Tk()  # nouvelle instance de Tk
+# Définition de la palette de couleurs
+BG_COLOR = "#1c1c1c"
+FG_COLOR = "#d9d9d9"
+BUTTON_BG_COLOR = "#3a3a3a"
+BUTTON_ACTIVE_COLOR = "#4a4a4a"
 
-# Charger la première image
-img1 = PhotoImage(file="imgs/training_80px.gif")
+# Création de la fenêtre principale
+root = tk.Tk()
+root.configure(bg=BG_COLOR)
 
-# Charger la deuxième image
-img2 = PhotoImage(file="imgs/training_80px.gif")
+# Modification des couleurs des widgets
+tk.Label(root, text="Hello World", bg=BG_COLOR, fg=FG_COLOR).pack(pady=20)
+tk.Button(root, text="Click me", bg=BUTTON_BG_COLOR, fg=FG_COLOR, activebackground=BUTTON_ACTIVE_COLOR).pack()
 
-# Utiliser les images dans votre interface utilisateur tkinter
-btn1 = Button(appSVM , image=img1)
-btn2 = Button(appSVM , image=img2)
-btn1.pack()
-btn2.pack()
-appSVM.mainloop()
+# Lancement de la boucle principale
+root.mainloop()

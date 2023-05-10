@@ -2,8 +2,8 @@
 #import les biblio
 import tkinter as tk
 from tkinter import *
+import customtkinter
 from PIL import Image, ImageTk
-from tkinter import ttk
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -41,15 +41,6 @@ def check_fields():
         btnTesting.config(state="disabled")
 
 # Fonction pour tracer le graphe
-def tracer_graphe():
-    # Créez un widget Figure de Matplotlib
-    fig = Figure(figsize=(5, 4), dpi=100)
-    ax = fig.add_subplot(111)
-    ax.plot([1, 2, 3, 4, 5], [10, 5, 20, 15, 25])
-    # Créez un widget Canvas Tkinter pour afficher la figure
-    canvas = FigureCanvasTkAgg(fig, master=frame_graphe)
-    canvas.draw()
-    canvas.get_tk_widget().pack()
 
 # Fonction appelée lors de la sélection d'une option dans la ComboBox
 def update_label(*args):
@@ -100,8 +91,9 @@ splash_time = 3000
 splash_root.after(splash_time, splash_root.destroy)
 
 # Création d'un objet "fenêtre"
-appSVM = tk.Tk()  # nouvelle instance de Tk
+appSVM = customtkinter.CTk()
 appSVM.title("Interface Home Machine")
+appSVM.grid_columnconfigure((0), weight=1)
 
 # Centrer la fenêtre au milieu de l'écran
 screen_width = appSVM.winfo_screenwidth()
@@ -109,90 +101,60 @@ screen_height = appSVM.winfo_screenheight()
 x = int((screen_width / 2) - (1300 / 2))
 y = int((screen_height / 2) - (750 / 2))
 appSVM.geometry(f"1300x750+{x}+{y}")
-appSVM.config(bg="#1c1c1c")
 
 # Rendre la fenêtre non-redimensionnable
 appSVM.resizable(width=False, height=False)
 
-bg_color_frame = "#3a3a3a"
-bg_color = "#4a4a4a"
+customtkinter.set_default_color_theme("dark-blue")
 
-f1 = tk.LabelFrame(appSVM, bd=2, text="", bg=bg_color_frame, relief="groove")
-f2 = tk.LabelFrame(appSVM, bd=2, text="", bg=bg_color_frame, relief="groove")
-f1.pack(side=tk.LEFT, padx=20, pady=20)
-f2.pack(side=tk.RIGHT, padx=20, pady=20)
+frame1 = customtkinter.CTkFrame(master=appSVM, width=200, height=200)
+frame2 = customtkinter.CTkFrame(master=appSVM, width=200, height=200)
 
-datalabel = tk.Label(f1, text="choisir le dataset : ", bg=bg_color_frame,font=("Helvetica", 13))
-datalabel.pack(padx=50, pady=10)
+datalabel = customtkinter.CTkLabel(appSVM, text="choisir le dataset : ",font=("Helvetica", 13))
+datalabel.grid(row=0, column=0, padx=20, pady=20)
 
 # Créer une liste déroulante
 datasets = ["Dataset Spam Email" , "Dataset Maladies Cardiaques" ]
-combo_box = ttk.Combobox(f1, values=datasets,font=("Helvetica", 12), width=35)
+combo_box = customtkinter.CTkComboBox(appSVM, values=datasets,font=("Helvetica", 12))
+combo_box.grid(row=1, column=0, padx=20, pady=20)
 
-# Configuration des couleurs de fond et de texte pour la ComboBox
-combo_box.configure(background=bg_color, foreground="black")
-combo_box.pack(padx=50, pady=5)
-
-description = tk.Label(f1, text="description : ",bg=bg_color_frame, font=("Helvetica", 13))
-description.pack(padx=20, pady=5)
+description = customtkinter.CTkLabel(appSVM, text="description : ", font=("Helvetica", 13))
+description.grid(row=2, column=0, padx=20, pady=20)
 
 # Création du Label pour afficher la valeur sélectionnée
-descriptiontxt = tk.Label(f1, text=" ",bg=bg_color_frame , font=("Helvetica", 11) ,wraplength=360 , justify="left")
-descriptiontxt.pack(padx=5, pady=5)
+descriptiontxt = customtkinter.CTkLabel(appSVM, text=" ", font=("Helvetica", 11) ,wraplength=360 , justify="left")
+descriptiontxt.grid(row=3, column=0, padx=20, pady=20)
 
 # Configuration de la ComboBox pour appeler la fonction update_label lors de la sélection d'une option
 combo_box.bind("<<ComboboxSelected>>", update_label)
 
-# Création d'un style personnalisé pour Entry
-style = ttk.Style()
+tstsize = customtkinter.CTkLabel(appSVM, text="test size: ",font=("Helvetica", 13))
+tstsize.grid(row=4, column=0, padx=20, pady=20)
 
-# Configuration de la bordure et du relief pour l'Entry
-style.configure("Custom.TEntry", borderwidth=0, relief="solid" , background=bg_color)
+testSize = customtkinter.CTkEntry(appSVM,font=("Helvetica", 11))
+testSize.grid(row=5, column=0, padx=20, pady=20)
 
-# Configuration de la bordure arrondie pour l'Entry
-style.map("Custom.TEntry",
-          foreground=[("focus", "black"), ("!focus", "gray")],
-          bordercolor=[("focus", "gray"), ("!focus", "gray")],
-          borderwidth=[("focus", 2), ("!focus", 2)],
-          relief=[("focus", "solid"), ("!focus", "solid")],
-          focuscolor=[("focus", "white"), ("!focus", "white")],
-          highlightthickness=[("focus", 2), ("!focus", 0)],
-          padx=[("focus", 6), ("!focus", 6)],
-          pady=[("focus", 6), ("!focus", 6)],
-          )
+parac = customtkinter.CTkLabel(appSVM, text="parametre C: ", font=("Helvetica", 13))
+parac.grid(row=6, column=0, padx=20, pady=20)
 
-tstsize = tk.Label(f1, text="test size: ",fg="#d9d9d9",bg=bg_color_frame,font=("Helvetica", 13))
-tstsize.pack(padx=50, pady=10)
+paramC = customtkinter.CTkEntry(appSVM,font=("Helvetica", 11))
+paramC.grid(row=7, column=0, padx=20, pady=20)
 
-testSize = ttk.Entry(f1, style="Custom.TEntry", width=40,font=("Helvetica", 11))
-testSize.pack(pady=8,ipady=5)
+paramk = customtkinter.CTkLabel(appSVM, text="parametre Kernel: ", font=("Helvetica", 13))
+paramk.grid(row=8, column=0, padx=20, pady=20)
 
-parac = tk.Label(f1, text="parametre C: ",fg="#d9d9d9",bg=bg_color_frame, font=("Helvetica", 13))
-parac.pack(padx=50, pady=10)
-
-paramC = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 11))
-paramC.pack(pady=8,ipady=5)
-
-paramk = tk.Label(f1, text="parametre Kernel: ",fg="#d9d9d9",bg=bg_color_frame, font=("Helvetica", 13))
-paramk.pack(padx=50, pady=10)
-
-paramKernel = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 11))
-paramKernel.pack(pady=8,ipady=5)
-
+paramKernel = customtkinter.CTkEntry(appSVM,font=("Helvetica", 11))
+paramKernel.grid(row=9, column=0, padx=20, pady=20)
 # Charger l'image et la convertir pour Tkinter
 #icon_training = PhotoImage(file="imgs/training_80px.gif")
 
 #creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=tracer_graphe,state="disabled")
-btnTraining.pack(padx=20,pady=5)
-
-# Création d'un cadre dans la fenêtre Tkinter pour y afficher le graphe
-frame_graphe = tk.LabelFrame(f2, bd=0, bg="#f3f3f3", relief="groove")
-frame_graphe.pack()
+btnTraining = customtkinter.CTkButton(appSVM , height=4, width=26, text="Training" ,font=('Helvetica', 15),state="disabled")
+btnTraining.grid(row=0, column=2, padx=20, pady=20)
 
 #creation de boutton pour tester le modele
-btnTesting = tk.Button(f2 , height=4, width=26, text="Testing" , font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=fitModelSpam,state="disabled")
-btnTesting.pack(padx=20,pady=5)
+btnTesting = customtkinter.CTkButton(appSVM , height=4, width=26, text="Testing" , font=('Helvetica', 15), command=fitModelSpam,state="disabled")
+btnTesting.grid(row=1, column=2, padx=20, pady=20)
 
 testSize.bind("<KeyRelease>", lambda event: check_fields())
 paramC.bind("<KeyRelease>", lambda event: check_fields())
