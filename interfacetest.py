@@ -28,6 +28,14 @@ def fitModelSpam() :
     print(k)
     print(C)
 
+def check_fields():
+    if len(testSize.get()) > 0 and len(paramC.get()) > 0 and len(paramKernel.get()) > 0:
+        btnTraining.config(state="normal")
+        btnTesting.config(state="normal")
+    else:
+        btnTraining.config(state="disabled")
+        btnTesting.config(state="disabled")
+
 # Fonction pour tracer le graphe
 def tracer_graphe():
     # Créez un widget Figure de Matplotlib
@@ -174,7 +182,7 @@ paramKernel.pack(pady=8,ipady=5)
 #icon_training = PhotoImage(file="imgs/training_80px.gif")
 
 #creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=tracer_graphe)
+btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=tracer_graphe,state="disabled")
 btnTraining.pack(padx=20,pady=5)
 
 # Création d'un cadre dans la fenêtre Tkinter pour y afficher le graphe
@@ -182,7 +190,12 @@ frame_graphe = tk.LabelFrame(f2, bd=0, bg="#f3f3f3", relief="groove")
 frame_graphe.pack()
 
 #creation de boutton pour tester le modele
-btnTesting = tk.Button(f2 , height=4, width=26, text="Testing" , font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=fitModelSpam)
+btnTesting = tk.Button(f2 , height=4, width=26, text="Testing" , font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=fitModelSpam,state="disabled")
 btnTesting.pack(padx=20,pady=5)
+
+
+testSize.bind("<KeyRelease>", lambda event: check_fields())
+paramC.bind("<KeyRelease>", lambda event: check_fields())
+paramKernel.bind("<KeyRelease>", lambda event: check_fields())
 
 appSVM.mainloop()
