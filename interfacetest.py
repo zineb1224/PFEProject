@@ -99,6 +99,13 @@ splash_time = 3000
 # Fermez la fenêtre du splash screen après le temps d'affichage
 splash_root.after(splash_time, splash_root.destroy)
 
+# Définition de la palette de couleurs
+BG_COLOR = "#1c1c1c"
+FG_COLOR = "#d9d9d9"
+LABEL_BG_COLOR = "#3a3a3a"
+ENTRY_BG_COLOR = "#3a3a3a"
+bg_color_frame = "#3a3a3a"
+
 # Création d'un objet "fenêtre"
 appSVM = tk.Tk()  # nouvelle instance de Tk
 appSVM.title("Interface Home Machine")
@@ -109,13 +116,10 @@ screen_height = appSVM.winfo_screenheight()
 x = int((screen_width / 2) - (1300 / 2))
 y = int((screen_height / 2) - (750 / 2))
 appSVM.geometry(f"1300x750+{x}+{y}")
-appSVM.config(bg="#1c1c1c")
+appSVM.config(bg=BG_COLOR)
 
 # Rendre la fenêtre non-redimensionnable
 appSVM.resizable(width=False, height=False)
-
-bg_color_frame = "#3a3a3a"
-bg_color = "#4a4a4a"
 
 f1 = tk.LabelFrame(appSVM, bd=2, text="", bg=bg_color_frame, relief="groove")
 f2 = tk.LabelFrame(appSVM, bd=2, text="", bg=bg_color_frame, relief="groove")
@@ -130,7 +134,7 @@ datasets = ["Dataset Spam Email" , "Dataset Maladies Cardiaques" ]
 combo_box = ttk.Combobox(f1, values=datasets,font=("Helvetica", 12), width=35)
 
 # Configuration des couleurs de fond et de texte pour la ComboBox
-combo_box.configure(background=bg_color, foreground="black")
+combo_box.configure(background=LABEL_BG_COLOR, foreground="black")
 combo_box.pack(padx=50, pady=5)
 
 description = tk.Label(f1, text="description : ",bg=bg_color_frame, font=("Helvetica", 13))
@@ -145,21 +149,9 @@ combo_box.bind("<<ComboboxSelected>>", update_label)
 
 # Création d'un style personnalisé pour Entry
 style = ttk.Style()
-
+style.theme_use("clam")
 # Configuration de la bordure et du relief pour l'Entry
-style.configure("Custom.TEntry", borderwidth=0, relief="solid" , background=bg_color)
-
-# Configuration de la bordure arrondie pour l'Entry
-style.map("Custom.TEntry",
-          foreground=[("focus", "black"), ("!focus", "gray")],
-          bordercolor=[("focus", "gray"), ("!focus", "gray")],
-          borderwidth=[("focus", 2), ("!focus", 2)],
-          relief=[("focus", "solid"), ("!focus", "solid")],
-          focuscolor=[("focus", "white"), ("!focus", "white")],
-          highlightthickness=[("focus", 2), ("!focus", 0)],
-          padx=[("focus", 6), ("!focus", 6)],
-          pady=[("focus", 6), ("!focus", 6)],
-          )
+style.configure("Custom.TEntry",fieldbackground=ENTRY_BG_COLOR , foreground=FG_COLOR)
 
 tstsize = tk.Label(f1, text="test size: ",fg="#d9d9d9",bg=bg_color_frame,font=("Helvetica", 13))
 tstsize.pack(padx=50, pady=10)
