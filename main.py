@@ -10,6 +10,9 @@ import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc ,confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.preprocessing import StandardScaler
+from sklearn import svm
+
 
 # model spam email
 svmmodelSpam = SVMModelSpam()
@@ -63,44 +66,66 @@ canvas.get_tk_widget().pack()
 # Lancer la boucle principale de Tkinter
 
 #model maladie
+# Charger les données
+df = pd.read_csv('datasets/maladie.csv')
 
+# Séparation des données en ensembles d'entraînement et de test
+features = df.iloc[:, :-1]
+labels = df.iloc[:, -1]
+features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size=0.2, random_state=42)
+
+# Normalisation des données
+scaler = StandardScaler()
+features_train = scaler.fit_transform(features_train)
+features_test = scaler.transform(features_test)
+
+# Entraînement d'un modèle SVM sur les données d'entraînement
+svm_model = svm.SVC(kernel='linear')
+svm_model.fit(features_train, labels_train)
+
+# Prédiction des étiquettes de classe pour les données de test
+labels_pred = svm_model.predict(features_test)
+
+# Évaluation des performances du modèle
+accuracy = accuracy_score(labels_test, labels_pred)
+print("Accuracy:", accuracy)
 # Créer une instance de la classe MaladiesCardiaques
-modelmaladie = MaladiesCardiaques("train.csv", "test.csv")
+#modelmaladie = MaladiesCardiaques("train.csv", "test.csv")
 
 # Train the model
-modelmaladie.train()
+#modelmaladie.train()
 
 # Plot the accuracy over time
-modelmaladie.plot_accuracy()
+#modelmaladie.plot_accuracy()
 
 # Créer le modèle SVM et l'entraîner sur les données d'entraînement
-modelmaladie.fit(modelmaladie.X_train, modelmaladie.y_train)
+#modelmaladie.fit(modelmaladie.X_train, modelmaladie.y_train)
 
 # Faire des prédictions sur les données de test
-maladie_pred = modelmaladie.predict(modelmaladie.X_test)
+#maladie_pred = modelmaladie.predict(modelmaladie.X_test)
 
 # Évaluer la précision du modèle
-accuracy = accuracy_score(modelmaladie.y_test, maladie_pred)
+#accuracy = accuracy_score(modelmaladie.y_test, maladie_pred)
 
 # Affichage du graphique d'entraînement
 
-plt.plot(modelmaladie.X_train, modelmaladie.y_train, 'ro', label='Training data')
-plt.plot(modelmaladie.X_train, modelmaladie.predict(modelmaladie.X_train), label='Predictions')
-plt.title('Training data')
-plt.legend()
-plt.show()
+#plt.plot(modelmaladie.X_train, modelmaladie.y_train, 'ro', label='Training data')
+#plt.plot(modelmaladie.X_train, modelmaladie.predict(modelmaladie.X_train), label='Predictions')
+#plt.title('Training data')
+#plt.legend()
+#plt.show()
 
 # Affichage du graphique de test
 # Plot testing data
-plt.plot(modelmaladie.X_test, modelmaladie.y_test, 'ro', label='Testing data')
+#plt.plot(modelmaladie.X_test, modelmaladie.y_test, 'ro', label='Testing data')
 # Plot model predictions
-plt.plot(modelmaladie.X_test, modelmaladie.predict(modelmaladie.X_test), label='Predictions')
+#plt.plot(modelmaladie.X_test, modelmaladie.predict(modelmaladie.X_test), label='Predictions')
 # Set plot title and legend
-plt.title('Model predictions on testing data')
-plt.legend()
+#plt.title('Model predictions on testing data')
+#plt.legend()
 # Show plot
-plt.show()
+#plt.show()
 
-print("Accuracy:", accuracy)
+#print("Accuracy:", accuracy)
 
 
