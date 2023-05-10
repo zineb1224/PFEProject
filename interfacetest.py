@@ -9,9 +9,24 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 
-def getValeur() :
+def getValeurTestSize() :
     val = testSize.get()
-    print(val)
+    return val
+
+def getValeurParamKernel() :
+    val = paramKernel.get()
+    return val
+def getValeurParamC() :
+    val = paramC.get()
+    return val
+
+def fitModelSpam() :
+    sizetest = getValeurTestSize()
+    k = getValeurParamKernel()
+    C = getValeurParamC()
+    print(sizetest)
+    print(k)
+    print(C)
 
 # Fonction pour tracer le graphe
 def tracer_graphe():
@@ -167,7 +182,7 @@ frame_graphe = tk.LabelFrame(f2, bd=0, bg="#f3f3f3", relief="groove")
 frame_graphe.pack()
 
 #creation de boutton pour tester le modele
-btnTesting = tk.Button(f2 , height=4, width=26, text="Testing" , font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=tracer_graphe)
+btnTesting = tk.Button(f2 , height=4, width=26, text="Testing" , font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=fitModelSpam)
 btnTesting.pack(padx=20,pady=5)
 
 appSVM.mainloop()
