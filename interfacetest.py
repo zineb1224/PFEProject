@@ -42,10 +42,14 @@ def check_fields():
 
 # Fonction pour tracer le graphe
 def tracer_graphe():
-    # Créez un widget Figure de Matplotlib
+    # Créer les données pour le graphe
+    x = [1, 2, 3, 4, 5]
+    y = [2, 4, 6, 8, 10]
+
+    # Créer la figure et le graphe avec Matplotlib
     fig = Figure(figsize=(5, 4), dpi=100)
     ax = fig.add_subplot(111)
-    ax.plot([1, 2, 3, 4, 5], [10, 5, 20, 15, 25])
+    ax.plot(x, y)
     # Créez un widget Canvas Tkinter pour afficher la figure
     canvas = FigureCanvasTkAgg(fig, master=frame_graphe)
     canvas.draw()
@@ -126,7 +130,7 @@ f2 = tk.LabelFrame(appSVM, bd=2, text="", bg=bg_color_frame, relief="groove")
 f1.pack(side=tk.LEFT, padx=20, pady=20)
 f2.pack(side=tk.RIGHT, padx=20, pady=20)
 
-datalabel = tk.Label(f1, text="choisir le dataset : ", bg=bg_color_frame,font=("Helvetica", 13))
+datalabel = tk.Label(f1, text="choisir le dataset : ",fg="#d9d9d9", bg=bg_color_frame,font=("Helvetica", 13))
 datalabel.pack(padx=50, pady=10)
 
 # Créer une liste déroulante
@@ -137,11 +141,11 @@ combo_box = ttk.Combobox(f1, values=datasets,font=("Helvetica", 12), width=35)
 combo_box.configure(background=LABEL_BG_COLOR, foreground="black")
 combo_box.pack(padx=50, pady=5)
 
-description = tk.Label(f1, text="description : ",bg=bg_color_frame, font=("Helvetica", 13))
+description = tk.Label(f1, text="description : ",fg="#d9d9d9",bg=bg_color_frame, font=("Helvetica", 13))
 description.pack(padx=20, pady=5)
 
 # Création du Label pour afficher la valeur sélectionnée
-descriptiontxt = tk.Label(f1, text=" ",bg=bg_color_frame , font=("Helvetica", 11) ,wraplength=360 , justify="left")
+descriptiontxt = tk.Label(f1, text=" ",fg="#d9d9d9",bg=bg_color_frame , font=("Helvetica", 11) ,wraplength=360 , justify="left")
 descriptiontxt.pack(padx=5, pady=5)
 
 # Configuration de la ComboBox pour appeler la fonction update_label lors de la sélection d'une option
