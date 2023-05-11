@@ -33,7 +33,7 @@ def fitModelSpam() :
 
 #fct pour verifier que les inputs sont bien remplis et rendre le boutton de train et de test normal
 def check_fields():
-    if len(testSize.get()) > 0 and len(paramC.get()) > 0 and len(paramKernel.get()) > 0:
+    if len(testSize.get()) > 0 and len(paramC.get()) > 0 and len(paramKernel.get()) > 0 and len(combo_box.get()) > 0:
         btnTraining.config(state="normal")
         btnTesting.config(state="normal")
     else:
@@ -56,7 +56,7 @@ def tracer_graphe():
     canvas.get_tk_widget().pack()
 
 # Fonction appelée lors de la sélection d'une option dans la ComboBox
-def update_label(*args):
+def update_label(event):
     selected_value = combo_box.get()
     if selected_value=="Dataset Spam Email" :
         descriptiontxt.configure(text="Le fichier csv contient 5172 lignes, chaque ligne"
@@ -69,7 +69,7 @@ def update_label(*args):
                                        )
     elif selected_value=="Dataset Maladies Cardiaques" :
         descriptiontxt.configure(text="description de maladie cardiaque ")
-
+    check_fields()
 
 #creation de splash screen
 splash_root = tk.Tk()
@@ -193,5 +193,6 @@ btnTesting.pack(padx=20,pady=5)
 testSize.bind("<KeyRelease>", lambda event: check_fields())
 paramC.bind("<KeyRelease>", lambda event: check_fields())
 paramKernel.bind("<KeyRelease>", lambda event: check_fields())
+combo_box.bind("<<ComboboxSelected>>", update_label)
 
 appSVM.mainloop()
