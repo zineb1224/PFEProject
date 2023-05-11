@@ -3,7 +3,6 @@ import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-from tkinter import *
 from models.SVMModelSpam import SVMModelSpam, import_data
 from models.SVMModelMaladie import MaladiesCardiaques
 import numpy as np
