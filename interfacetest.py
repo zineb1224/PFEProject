@@ -36,7 +36,7 @@ def fitModel() :
     selected_value = combo_box.get()
     if selected_value == "Dataset Spam Email":
         trainModelSvmSpam(kernel, float(sizetest))
-
+        tracer_grapheSpam_train(kernel, sizetest)
 
 def tracerGraphe() :
     sizetest = getValeurTestSize()
@@ -44,8 +44,9 @@ def tracerGraphe() :
     C = getValeurParamC()
     selected_value = combo_box.get()
     if selected_value == "Dataset Spam Email":
-        tracer_grapheSpam(kernel, sizetest)
         testModelSvmSpam(kernel, float(sizetest))
+        tracer_grapheSpam_test(kernel, float(sizetest))
+
 def trainModelSvmSpam(kernel, testsize) :
     # model spam email
     svmmodelSpam = SVMModelSpam(kernel)
@@ -57,21 +58,20 @@ def trainModelSvmSpam(kernel, testsize) :
     emails = emails_data['email']
     labels = np.where(emails_data['label'] == 'spam', 1, 0)  # Encoder les étiquettes en 0 et 1
 
-    # Diviser les données en ensembles d'entraînement et de test
-    emails_train, emails_test, labels_train, labels_test = train_test_split(emails, labels, test_size=testsize,
-                                                                            random_state=42)
-
     # Vectoriser les courriers électroniques en utilisant la transformation TF-IDF
     vectorizer = TfidfVectorizer()
-    features_train = vectorizer.fit_transform(emails_train)
-    features_test = vectorizer.transform(emails_test)
+    features = vectorizer.fit_transform(emails)
+
+    # Diviser les données en ensembles d'entraînement et de test
+    features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size=testsize, random_state=42)
 
     # Prédiction sur l'ensemble de test
     svmmodelSpam.fit(features_train, labels_train)
-    return features_test, features_train, labels_train, svmmodelSpam, labels_test
+    return  features_train, labels_train, svmmodelSpam, labels_test ,features_test
 
-def testModelSvmSpam(kernel , testSize) :
-    features_test , features_train,labelstrain, svmmodelSpam, labels_test = trainModelSvmSpam(kernel , testSize)
+
+def testModelSvmSpam(kernel, testsize) :
+    features_train,labelstrain, svmmodelSpam, labels_test,features_test = trainModelSvmSpam(kernel, testsize)
     mail_pred = svmmodelSpam.predict(features_test)
     # Évaluer les performances du modèle
     accuracy = accuracy_score(labels_test, mail_pred)
@@ -89,16 +89,57 @@ def check_fields():
         btnTraining.config(state="disabled")
         btnTesting.config(state="disabled")
 
-# Fonction pour tracer le graphe
-canvas = None
-def tracer_grapheSpam(kernel , testSize):
-    global canvas
+# Fonction pour tracer le graphe avec les données d'entraînement
+canvas_train = None
+def tracer_grapheSpam_train(kernel, testSize):
+    global canvas_train
     # Détruire le canvas s'il existe déjà
-    if canvas:
-        canvas.get_tk_widget().destroy()
+    if canvas_train:
+        canvas_train.get_tk_widget().destroy()
     # Entraîner le modèle SVM et extraire l'objet de modèle SVM
     model_tuple = trainModelSvmSpam(kernel, float(testSize))
     model = model_tuple[3]
+
+    # Créer la grille de points pour l'affichage du graphe
+    xx = np.linspace(-1, 5)
+    yy = np.linspace(-1, 5)
+    xx, yy = np.meshgrid(xx, yy)
+    xy = np.vstack([xx.ravel(), yy.ravel()]).T
+
+    # Vectoriser les courriers électroniques en utilisant la transformation TF-IDF
+    vectorizer = TfidfVectorizer()
+    features_train = vectorizer.fit_transform(model_tuple[0]).toarray()
+
+    # Calculer les prédictions du modèle SVM sur la grille de points
+    Z = model.decision_function(vectorizer.transform(xy)).reshape(xx.shape)
+
+    # Créer le graphe
+    fig = Figure(figsize=(5, 4), dpi=100)
+    ax = fig.add_subplot(111)
+    # Afficher les données de classification binaire
+    ax.scatter(features_train[:, 0], features_train[:, 1], c=model_tuple[2], cmap='coolwarm')
+    # Afficher les frontières de décision du modèle SVM
+    ax.contour(xx, yy, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_title('SVM Classification (Training Set)')
+    # Afficher le graphe dans la frame
+    canvas_train = FigureCanvasTkAgg(fig, master=f2)
+    canvas_train.get_tk_widget().pack()
+
+canvas_test = None
+def tracer_grapheSpam_test(kernel , testSize):
+    global canvas_test
+    # Détruire le canvas s'il existe déjà
+    if canvas_test:
+        canvas_test.get_tk_widget().destroy()
+    # Entraîner le modèle SVM et extraire l'objet de modèle SVM
+    model_tuple = trainModelSvmSpam(kernel, float(testSize))
+    model = model_tuple[3]
+
+    # Vectoriser les courriers électroniques de test en utilisant le même transformateur de caractéristiques
+    vectorizer = model_tuple[0]
+    emails_test = vectorizer.transform(model_tuple[1])
 
     # Créer la grille de points pour l'affichage du graphe
     xx = np.linspace(-1, 5)
@@ -112,15 +153,16 @@ def tracer_grapheSpam(kernel , testSize):
     fig = Figure(figsize=(5, 4), dpi=100)
     ax = fig.add_subplot(111)
     # Afficher les données de classification binaire
-    ax.scatter(model_tuple[1][:, 0], model_tuple[1][:, 1], c=model_tuple[2], cmap='coolwarm')
+    ax.scatter(emails_test[:, 0], emails_test[:, 1], c=model_tuple[3].predict(emails_test), cmap='coolwarm')
     # Afficher les frontières de décision du modèle SVM
     ax.contour(xx, yy, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_title('SVM Classification')
     # Afficher le graphe dans la frame
-    canvas = FigureCanvasTkAgg(fig, master=f2)
-    canvas.get_tk_widget().pack()
+    canvas_test = FigureCanvasTkAgg(fig, master=f2)
+    canvas_test.get_tk_widget().pack()
+
 
 # Fonction appelée lors de la sélection d'une option dans la ComboBox
 def update_label(event):
@@ -197,22 +239,22 @@ f2 = tk.LabelFrame(appSVM, bd=2, text="", bg=bg_color_frame, relief="groove")
 f1.pack(side=tk.LEFT, padx=20, pady=20)
 f2.pack(side=tk.RIGHT, padx=20, pady=20)
 
-datalabel = tk.Label(f1, text="choisir le dataset : ",fg="#d9d9d9", bg=bg_color_frame,font=("Helvetica", 13))
+datalabel = tk.Label(f1, text="choisir le dataset : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13))
 datalabel.pack(padx=50, pady=10)
 
 # Créer une liste déroulante
 datasets = ["Dataset Spam Email" , "Dataset Maladies Cardiaques" ]
-combo_box = ttk.Combobox(f1, values=datasets,font=("Helvetica", 12), width=35)
+combo_box = ttk.Combobox(f1, values=datasets, font=("Helvetica", 12), width=35)
 
 # Configuration des couleurs de fond et de texte pour la ComboBox
 combo_box.configure(background=LABEL_BG_COLOR, foreground="black")
 combo_box.pack(padx=50, pady=5)
 
-description = tk.Label(f1, text="description : ",fg="#d9d9d9",bg=bg_color_frame, font=("Helvetica", 13))
+description = tk.Label(f1, text="description : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13))
 description.pack(padx=20, pady=5)
 
 # Création du Label pour afficher la valeur sélectionnée
-descriptiontxt = tk.Label(f1, text=" ",fg="#d9d9d9",bg=bg_color_frame , font=("Helvetica", 11) ,wraplength=360 , justify="left")
+descriptiontxt = tk.Label(f1, text=" ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 11), wraplength=360, justify="left")
 descriptiontxt.pack(padx=5, pady=5)
 
 # Configuration de la ComboBox pour appeler la fonction update_label lors de la sélection d'une option
@@ -222,31 +264,31 @@ combo_box.bind("<<ComboboxSelected>>", update_label)
 style = ttk.Style()
 style.theme_use("clam")
 # Configuration de la bordure et du relief pour l'Entry
-style.configure("Custom.TEntry",fieldbackground=ENTRY_BG_COLOR , foreground=FG_COLOR)
+style.configure("Custom.TEntry", fieldbackground=ENTRY_BG_COLOR, foreground=FG_COLOR)
 
-tstsize = tk.Label(f1, text="test size: ",fg="#d9d9d9",bg=bg_color_frame,font=("Helvetica", 13))
+tstsize = tk.Label(f1, text="test size: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13))
 tstsize.pack(padx=50, pady=10)
 
-testSize = ttk.Entry(f1, style="Custom.TEntry", width=40,font=("Helvetica", 11))
+testSize = ttk.Entry(f1, style="Custom.TEntry", width=40, font=("Helvetica", 11))
 testSize.pack(pady=8,ipady=5)
 
-parac = tk.Label(f1, text="parametre C: ",fg="#d9d9d9",bg=bg_color_frame, font=("Helvetica", 13))
+parac = tk.Label(f1, text="parametre C: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13))
 parac.pack(padx=50, pady=10)
 
-paramC = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 11))
+paramC = ttk.Entry(f1, style="Custom.TEntry", width=40, font=("Helvetica", 11))
 paramC.pack(pady=8,ipady=5)
 
-paramk = tk.Label(f1, text="parametre Kernel: ",fg="#d9d9d9",bg=bg_color_frame, font=("Helvetica", 13))
+paramk = tk.Label(f1, text="parametre Kernel: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13))
 paramk.pack(padx=50, pady=10)
 
-paramKernel = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 11))
+paramKernel = ttk.Entry(f1, style="Custom.TEntry", width=40,font=("Helvetica", 11))
 paramKernel.pack(pady=8,ipady=5)
 
 # Charger l'image et la convertir pour Tkinter
 #icon_training = PhotoImage(file="imgs/training_80px.gif")
 
 #creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=fitModel,state="disabled")
+btnTraining = tk.Button(f2 , height=4, width=26, text="Training", font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=fitModel, state="disabled")
 btnTraining.pack(padx=20,pady=5)
 
 # Création d'un cadre dans la fenêtre Tkinter pour y afficher le graphe
@@ -254,10 +296,10 @@ frame_graphe = tk.LabelFrame(f2, bd=0, bg="#f3f3f3", relief="groove")
 frame_graphe.pack()
 
 #creation de boutton pour tester le modele
-btnTesting = tk.Button(f2 , height=4, width=26, text="Testing" , font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=tracerGraphe,state="disabled")
+btnTesting = tk.Button(f2 , height=4, width=26, text="Testing", font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=tracerGraphe, state="disabled")
 btnTesting.pack(padx=20,pady=5)
 
-accuracyLabel = tk.Label(f2, text="",fg="#d9d9d9",bg=bg_color_frame, font=("Helvetica", 12))
+accuracyLabel = tk.Label(f2, text="", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 12))
 accuracyLabel.pack(padx=50, pady=10)
 
 testSize.bind("<KeyRelease>", lambda event: check_fields())
