@@ -14,7 +14,6 @@ from sklearn.model_selection import train_test_split
 
 from models.SVMModelSpam import SVMModelSpam, import_data
 
-
 #fct pour recuperer la valeur de size du test
 def getValeurTestSize() :
     val = testSize.get()
@@ -138,7 +137,8 @@ def tracer_grapheSpam_test(kernel , testSize):
     model = model_tuple[3]
 
     # Vectoriser les courriers électroniques de test en utilisant le même transformateur de caractéristiques
-    vectorizer = model_tuple[0]
+    vectorizer = TfidfVectorizer()
+    features_train = vectorizer.fit_transform(model_tuple[0]).toarray()
     emails_test = vectorizer.transform(model_tuple[1])
 
     # Créer la grille de points pour l'affichage du graphe
