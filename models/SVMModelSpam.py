@@ -17,3 +17,8 @@ class SVMModelSpam:
 
     def predict(self, x_test):
         return self.model.predict(x_test)
+
+    def decision_function(self, X):
+        if self.model is None:
+            raise Exception("Model has not been trained yet!")
+        return self.model.decision_function(X)

@@ -8,6 +8,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import accuracy_score, precision_score
+from sklearn.model_selection import train_test_split
+
+from models.SVMModelSpam import SVMModelSpam, import_data
+
 
 #fct pour recuperer la valeur de size du test
 def getValeurTestSize() :
@@ -23,13 +29,56 @@ def getValeurParamC() :
     return val
 
 #fct pour entrainer le modele de svm du spam
-def fitModelSpam() :
+def fitModel() :
     sizetest = getValeurTestSize()
-    k = getValeurParamKernel()
+    kernel = getValeurParamKernel()
     C = getValeurParamC()
-    print(sizetest)
-    print(k)
-    print(C)
+    selected_value = combo_box.get()
+    if selected_value == "Dataset Spam Email":
+        trainModelSvmSpam(kernel, float(sizetest))
+
+
+def tracerGraphe() :
+    sizetest = getValeurTestSize()
+    kernel = getValeurParamKernel()
+    C = getValeurParamC()
+    selected_value = combo_box.get()
+    if selected_value == "Dataset Spam Email":
+        tracer_grapheSpam(kernel, sizetest)
+        testModelSvmSpam(kernel, float(sizetest))
+def trainModelSvmSpam(kernel, testsize) :
+    # model spam email
+    svmmodelSpam = SVMModelSpam(kernel)
+
+    # Chargement des données
+    emails_data = import_data('datasets/labeled_emails.csv')
+
+    # Séparation des données en ensembles d'entraînement et de test
+    emails = emails_data['email']
+    labels = np.where(emails_data['label'] == 'spam', 1, 0)  # Encoder les étiquettes en 0 et 1
+
+    # Diviser les données en ensembles d'entraînement et de test
+    emails_train, emails_test, labels_train, labels_test = train_test_split(emails, labels, test_size=testsize,
+                                                                            random_state=42)
+
+    # Vectoriser les courriers électroniques en utilisant la transformation TF-IDF
+    vectorizer = TfidfVectorizer()
+    features_train = vectorizer.fit_transform(emails_train)
+    features_test = vectorizer.transform(emails_test)
+
+    # Prédiction sur l'ensemble de test
+    svmmodelSpam.fit(features_train, labels_train)
+    return features_test, features_train, labels_train, svmmodelSpam, labels_test
+
+def testModelSvmSpam(kernel , testSize) :
+    features_test , features_train,labelstrain, svmmodelSpam, labels_test = trainModelSvmSpam(kernel , testSize)
+    mail_pred = svmmodelSpam.predict(features_test)
+    # Évaluer les performances du modèle
+    accuracy = accuracy_score(labels_test, mail_pred)
+    precision = precision_score(labels_test, mail_pred)
+    accuracyLabel.configure(text=str(accuracy))
+    print("Accuracy:", accuracy)
+    print("Precision:", precision)
 
 #fct pour verifier que les inputs sont bien remplis et rendre le boutton de train et de test normal
 def check_fields():
@@ -41,18 +90,36 @@ def check_fields():
         btnTesting.config(state="disabled")
 
 # Fonction pour tracer le graphe
-def tracer_graphe():
-    # Créer les données pour le graphe
-    x = [1, 2, 3, 4, 5]
-    y = [2, 4, 6, 8, 10]
+canvas = None
+def tracer_grapheSpam(kernel , testSize):
+    global canvas
+    # Détruire le canvas s'il existe déjà
+    if canvas:
+        canvas.get_tk_widget().destroy()
+    # Entraîner le modèle SVM et extraire l'objet de modèle SVM
+    model_tuple = trainModelSvmSpam(kernel, float(testSize))
+    model = model_tuple[3]
 
-    # Créer la figure et le graphe avec Matplotlib
+    # Créer la grille de points pour l'affichage du graphe
+    xx = np.linspace(-1, 5)
+    yy = np.linspace(-1, 5)
+    xx, yy = np.meshgrid(xx, yy)
+    xy = np.vstack([xx.ravel(), yy.ravel()]).T
+
+    # Calculer les prédictions du modèle SVM sur la grille de points
+    Z = model.decision_function(xy).reshape(xx.shape)
+    # Créer le graphe
     fig = Figure(figsize=(5, 4), dpi=100)
     ax = fig.add_subplot(111)
-    ax.plot(x, y)
-    # Créez un widget Canvas Tkinter pour afficher la figure
-    canvas = FigureCanvasTkAgg(fig, master=frame_graphe)
-    canvas.draw()
+    # Afficher les données de classification binaire
+    ax.scatter(model_tuple[1][:, 0], model_tuple[1][:, 1], c=model_tuple[2], cmap='coolwarm')
+    # Afficher les frontières de décision du modèle SVM
+    ax.contour(xx, yy, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_title('SVM Classification')
+    # Afficher le graphe dans la frame
+    canvas = FigureCanvasTkAgg(fig, master=f2)
     canvas.get_tk_widget().pack()
 
 # Fonction appelée lors de la sélection d'une option dans la ComboBox
@@ -179,7 +246,7 @@ paramKernel.pack(pady=8,ipady=5)
 #icon_training = PhotoImage(file="imgs/training_80px.gif")
 
 #creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=fitModelSpam,state="disabled")
+btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=fitModel,state="disabled")
 btnTraining.pack(padx=20,pady=5)
 
 # Création d'un cadre dans la fenêtre Tkinter pour y afficher le graphe
@@ -187,8 +254,11 @@ frame_graphe = tk.LabelFrame(f2, bd=0, bg="#f3f3f3", relief="groove")
 frame_graphe.pack()
 
 #creation de boutton pour tester le modele
-btnTesting = tk.Button(f2 , height=4, width=26, text="Testing" , font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=tracer_graphe,state="disabled")
+btnTesting = tk.Button(f2 , height=4, width=26, text="Testing" , font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=tracerGraphe,state="disabled")
 btnTesting.pack(padx=20,pady=5)
+
+accuracyLabel = tk.Label(f2, text="",fg="#d9d9d9",bg=bg_color_frame, font=("Helvetica", 12))
+accuracyLabel.pack(padx=50, pady=10)
 
 testSize.bind("<KeyRelease>", lambda event: check_fields())
 paramC.bind("<KeyRelease>", lambda event: check_fields())
