@@ -27,7 +27,7 @@ def getValeurParamC() :
     val = paramC.get()
     return val
 
-#fct pour entrainer le modele de svm du spam
+#fct pour entrainer le modele de svm et afficher le graphe d'entrainement
 def fitModel() :
     sizetest = getValeurTestSize()
     kernel = getValeurParamKernel()
@@ -37,6 +37,7 @@ def fitModel() :
         trainModelSvmSpam(kernel, float(sizetest))
         tracer_grapheSpam_train(kernel, sizetest)
 
+#fct pour tester le model et afficher le graphe du test
 def tracerGraphe() :
     sizetest = getValeurTestSize()
     kernel = getValeurParamKernel()
@@ -46,6 +47,7 @@ def tracerGraphe() :
         testModelSvmSpam(kernel, float(sizetest))
         tracer_grapheSpam_test(kernel, float(sizetest))
 
+#fct pour entrainer le model du Spam
 def trainModelSvmSpam(kernel, testsize) :
     # model spam email
     svmmodelSpam = SVMModelSpam(kernel)
@@ -68,7 +70,7 @@ def trainModelSvmSpam(kernel, testsize) :
     svmmodelSpam.fit(features_train, labels_train)
     return  features_train, labels_train, svmmodelSpam, labels_test ,features_test
 
-
+#fct pour faire le test du model de Spam
 def testModelSvmSpam(kernel, testsize) :
     features_train,labelstrain, svmmodelSpam, labels_test,features_test = trainModelSvmSpam(kernel, testsize)
     mail_pred = svmmodelSpam.predict(features_test)
@@ -88,7 +90,7 @@ def check_fields():
         btnTraining.config(state="disabled")
         btnTesting.config(state="disabled")
 
-# Fonction pour tracer le graphe avec les données d'entraînement
+# Fonction pour tracer le graphe avec les données d'entraînement du spam
 canvas_train = None
 def tracer_grapheSpam_train(kernel, testSize):
     global canvas_train
@@ -126,6 +128,7 @@ def tracer_grapheSpam_train(kernel, testSize):
     canvas_train = FigureCanvasTkAgg(fig, master=f2)
     canvas_train.get_tk_widget().pack()
 
+#fct pour tracer le graphe avec les donnees de test du spam
 canvas_test = None
 def tracer_grapheSpam_test(kernel , testSize):
     global canvas_test
