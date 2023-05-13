@@ -8,9 +8,9 @@ def import_data(file_path):
     return data
 
 
-class SVMModelMaladie:
-    def __init__(self, kernel='linear'):
-        self.model = svm.SVC(kernel=kernel)
+class SVMModelMaladieCardiaque:
+    def __init__(self, kernel='linear', C=1.0):
+        self.model = svm.SVC(kernel=kernel, C=C)
 
     def fit(self, x_train, y_train):
         self.model.fit(x_train, y_train)

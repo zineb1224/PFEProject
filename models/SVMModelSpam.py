@@ -9,8 +9,8 @@ def import_data(file_path):
 
 
 class SVMModelSpam:
-    def __init__(self, kernel='linear'):
-        self.model = svm.SVC(kernel=kernel)
+    def __init__(self, kernel='linear', c=1.0):
+        self.model = svm.SVC(kernel=kernel, C=c)
 
     def fit(self, x_train, y_train):
         self.model.fit(x_train, y_train)

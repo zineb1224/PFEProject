@@ -13,12 +13,7 @@ from sklearn.metrics import accuracy_score, precision_score
 from sklearn.model_selection import train_test_split
 
 from models.SVMModelSpam import SVMModelSpam, import_data
-from sklearn.feature_extraction.text import CountVectorizer
-
-# create global variables
-vectorizer = CountVectorizer(lowercase=False)
-text_train = []
-features_train = []
+from models.SVMModelMaladieCardiaque import SVMModelMaladieCardiaque , import_data
 
 
 #fct pour recuperer la valeur de size du test
@@ -41,8 +36,10 @@ def fitModel() :
     C = getValeurParamC()
     selected_value = combo_box.get()
     if selected_value == "Dataset Spam Email":
-        trainModelSvmSpam(kernel, float(sizetest))
-        tracer_grapheSpam_train(kernel, sizetest)
+        trainModelSvmSpam(kernel, float(sizetest), float(C))
+        #tracer_grapheSpam_train(kernel, sizetest)
+    elif selected_value == "Dataset Maladies Cardiaques":
+        trainModelSVMMaladie(kernel, float(sizetest), float(C))
 
 #fct pour tester le model et afficher le graphe du test
 def tracerGraphe() :
@@ -51,13 +48,15 @@ def tracerGraphe() :
     C = getValeurParamC()
     selected_value = combo_box.get()
     if selected_value == "Dataset Spam Email":
-        testModelSvmSpam(kernel, float(sizetest))
-        tracer_grapheSpam_test(kernel, float(sizetest))
+        testModelSvmSpam(kernel, float(sizetest), float(C))
+        #tracer_grapheSpam_test(kernel, float(sizetest))
+    elif selected_value == "Dataset Maladies Cardiaques":
+        testModelSvmMaladie(kernel, float(sizetest), float(C))
 
 #fct pour entrainer le model du Spam
-def trainModelSvmSpam(kernel, testsize) :
+def trainModelSvmSpam(kernel, testsize ,c) :
     # model spam email
-    svmmodelSpam = SVMModelSpam(kernel)
+    svmmodelSpam = SVMModelSpam(kernel, c)
 
     # Chargement des données
     emails_data = import_data('datasets/labeled_emails.csv')
@@ -78,12 +77,41 @@ def trainModelSvmSpam(kernel, testsize) :
     return  features_train, labels_train, svmmodelSpam, labels_test ,features_test
 
 #fct pour faire le test du model de Spam
-def testModelSvmSpam(kernel, testsize) :
-    features_train,labelstrain, svmmodelSpam, labels_test,features_test = trainModelSvmSpam(kernel, testsize)
+def testModelSvmSpam(kernel, testsize, c) :
+    features_train,labelstrain, svmmodelSpam, labels_test,features_test = trainModelSvmSpam(kernel, testsize, c)
     mail_pred = svmmodelSpam.predict(features_test)
     # Évaluer les performances du modèle
     accuracy = accuracy_score(labels_test, mail_pred)
     precision = precision_score(labels_test, mail_pred)
+    accuracyLabel.configure(text=str(accuracy))
+    print("Accuracy:", accuracy)
+    print("Precision:", precision)
+
+
+#fct pour entrainer le model des maladies cardiaques
+def trainModelSVMMaladie(kernel, testsize, c):
+    # model maladie cardiaque
+    svmmodelMaladieCardiaque = SVMModelMaladieCardiaque(kernel , c)
+    # Chargement des données
+    maladie_data = import_data("datasets/dataset_maladie.csv")
+    # Séparation des données et de target
+    y_maladie = maladie_data['target']
+    X_maladie = maladie_data.drop(['target'], axis=1)
+
+    # Diviser les données en ensembles d'entraînement et de test
+    featuresMaladie_train, featuresMaladie_test, targetMaladie_train, targetMaladie_test = train_test_split(X_maladie, y_maladie, test_size=testsize, random_state=0)
+    # Prédiction sur l'ensemble de test
+    svmmodelMaladieCardiaque.fit(featuresMaladie_train, targetMaladie_train)
+
+    return featuresMaladie_train, featuresMaladie_test, svmmodelMaladieCardiaque, featuresMaladie_test, targetMaladie_test
+
+#fct pour faire le test du model des maladies cardiaques
+def testModelSvmMaladie(kernel, testsize, c) :
+    featuresMaladie_train, featuresMaladie_test , svmmodelMaladieCardiaque, featuresMaladie_test, targetMaladie_test = trainModelSVMMaladie(kernel, testsize, c)
+    mail_pred = svmmodelMaladieCardiaque.predict(featuresMaladie_test)
+    # Évaluer les performances du modèle
+    accuracy = accuracy_score(targetMaladie_test, mail_pred)
+    precision = precision_score(targetMaladie_test, mail_pred)
     accuracyLabel.configure(text=str(accuracy))
     print("Accuracy:", accuracy)
     print("Precision:", precision)
