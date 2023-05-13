@@ -9,11 +9,16 @@ def import_data(file_path):
 
 
 class SVMModelSpam:
-    def __init__(self):
-        self.model = svm.SVC()
+    def __init__(self, kernel='linear'):
+        self.model = svm.SVC(kernel=kernel)
 
     def fit(self, x_train, y_train):
         self.model.fit(x_train, y_train)
 
     def predict(self, x_test):
         return self.model.predict(x_test)
+
+    def decision_function(self, X):
+        if self.model is None:
+            raise Exception("Model has not been trained yet!")
+        return self.model.decision_function(X)
