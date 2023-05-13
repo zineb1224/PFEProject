@@ -68,6 +68,7 @@ canvas.get_tk_widget().pack()
 #model maladie
 # Charger les données
 df = pd.read_csv('datasets/maladie.csv')
+#print(df)
 
 # Séparation des données en ensembles d'entraînement et de test
 features = df.iloc[:, :-1]

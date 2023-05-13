@@ -1,5 +1,7 @@
 # objet : fenêtre avec deux frames
-#import les biblio
+
+# import les biblio
+
 import tkinter as tk
 from tkinter import *
 from PIL import Image, ImageTk
@@ -9,20 +11,28 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
-#fct pour recuperer la valeur de size du test
-def getValeurTestSize() :
+# fct pour recuperer la valeur de size du test
+
+
+def  getValeurTestSize():
+
     val = testSize.get()
     return val
-#fct pour recuperer la valeur de parametre kernel
+
+# fct pour recuperer la valeur de parametre kernel
+
 def getValeurParamKernel() :
+
     val = paramKernel.get()
     return val
-#fct pour recuperer la valeur de parametre C
+# fct pour recuperer la valeur de parametre C
+
 def getValeurParamC() :
+
     val = paramC.get()
     return val
 
-#fct pour entrainer le modele de svm du spam
+# fct pour entrainer le modele de svm du spam
 def fitModelSpam() :
     sizetest = getValeurTestSize()
     k = getValeurParamKernel()
@@ -31,7 +41,7 @@ def fitModelSpam() :
     print(k)
     print(C)
 
-#fct pour verifier que les inputs sont bien remplis et rendre le boutton de train et de test normal
+# fct pour verifier que les inputs sont bien remplis et rendre le boutton de train et de test normal
 def check_fields():
     if len(testSize.get()) > 0 and len(paramC.get()) > 0 and len(paramKernel.get()) > 0:
         btnTraining.config(state="normal")
@@ -53,21 +63,22 @@ def tracer_graphe():
 
 # Fonction appelée lors de la sélection d'une option dans la ComboBox
 def update_label(*args):
+
     selected_value = combo_box.get()
-    if selected_value=="Dataset Spam Email" :
+    if selected_value == "Dataset Spam Email":
         descriptiontxt.configure(text="Le fichier csv contient 5172 lignes, chaque ligne"
                                       " pour chaque e-mail. Il y a 3002 colonnes. La première colonne indique le nom de l'e-mail."
                                       " Le nom a été défini avec des chiffres et non avec le nom des destinataires pour protéger la confidentialité. "
-                                      "La dernière colonne contient les libellés de prédiction : 1 pour spam, 0 pour non spam."
+                                      " La dernière colonne contient les libellés de prédiction : 1 pour spam, 0 pour non spam."
                                       " Les 3000 colonnes restantes sont les 3000 mots les plus courants dans tous les e-mails,"
                                       " après exclusion des caractères/mots non alphabétiques. Pour chaque ligne, "
                                       "le nombre de chaque mot (colonne) dans cet e-mail (ligne) est stocké dans les cellules respectives. "
                                        )
-    elif selected_value=="Dataset Maladies Cardiaques" :
+    elif selected_value == "Dataset Maladies Cardiaques" :
         descriptiontxt.configure(text="description de maladie cardiaque ")
 
 
-#creation de splash screen
+# creation de splash screen
 splash_root = tk.Tk()
 # Centrer la fenêtre au milieu de l'écran
 screen_width = splash_root.winfo_screenwidth()
@@ -172,19 +183,19 @@ paramKernel = ttk.Entry(f1, style="Custom.TEntry" , width=40,font=("Helvetica", 
 paramKernel.pack(pady=8,ipady=5)
 
 # Charger l'image et la convertir pour Tkinter
-#icon_training = PhotoImage(file="imgs/training_80px.gif")
+# icon_training = PhotoImage(file="imgs/training_80px.gif")
 
-#creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f2 , height=4, width=26, text="Training" ,font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=fitModelSpam,state="disabled")
-btnTraining.pack(padx=20,pady=5)
+# creation de boutton pour entrainer le modele
+btnTraining = tk.Button(f2, height=4, width=26, text="Training", font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=fitModelSpam,state="disabled")
+btnTraining.pack(padx=20, pady=5)
 
 # Création d'un cadre dans la fenêtre Tkinter pour y afficher le graphe
 frame_graphe = tk.LabelFrame(f2, bd=0, bg="#f3f3f3", relief="groove")
 frame_graphe.pack()
 
-#creation de boutton pour tester le modele
-btnTesting = tk.Button(f2 , height=4, width=26, text="Testing" , font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0 , command=tracer_graphe,state="disabled")
-btnTesting.pack(padx=20,pady=5)
+# creation de boutton pour tester le modele
+btnTesting = tk.Button(f2, height=4, width=26, text="Testing", font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=tracer_graphe, state="disabled")
+btnTesting.pack(padx=20, pady=5)
 
 testSize.bind("<KeyRelease>", lambda event: check_fields())
 paramC.bind("<KeyRelease>", lambda event: check_fields())
