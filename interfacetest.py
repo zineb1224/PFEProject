@@ -13,6 +13,13 @@ from sklearn.metrics import accuracy_score, precision_score
 from sklearn.model_selection import train_test_split
 
 from models.SVMModelSpam import SVMModelSpam, import_data
+from sklearn.feature_extraction.text import CountVectorizer
+
+# create global variables
+vectorizer = CountVectorizer(lowercase=False)
+text_train = []
+features_train = []
+
 
 #fct pour recuperer la valeur de size du test
 def getValeurTestSize() :
@@ -99,7 +106,7 @@ def tracer_grapheSpam_train(kernel, testSize):
         canvas_train.get_tk_widget().destroy()
     # Entraîner le modèle SVM et extraire l'objet de modèle SVM
     model_tuple = trainModelSvmSpam(kernel, float(testSize))
-    model = model_tuple[3]
+    model = model_tuple[2]
 
     # Créer la grille de points pour l'affichage du graphe
     xx = np.linspace(-1, 5)
@@ -118,15 +125,18 @@ def tracer_grapheSpam_train(kernel, testSize):
     fig = Figure(figsize=(5, 4), dpi=100)
     ax = fig.add_subplot(111)
     # Afficher les données de classification binaire
-    ax.scatter(features_train[:, 0], features_train[:, 1], c=model_tuple[2], cmap='coolwarm')
-    # Afficher les frontières de décision du modèle SVM
-    ax.contour(xx, yy, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_title('SVM Classification (Training Set)')
-    # Afficher le graphe dans la frame
+    ax.scatter(features_train[:, 0], features_train[:, 1], c=model_tuple[1], cmap=plt.cm.Paired, edgecolors='k')
+    # Afficher la frontière de décision
+    ax.contour(xx, yy, Z, levels=[0], linewidths=2, colors='black')
+    ax.set_xlabel('Feature 1')
+    ax.set_ylabel('Feature 2')
+    ax.set_title('SVM Spam - Training Data')
+
+    # Créer le canvas pour afficher le graphe
     canvas_train = FigureCanvasTkAgg(fig, master=f2)
-    canvas_train.get_tk_widget().pack()
+    canvas_train.draw()
+    canvas_train.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
 
 #fct pour tracer le graphe avec les donnees de test du spam
 canvas_test = None
