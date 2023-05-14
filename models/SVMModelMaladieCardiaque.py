@@ -1,4 +1,4 @@
-from sklearn import svm
+from sklearn.svm import SVC
 import pandas as pd
 
 
@@ -9,8 +9,8 @@ def import_data(file_path):
 
 
 class SVMModelMaladieCardiaque:
-    def __init__(self, kernel='linear', C=1.0):
-        self.model = svm.SVC(kernel=kernel, C=C)
+    def __init__(self, kernel='linear', C=1.0, gamma=0.05):
+        self.model = SVC(kernel=kernel, C=C, gamma=gamma)
 
     def fit(self, x_train, y_train):
         self.model.fit(x_train, y_train)
@@ -22,3 +22,6 @@ class SVMModelMaladieCardiaque:
         if self.model is None:
             raise Exception("Model has not been trained yet!")
         return self.model.decision_function(X)
+
+    def support_vectors_(self):
+        return self.model.support_vectors_
