@@ -6,12 +6,15 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, precision_score, ConfusionMatrixDisplay, f1_score
 from sklearn.model_selection import train_test_split
 
+from models.SVMModelPenguin import SVMModelPenguin , import_data
 from models.SVMModelSpam import SVMModelSpam, import_data
 from models.SVMModelMaladieCardiaque import SVMModelMaladieCardiaque , import_data
 
@@ -41,6 +44,9 @@ def fitModel() :
     elif selected_value == "Dataset Maladies Cardiaques":
         trainModelSVMMaladie(kernel, float(sizetest), float(C))
         tracer_grapheMaladie_train(kernel, float(sizetest), float(C))
+    elif selected_value == "Dataset Penguin":
+        trainModelSVMPenguin(kernel, float(sizetest), float(C))
+        tracer_graphePenguin_train(kernel, float(sizetest), float(C))
 
 #fct pour tester le model et afficher le graphe du test
 def tracerGraphe() :
@@ -55,6 +61,10 @@ def tracerGraphe() :
         testModelSvmMaladie(kernel, float(sizetest), float(C))
         tracer_grapheMaladie_test(kernel, float(sizetest), float(C))
         tracer_matriceConfusionMaladie(kernel, float(sizetest), float(C))
+    elif selected_value == "Dataset Penguin":
+        testModelSvmPenguin(kernel, float(sizetest), float(C))
+        tracer_graphePenguin_test(kernel, float(sizetest), float(C))
+        tracer_matriceConfusionPenguin(kernel, float(sizetest), float(C))
 
 #fct pour entrainer le model du Spam
 def trainModelSvmSpam(kernel, testsize ,c) :
@@ -77,10 +87,10 @@ def trainModelSvmSpam(kernel, testsize ,c) :
 
     # Prédiction sur l'ensemble de test
     svmmodelSpam.fit(features_train, labels_train)
-    return  features_train, labels_train, svmmodelSpam, labels_test ,features_test
+    return features_train, labels_train, svmmodelSpam, labels_test, features_test
 
 #fct pour faire le test du model de Spam
-def testModelSvmSpam(kernel, testsize, c) :
+def testModelSvmSpam(kernel, testsize, c):
     features_train,labelstrain, svmmodelSpam, labels_test,features_test = trainModelSvmSpam(kernel, testsize, c)
     mail_pred = svmmodelSpam.predict(features_test)
     # Évaluer les performances du modèle
@@ -106,11 +116,11 @@ def trainModelSVMMaladie(kernel, testsize, c):
     # Prédiction sur l'ensemble de test
     svmmodelMaladieCardiaque.fit(featuresMaladie_train, targetMaladie_train)
 
-    return featuresMaladie_train, featuresMaladie_test, svmmodelMaladieCardiaque, featuresMaladie_test, targetMaladie_test
+    return featuresMaladie_train, featuresMaladie_test, svmmodelMaladieCardiaque, targetMaladie_train, targetMaladie_test
 
 #fct pour faire le test du model des maladies cardiaques
 def testModelSvmMaladie(kernel, testsize, c) :
-    featuresMaladie_train, featuresMaladie_test , svmmodelMaladieCardiaque, featuresMaladie_test, targetMaladie_test = trainModelSVMMaladie(kernel, testsize, c)
+    featuresMaladie_train, featuresMaladie_test , svmmodelMaladieCardiaque, targetMaladie_train, targetMaladie_test = trainModelSVMMaladie(kernel, testsize, c)
     mail_pred = svmmodelMaladieCardiaque.predict(featuresMaladie_test)
     # Évaluer les performances du modèle
     accuracy = accuracy_score(targetMaladie_test, mail_pred)
@@ -183,6 +193,15 @@ def tracer_grapheMaladie_test(kernel, testSize ,C):
     # Afficher la frontière de décision et la marge
     ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1],
                alpha=0.5, linestyles=['--', '-', '--'])
+    # Tracé du graphe avec les vecteurs de support et les marges
+    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+    plt.xlabel('Âge')
+    plt.ylabel('Taux de cholestérol')
+    # Créer le canvas pour afficher le graphe
+    canvas_test = FigureCanvasTkAgg(fig, master=f_graphe)
+    canvas_test.draw()
+    canvas_test.get_tk_widget().pack(side=tk.LEFT)
+
 
 # Fonction pour tracer le graphe avec les données d'entraînement du maladie
 canvas_train = None
@@ -197,10 +216,10 @@ def tracer_grapheMaladie_train(kernel, testSize, C):
     # Création du graphe avec la marge et les vecteurs de support
     fig = plt.figure(figsize=(4, 4))
     # afficher les données
-    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 0], model_tuple[1][:, 1][model_tuple[4] == 0],
+    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 0], model_tuple[0][:, 1][model_tuple[3] == 0],
                  "yo")
     # afficher les données
-    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 1], model_tuple[1][:, 1][model_tuple[4] == 1],
+    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 1], model_tuple[0][:, 1][model_tuple[3] == 1],
                  "bo")
     # Limites du cadre
     ax = plt.gca()
@@ -228,6 +247,169 @@ def tracer_grapheMaladie_train(kernel, testSize, C):
     canvas_train = FigureCanvasTkAgg(fig, master=f_graphe)
     canvas_train.draw()
     canvas_train.get_tk_widget().pack(side=tk.LEFT)
+
+
+#fct pour entrainer le model des penguins
+def trainModelSVMPenguin(kernel, testsize, c):
+    # model penguin
+    # Chargement des données
+    svmmodelPenguin = SVMModelPenguin(kernel, c)
+    penguins = import_data("datasets/penguins.csv")
+    data = penguins[["bill_length_mm",
+                     "bill_depth_mm",
+                     "flipper_length_mm",
+                     "body_mass_g"]].to_numpy()
+    labels = pd.Categorical(penguins["species"]).astype('category').codes
+
+    # Nous allons ici nous se limiter à deux espèces :
+    # Adelie (0) et Gentoo (2)
+    # et deux variables : bill_length_mm et bill_depth_mm.
+    y_penguin_data = labels
+    Adelie_or_Gentoo = (y_penguin_data == 0) | (y_penguin_data == 2)
+    X_penguin_data = data[:, :2][Adelie_or_Gentoo]
+    y_penguin = y_penguin_data[Adelie_or_Gentoo]
+
+    # Instantiate the imputer
+    imputer = SimpleImputer(strategy='mean')  # or 'median', 'most_frequent' etc.
+    # Impute missing values in X_penguin
+    X_penguin = imputer.fit_transform(X_penguin_data)
+    # Split the data into training and test sets
+
+    # Diviser les données en ensembles d'entraînement et de test
+    featuresPenguin_train, featuresPenguin_test, targetPenguin_train, targetPenguin_test = train_test_split(X_penguin, y_penguin, test_size=testsize, random_state=0)
+    # Prédiction sur l'ensemble de test
+    svmmodelPenguin.fit(featuresPenguin_train, targetPenguin_train)
+
+    return featuresPenguin_train, featuresPenguin_test, svmmodelPenguin, targetPenguin_train, targetPenguin_test
+
+#fct pour faire le test du model des maladies cardiaques
+def testModelSvmPenguin(kernel, testsize, c) :
+    featuresPenguin_train, featuresPenguin_test, svmmodelPenguin, targetPenguin_train, targetPenguin_test = trainModelSVMPenguin(kernel, testsize, c)
+    penguin_pred = svmmodelPenguin.predict(featuresPenguin_test)
+    # Évaluer les performances du modèle
+    accuracy = accuracy_score(targetPenguin_test, svmmodelPenguin.predict(featuresPenguin_test))
+    precision = precision_score(targetPenguin_test, svmmodelPenguin.predict(featuresPenguin_test), pos_label=0)
+    # Calcul du score F1
+    f1 = f1_score(targetPenguin_test, svmmodelPenguin.predict(featuresPenguin_test), pos_label=0)
+    # Affichage du score F1
+    print("Score F1 : ", f1)
+    accuracyLabel.configure(text=str(accuracy))
+    scoreLabel.configure(text=str(f1))
+    print("Accuracy:", accuracy)
+    print("Precision:", precision)
+
+canvas_metrics = None
+def tracer_matriceConfusionPenguin(kernel, testSize, C):
+    global canvas_metrics
+    # Détruire le canvas s'il existe déjà
+    if canvas_metrics:
+        canvas_metrics.get_tk_widget().destroy()
+
+    # Entraîner le modèle SVM et extraire l'objet de modèle SVM
+    model_tuple = trainModelSVMPenguin(kernel, float(testSize), C)
+    svmmodelPenguin = model_tuple[2]
+
+    cm = ConfusionMatrixDisplay.from_predictions(model_tuple[4],svmmodelPenguin.predict(model_tuple[1]))
+
+    # 3. Obtenir la figure de la matrice de confusion
+    fig, ax = plt.subplots(figsize=(4, 4))
+    cm.plot(ax=ax)
+
+    # 4. Créer un widget Tkinter pour afficher la figure
+    canvas = FigureCanvasTkAgg(fig, master=f_matriceC)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side=tk.RIGHT)
+
+# Fonction pour tracer le graphe avec les données d'entraînement du penguin
+canvas_test = None
+def tracer_graphePenguin_test(kernel, testSize ,C):
+    global canvas_test
+    # Détruire le canvas s'il existe déjà
+    if canvas_test:
+        canvas_test.get_tk_widget().destroy()
+    # Entraîner le modèle SVM et extraire l'objet de modèle SVM
+    model_tuple = trainModelSVMPenguin(kernel, float(testSize), C)
+    svmmodelPenguin = model_tuple[2]
+
+    # Création du graphe avec la marge et les vecteurs de support
+    fig = plt.figure(figsize=(4, 4))
+    # afficher les données
+    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 0], model_tuple[1][:, 1][model_tuple[4] == 0],
+             "yo")
+    # afficher les données
+    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 2], model_tuple[1][:, 1][model_tuple[4] == 2],
+             "bo")
+    # Limites du cadre
+    ax = plt.gca()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    support_vectors_ = svmmodelPenguin.support_vectors_()
+    # Marquer les vecteurs de support d'une croix
+    ax.scatter(support_vectors_[:, 0], support_vectors_[:, 1], linewidth=1, facecolors='#FFAAAA', s=180)
+    # Grille de points sur lesquels appliquer le modèle
+    xx = np.linspace(xlim[0], xlim[1], 30)
+    yy = np.linspace(ylim[0], ylim[1], 30)
+    YY, XX = np.meshgrid(yy, xx)
+    xy = np.vstack([XX.ravel(), YY.ravel()]).T
+    # Prédire pour les points de la grille
+    Z = svmmodelPenguin.decision_function(xy).reshape(XX.shape)
+    # Afficher la frontière de décision et la marge
+    ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1],
+               alpha=0.5, linestyles=['--', '-', '--'])
+    # Tracé du graphe avec les vecteurs de support et les marges
+    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+    plt.xlabel('Âge')
+    plt.ylabel('Taux de cholestérol')
+    # Créer le canvas pour afficher le graphe
+    canvas_test = FigureCanvasTkAgg(fig, master=f_graphe)
+    canvas_test.draw()
+    canvas_test.get_tk_widget().pack(side=tk.LEFT)
+
+# Fonction pour tracer le graphe avec les données d'entraînement du penguin
+canvas_train = None
+def tracer_graphePenguin_train(kernel, testSize, C):
+    global canvas_train
+    # Détruire le canvas s'il existe déjà
+    if canvas_train:
+        canvas_train.get_tk_widget().destroy()
+    # Entraîner le modèle SVM et extraire l'objet de modèle SVM
+    model_tuple = trainModelSVMPenguin(kernel, float(testSize), C)
+    svmmodelPenguin = model_tuple[2]
+    # Création du graphe avec la marge et les vecteurs de support
+    fig = plt.figure(figsize=(4, 4))
+    # afficher les données
+    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 0], model_tuple[0][:, 1][model_tuple[3] == 0],
+                 "yo")
+    # afficher les données
+    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 2], model_tuple[0][:, 1][model_tuple[3] == 2],
+                 "bo")
+    # Limites du cadre
+    ax = plt.gca()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    support_vectors_ = svmmodelPenguin.support_vectors_()
+    # Marquer les vecteurs de support d'une croix
+    ax.scatter(support_vectors_[:, 0], support_vectors_[:, 1], linewidth=1, facecolors='#FFAAAA', s=180)
+    # Grille de points sur lesquels appliquer le modèle
+    xx = np.linspace(xlim[0], xlim[1], 30)
+    yy = np.linspace(ylim[0], ylim[1], 30)
+    YY, XX = np.meshgrid(yy, xx)
+    xy = np.vstack([XX.ravel(), YY.ravel()]).T
+    # Prédire pour les points de la grille
+    Z = svmmodelPenguin.decision_function(xy).reshape(XX.shape)
+    # Afficher la frontière de décision et la marge
+    ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1],
+                   alpha=0.5, linestyles=['--', '-', '--'])
+
+    # Tracé du graphe avec les vecteurs de support et les marges
+    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+    plt.xlabel('Âge')
+    plt.ylabel('Taux de cholestérol')
+    # Créer le canvas pour afficher le graphe
+    canvas_train = FigureCanvasTkAgg(fig, master=f_graphe)
+    canvas_train.draw()
+    canvas_train.get_tk_widget().pack(side=tk.LEFT)
+
 
 #fct pour verifier que les inputs sont bien remplis et rendre le boutton de train et de test normal
 def check_fields():
@@ -317,11 +499,10 @@ def tracer_grapheSpam_test(kernel , testSize):
     canvas_test = FigureCanvasTkAgg(fig, master=f2)
     canvas_test.get_tk_widget().pack()
 
-
 # Fonction appelée lors de la sélection d'une option dans la ComboBox
 def update_label(event):
     selected_value = combo_box.get()
-    if selected_value=="Dataset Spam Email" :
+    if selected_value == "Dataset Spam Email" :
         descriptiontxt.configure(text="Le fichier csv contient 5172 lignes, chaque ligne"
                                       " pour chaque e-mail. Il y a 3002 colonnes. La première colonne indique le nom de l'e-mail."
                                       " Le nom a été défini avec des chiffres et non avec le nom des destinataires pour protéger la confidentialité. "
@@ -330,8 +511,10 @@ def update_label(event):
                                       " après exclusion des caractères/mots non alphabétiques. Pour chaque ligne, "
                                       "le nombre de chaque mot (colonne) dans cet e-mail (ligne) est stocké dans les cellules respectives. "
                                        )
-    elif selected_value=="Dataset Maladies Cardiaques" :
+    elif selected_value == "Dataset Maladies Cardiaques":
         descriptiontxt.configure(text="description de maladie cardiaque ")
+    elif selected_value == "Dataset Penguin":
+        descriptiontxt.configure(text="description de penguin ")
     check_fields()
 
 #creation de splash screen
@@ -349,12 +532,12 @@ splash_root.resizable(width=False, height=False)
 # Créez un canevas pour ajouter une image
 splash_canvas = Canvas(splash_root, width=1600, height=950)
 splash_canvas.pack()
-logo_img=tk.PhotoImage(file="imgs/16x16.png")
+logo_img = tk.PhotoImage(file="imgs/16x16.png")
 # Définition du logo pour la fenêtre
 splash_root.iconphoto(True, logo_img)
 
 # Affichage de votre logo dans la barre de titre
-splash_root.tk.call('wm', 'iconphoto', splash_root._w,logo_img)
+splash_root.tk.call('wm', 'iconphoto', splash_root._w, logo_img)
 # Charger l'image et la convertir pour Tkinter
 image = Image.open("imgs/AI.gif")
 photo = ImageTk.PhotoImage(image)
@@ -366,7 +549,7 @@ splash_label = Label(splash_root, text="Chargement en cours...")
 splash_label.pack()
 
 # Définissez le temps d'affichage du splash screen en millisecondes
-splash_time = 3000
+splash_time = 4000
 
 # Fermez la fenêtre du splash screen après le temps d'affichage
 splash_root.after(splash_time, splash_root.destroy)
@@ -410,7 +593,7 @@ datalabel = tk.Label(f1, text="choisir le dataset : ", fg="#d9d9d9", bg=bg_color
 datalabel.pack(padx=50, pady=10)
 
 # Créer une liste déroulante
-datasets = ["Dataset Spam Email" , "Dataset Maladies Cardiaques" ]
+datasets = ["Dataset Spam Email" , "Dataset Maladies Cardiaques" , "Dataset Penguin"]
 combo_box = ttk.Combobox(f1, values=datasets, font=("Helvetica", 12), width=35)
 
 # Configuration des couleurs de fond et de texte pour la ComboBox

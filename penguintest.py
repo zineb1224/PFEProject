@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn.metrics import accuracy_score, precision_score, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn import svm
@@ -44,6 +45,8 @@ svmmodelPenguin.fit(X_train, y_train)
 # Evaluation
 metrics.ConfusionMatrixDisplay.from_predictions(y_test, svmmodelPenguin.predict(X_test))
 
+
+
 # afficher les données (pingouins Adelie et Gentoo)
 plt.figure(figsize=(6, 4))
 plt.plot(X_train[:, 0][y_train==0], X_train[:, 1][y_train==0], "yo", label="Adelie")
@@ -74,3 +77,11 @@ plt.ylabel("Bill depth (mm)")
 plt.title("SVM linéaire (C=%.2f)"%C1)
 plt.tight_layout()
 plt.show()
+
+# Évaluer les performances du modèle
+accuracy = accuracy_score(y_test, svmmodelPenguin.predict(X_test))
+precision = precision_score(y_test, svmmodelPenguin.predict(X_test), pos_label=0)
+# Calcul du score F1
+f1 = f1_score(y_test, svmmodelPenguin.predict(X_test), pos_label=0)
+# Affichage du score F1
+print("Score F1 : ", f1)
