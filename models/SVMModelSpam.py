@@ -2,7 +2,7 @@ from sklearn import svm
 import pandas as pd
 
 
-def import_data(file_path):
+def import_dataSpam(file_path):
     data = pd.read_csv(file_path)
     # effectuer les opérations de prétraitement nécessaires
     return data

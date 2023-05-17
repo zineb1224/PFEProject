@@ -9,7 +9,7 @@ from sklearn import metrics
 #model maladie cardiaque
 svmmodelMaladieCardiaque = SVMModelMaladieCardiaque('rbf')
 # Chargement des données
-maladie_data = import_data("datasets/dataset_maladie.csv")
+maladie_data = import_data("../datasets/dataset_maladie.csv")
 
 # Séparation des données et de target
 X_maladie = maladie_data[["age", "thalach"]].to_numpy()

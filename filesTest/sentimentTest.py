@@ -10,7 +10,7 @@ from sklearn import metrics
 #model maladie cardiaque
 svmmodelSentiment = SVMModelSentiment()
 # Chargement des données
-sentiment_data = import_data("datasets/EcoPreprocessed.csv")
+sentiment_data = import_data("../datasets/EcoPreprocessed.csv")
 
 # Séparation des données et de target
 X_sentiment = np.array(sentiment_data["review"])

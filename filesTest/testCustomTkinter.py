@@ -75,7 +75,7 @@ splash_canvas = Canvas(splash_root, width=1300, height=750)
 splash_canvas.pack()
 
 # Charger l'image et la convertir pour Tkinter
-image = Image.open("imgs/AI.gif")
+image = Image.open("../imgs/AI.gif")
 photo = ImageTk.PhotoImage(image)
 
 splash_canvas.create_image(650, 375, anchor=CENTER, image=photo)

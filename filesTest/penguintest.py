@@ -11,7 +11,7 @@ from models.SVMModelPenguin import SVMModelPenguin , import_data
 
 # Chargement des données
 svmmodelPenguin = SVMModelPenguin()
-penguins = import_data("datasets/penguins.csv")
+penguins = import_data("../datasets/penguins.csv")
 data = penguins[["bill_length_mm",
  "bill_depth_mm",
  "flipper_length_mm",
