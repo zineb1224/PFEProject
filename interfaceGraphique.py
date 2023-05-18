@@ -1,8 +1,9 @@
 # import les biblio
 import tkinter as tk
 from tkinter import *
+from tkinter.ttk import Combobox, Style
+
 from PIL import Image, ImageTk
-from tkinter import ttk
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -459,7 +460,7 @@ largeur = 950
 hauteur = 780
 image_redimensionnee = image.resize((largeur, hauteur))
 photo = ImageTk.PhotoImage(image_redimensionnee)
-splash_canvas.create_image(650, 375, anchor=CENTER, image=photo)
+splash_canvas.create_image(650, 485, anchor=CENTER, image=photo)
 # Définissez le temps d'affichage du splash screen en millisecondes
 splash_time = 3000
 # Fermez la fenêtre du splash screen après le temps d'affichage
@@ -506,15 +507,26 @@ f_graphe.pack(side=tk.LEFT)
 descrProjetlabel = tk.Label(f_description, text="Notre interface graphique consiste à implémenter un model SVM pour des diffrenetes datasets", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 14, "bold"))
 descrProjetlabel.pack(padx=50, pady=10)
 
+# Charger l'image et la convertir pour Tkinter
+# logo = Image.open("imgs/splashScreen.png")
+# photo_logo = ImageTk.PhotoImage(logo)
+# Créez un canvas pour ajouter une image
+# logo_canvas = Canvas(f_description, bg=bg_color_frame, highlightthickness=0)
+# logo_canvas.pack()
+# logo_canvas.create_image(0, 0, anchor=CENTER, image=photo_logo)
+
 datalabel = tk.Label(f_parametre, text="Choisir le dataset : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 datalabel.pack(padx=50, pady=10)
 
 # Créer une liste déroulante
 datasets = ["Dataset Spam Email", "Dataset Maladies Cardiaques", "Dataset Penguin"]
-combo_box = ttk.Combobox(f_parametre, values=datasets, font=("Helvetica", 12), width=35)
+combo_box = Combobox(f_parametre, values=datasets, font=("Helvetica", 12), width=35)
+# Création d'un style personnalisé
+style = Style()
+style.configure('Custom.TCombobox', background=bg_color_frame)
+# Appliquer le style personnalisé au Combobox
+combo_box['style'] = 'Custom.TCombobox'
 
-# Configuration des couleurs de fond et de texte pour la ComboBox
-combo_box.configure(background=LABEL_BG_COLOR, foreground="black")
 combo_box.pack(padx=50, pady=5)
 
 description = tk.Label(f_parametre, text="Description : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
@@ -530,26 +542,26 @@ combo_box.bind("<<ComboboxSelected>>", update_label)
 tstsize = tk.Label(f_parametre, text="Test size: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 tstsize.pack(padx=50, pady=10)
 
-testSize = tk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
+testSize = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
 testSize.pack(pady=8, ipady=5)
 
 parac = tk.Label(f_parametre, text="Parametre C: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 parac.pack(padx=50, pady=10)
 
-paramC = tk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
+paramC = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
 paramC.pack(pady=8, ipady=5)
 
 paramk = tk.Label(f_parametre, text="Parametre Kernel: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 paramk.pack(padx=50, pady=10)
 
-paramKernel = tk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
+paramKernel = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
 paramKernel.pack(pady=8, ipady=5)
 
 # Charger l'image et la convertir pour Tkinter
 # icon_training = PhotoImage(file="imgs/training_80px.gif")
 
 # creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f3_btn, height=3, width=24, text="Training", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', bd=0, command=fitModel, state="disabled")
+btnTraining = Button(f3_btn, height=3, width=24, text="Training", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', bd=0, command=fitModel, state="disabled")
 btnTraining.pack(padx=20, pady=5, side=tk.LEFT)
 
 # creation de boutton pour tester le modele
