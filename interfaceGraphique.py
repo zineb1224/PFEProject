@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, f1_score
@@ -66,8 +65,7 @@ def update_label(event):
                                       " Le nom a été défini avec des chiffres et non avec le nom des destinataires pour protéger la confidentialité. "
                                       "La dernière colonne contient les libellés de prédiction : 1 pour spam, 0 pour non spam."
                                       " Les 3000 colonnes restantes sont les 3000 mots les plus courants dans tous les e-mails,"
-                                      " après exclusion des caractères/mots non alphabétiques."
-                                       )
+                                      " après exclusion des caractères/mots non alphabétiques.")
     elif selected_value == "Dataset Maladies Cardiaques":
         descriptiontxt.configure(text="Le fichier csv contient 303 lignes, chaque ligne pour chaque personne. "
                                       " Il y a 14 colonnes. La dernière colonne contient les libellés de prédiction : "
@@ -192,7 +190,7 @@ def tracer_matriceConfusionMaladie(kernel, testSize, C):
     svmmodelMaladieCardiaque = model_tuple[2]
     cm = ConfusionMatrixDisplay.from_predictions(model_tuple[4], svmmodelMaladieCardiaque.predict(model_tuple[1]))
     # Obtenir la figure de la matrice de confusion
-    fig, ax = plt.subplots(figsize=(4, 4))
+    fig, ax = plt.subplots(figsize=(3.5, 3.5))
     cm.plot(ax=ax)
     # Créer un widget Tkinter pour afficher la figure
     canvas_metricsMaladie = FigureCanvasTkAgg(fig, master=f_matriceC)
@@ -204,7 +202,7 @@ def tracer_matriceConfusionMaladie(kernel, testSize, C):
 canvas_testMaladie = None
 
 
-def tracer_grapheMaladie_test(kernel, testSize ,C):
+def tracer_grapheMaladie_test(kernel, testSize, C):
     global canvas_testMaladie
     # Détruire le canvas s'il existe déjà
     if canvas_testMaladie:
@@ -213,7 +211,7 @@ def tracer_grapheMaladie_test(kernel, testSize ,C):
     model_tuple = trainModelSVMMaladie(kernel, float(testSize), C)
     svmmodelMaladieCardiaque = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
-    fig = plt.figure(figsize=(4, 4))
+    fig = plt.figure(figsize=(3.5, 3.5))
     # afficher les données
     plt.plot(model_tuple[1][:, 0][model_tuple[4] == 0], model_tuple[1][:, 1][model_tuple[4] == 0], "yo", label="0:non malade")
     # afficher les données
@@ -239,7 +237,7 @@ def tracer_grapheMaladie_test(kernel, testSize ,C):
     plt.xlabel('Âge')
     plt.ylabel('Thalach')
     # Créer le canvas pour afficher le graphe
-    canvas_testMaladie = FigureCanvasTkAgg(fig, master=f_graphe)
+    canvas_testMaladie = FigureCanvasTkAgg(fig, master=f_matriceC)
     canvas_testMaladie.draw()
     canvas_testMaladie.get_tk_widget().pack(side=tk.LEFT)
 
@@ -257,7 +255,7 @@ def tracer_grapheMaladie_train(kernel, testSize, C):
     model_tuple = trainModelSVMMaladie(kernel, float(testSize), C)
     svmmodelMaladieCardiaque = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
-    fig = plt.figure(figsize=(4, 4))
+    fig = plt.figure(figsize=(3.5, 3.5))
     # afficher les données
     plt.plot(model_tuple[0][:, 0][model_tuple[3] == 0], model_tuple[0][:, 1][model_tuple[3] == 0], "yo", label="0:non malade")
     # afficher les données
@@ -320,9 +318,9 @@ def testModelSvmPenguin(kernel, testsize, c):
     featuresPenguin_train, featuresPenguin_test, svmmodelPenguin, targetPenguin_train, targetPenguin_test = trainModelSVMPenguin(kernel, testsize, c)
     penguin_pred = svmmodelPenguin.predict(featuresPenguin_test)
     # Évaluer les performances du modèle
-    accuracy = accuracy_score(targetPenguin_test, svmmodelPenguin.predict(featuresPenguin_test))
+    accuracy = accuracy_score(targetPenguin_test, penguin_pred)
     # Calcul du score F1
-    f1 = f1_score(targetPenguin_test, svmmodelPenguin.predict(featuresPenguin_test), pos_label=0)
+    f1 = f1_score(targetPenguin_test, penguin_pred, pos_label=0)
     # Affichage du score F1 et accuracy
     accuracyLabel.configure(text=str(accuracy))
     scoreLabel.configure(text=str(f1))
@@ -341,9 +339,9 @@ def tracer_matriceConfusionPenguin(kernel, testSize, C):
     # Entraîner le modèle SVM et extraire l'objet de modèle SVM
     model_tuple = trainModelSVMPenguin(kernel, float(testSize), C)
     svmmodelPenguin = model_tuple[2]
-    cm = ConfusionMatrixDisplay.from_predictions(model_tuple[4],svmmodelPenguin.predict(model_tuple[1]))
+    cm = ConfusionMatrixDisplay.from_predictions(model_tuple[4], svmmodelPenguin.predict(model_tuple[1]))
     # Obtenir la figure de la matrice de confusion
-    fig, ax = plt.subplots(figsize=(4, 4))
+    fig, ax = plt.subplots(figsize=(3.5, 3.5))
     cm.plot(ax=ax)
     # Créer un widget Tkinter pour afficher la figure
     canvas_metricsPenguin = FigureCanvasTkAgg(fig, master=f_matriceC)
@@ -355,7 +353,7 @@ def tracer_matriceConfusionPenguin(kernel, testSize, C):
 canvas_testPenguin = None
 
 
-def tracer_graphePenguin_test(kernel, testSize ,C):
+def tracer_graphePenguin_test(kernel, testSize, C):
     global canvas_testPenguin
     # Détruire le canvas s'il existe déjà
     if canvas_testPenguin:
@@ -364,7 +362,7 @@ def tracer_graphePenguin_test(kernel, testSize ,C):
     model_tuple = trainModelSVMPenguin(kernel, float(testSize), C)
     svmmodelPenguin = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
-    fig = plt.figure(figsize=(4, 4))
+    fig = plt.figure(figsize=(3.5, 3.5))
     # afficher les données
     plt.plot(model_tuple[1][:, 0][model_tuple[4] == 0], model_tuple[1][:, 1][model_tuple[4] == 0], "yo", label="Adelie")
     # afficher les données
@@ -390,7 +388,7 @@ def tracer_graphePenguin_test(kernel, testSize ,C):
     plt.xlabel('bill_length_mm')
     plt.ylabel('bill_depth_mm')
     # Créer le canvas pour afficher le graphe
-    canvas_testPenguin = FigureCanvasTkAgg(fig, master=f_graphe)
+    canvas_testPenguin = FigureCanvasTkAgg(fig, master=f_matriceC)
     canvas_testPenguin.draw()
     canvas_testPenguin.get_tk_widget().pack(side=tk.LEFT)
 
@@ -408,7 +406,7 @@ def tracer_graphePenguin_train(kernel, testSize, C):
     model_tuple = trainModelSVMPenguin(kernel, float(testSize), C)
     svmmodelPenguin = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
-    fig = plt.figure(figsize=(4, 4))
+    fig = plt.figure(figsize=(3.5, 3.5))
     # afficher les données
     plt.plot(model_tuple[0][:, 0][model_tuple[3] == 0], model_tuple[0][:, 1][model_tuple[3] == 0], "yo", label="Adelie")
     # afficher les données
@@ -546,19 +544,19 @@ paramKernel.pack(pady=8, ipady=5)
 # icon_training = PhotoImage(file="imgs/training_80px.gif")
 
 # creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f3_btn, height=4, width=26, text="Training", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#ED6663', bd=0, command=fitModel, state="disabled")
+btnTraining = tk.Button(f3_btn, height=4, width=26, text="Training", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#90B8F8', bd=0, command=fitModel, state="disabled")
 btnTraining.pack(padx=20, pady=5, side=tk.LEFT)
 
 # creation de boutton pour tester le modele
-btnTesting = tk.Button(f3_btn, height=4, width=26, text="Testing", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#ED6663', bd=0, command=tracerGraphe, state="disabled")
+btnTesting = tk.Button(f3_btn, height=4, width=26, text="Testing", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#90B8F8', bd=0, command=tracerGraphe, state="disabled")
 btnTesting.pack(padx=20, pady=5, side=tk.RIGHT)
 
-accuracyLbl = tk.Label(f_model, text="Accuracy : ", fg="#FB5B5A", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+accuracyLbl = tk.Label(f_model, text="Accuracy : ", fg="#5F85DB", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 accuracyLbl.pack(padx=50, pady=10)
 accuracyLabel = tk.Label(f_model, text="", fg="#D8E9A8", bg=bg_color_frame, font=("Helvetica", 12, "bold"))
 accuracyLabel.pack(padx=50, pady=10)
 
-scoref1Lbl = tk.Label(f_model, text="F1_Score : ", fg="#EE4540", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+scoref1Lbl = tk.Label(f_model, text="F1_Score : ", fg="#5F85DB", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 scoref1Lbl.pack(padx=50, pady=10)
 scoreLabel = tk.Label(f_model, text="", fg="#D8E9A8", bg=bg_color_frame, font=("Helvetica", 12, "bold"))
 scoreLabel.pack(padx=50, pady=10)
