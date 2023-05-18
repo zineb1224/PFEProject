@@ -19,11 +19,11 @@ from models.SVMModelMaladieCardiaque import SVMModelMaladieCardiaque, import_dat
 
 
 # Définition de la palette de couleurs
-BG_COLOR = "#1c1c1c"
-FG_COLOR = "#d9d9d9"
+BG_COLOR = "#000000"
+FG_COLOR = "#121212"
 LABEL_BG_COLOR = "#3a3a3a"
 ENTRY_BG_COLOR = "#3a3a3a"
-bg_color_frame = "#3a3a3a"
+bg_color_frame = "#121212"
 
 
 # définition des fonctions
@@ -49,7 +49,7 @@ def getValeurParamC():
 
 # fct pour verifier que les inputs sont bien remplis et rendre le boutton de train et de test normal
 def check_fields():
-    if len(getValeurTestSize()) > 0 and len(getValeurParamC()) > 0 and len(getValeurParamC()) > 0 and len(combo_box.get()) > 0:
+    if len(getValeurTestSize()) > 0 and len(getValeurParamC()) > 0 and len(getValeurParamKernel()) > 0 and len(combo_box.get()) > 0:
         btnTraining.config(state="normal")
         btnTesting.config(state="normal")
     else:
@@ -453,8 +453,8 @@ splash_canvas.pack()
 
 # Charger l'image et la convertir pour Tkinter
 image = Image.open("imgs/splashScreen.png")
-largeur = 700
-hauteur = 500
+largeur = 800
+hauteur = 600
 image_redimensionnee = image.resize((largeur, hauteur))
 photo = ImageTk.PhotoImage(image_redimensionnee)
 splash_canvas.create_image(650, 375, anchor=CENTER, image=photo)
@@ -484,12 +484,12 @@ appSVM.config(bg=BG_COLOR)
 appSVM.resizable(width=False, height=False)
 
 # creation des frames
-f_parametre = tk.LabelFrame(appSVM, bd=2, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
-f_model = tk.LabelFrame(appSVM, bd=2, text="", bg=bg_color_frame, relief="groove", width=200, height=200)
-f3_btn = tk.LabelFrame(f_model, bd=2, text="", bg=bg_color_frame, highlightthickness=0)
-f4_grp = tk.LabelFrame(f_model, bd=2, text="", bg=bg_color_frame, highlightthickness=0)
-f_matriceC = tk.LabelFrame(f4_grp, bd=2, text="", bg=bg_color_frame, highlightthickness=0)
-f_graphe = tk.LabelFrame(f4_grp, bd=2, text="", bg=bg_color_frame, highlightthickness=0)
+f_parametre = tk.LabelFrame(appSVM, bd=2, text="", bg=FG_COLOR, relief="groove", width=200, height=100)
+f_model = tk.LabelFrame(appSVM, bd=2, text="", bg=FG_COLOR, relief="groove", width=200, height=200)
+f3_btn = tk.LabelFrame(f_model, bd=2, text="", bg=FG_COLOR, highlightthickness=0)
+f4_grp = tk.LabelFrame(f_model, bd=2, text="", bg=FG_COLOR, highlightthickness=0)
+f_matriceC = tk.LabelFrame(f4_grp, bd=2, text="", bg=FG_COLOR, highlightthickness=0)
+f_graphe = tk.LabelFrame(f4_grp, bd=2, text="", bg=FG_COLOR, highlightthickness=0)
 f_parametre.pack(side=tk.LEFT, padx=20, pady=20)
 f_model.pack(side=tk.RIGHT, padx=20, pady=20)
 f3_btn.pack(side=tk.TOP)
@@ -548,11 +548,11 @@ paramKernel.pack(pady=8, ipady=5)
 # icon_training = PhotoImage(file="imgs/training_80px.gif")
 
 # creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f3_btn, height=4, width=26, text="Training", font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=fitModel, state="disabled")
+btnTraining = tk.Button(f3_btn, height=4, width=26, text="Training", font=('Helvetica', 15), fg='#FFFFFF', bg='#87431D', bd=0, command=fitModel, state="disabled")
 btnTraining.pack(padx=20, pady=5, side=tk.LEFT)
 
 # creation de boutton pour tester le modele
-btnTesting = tk.Button(f3_btn, height=4, width=26, text="Testing", font=('Helvetica', 15), fg='#FFFFFF', bg='#9AC8EB', bd=0, command=tracerGraphe, state="disabled")
+btnTesting = tk.Button(f3_btn, height=4, width=26, text="Testing", font=('Helvetica', 15), fg='#FFFFFF', bg='#C87941', bd=0, command=tracerGraphe, state="disabled")
 btnTesting.pack(padx=20, pady=5, side=tk.RIGHT)
 
 accuracyLabel = tk.Label(f_model, text="", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 12))
