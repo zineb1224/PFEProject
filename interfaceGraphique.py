@@ -491,8 +491,8 @@ f_description = tk.LabelFrame(appSVM, bd=0, text="", bg=bg_color_frame, relief="
 f_parametre = tk.LabelFrame(appSVM, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
 f_model = tk.LabelFrame(appSVM, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=200)
 f3_btn = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0)
-f4_grp = tk.LabelFrame(f_model, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
-f_matriceC = tk.LabelFrame(f4_grp, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
+f4_grp = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0)
+f_matriceC = tk.LabelFrame(f4_grp, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_graphe = tk.LabelFrame(f4_grp, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
 f_description.pack(side=tk.TOP , padx=20, pady=20, ipady=20)
 f_parametre.pack(side=tk.LEFT, padx=20, pady=20)
@@ -565,7 +565,7 @@ btnTraining = Button(f3_btn, height=3, width=24, text="Training", font=('Helveti
 btnTraining.pack(padx=20, pady=5, side=tk.LEFT)
 
 # creation de boutton pour tester le modele
-btnTesting = tk.Button(f3_btn, height=3, width=24, text="Testing", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#996045', bd=0, command=tracerGraphe, state="disabled")
+btnTesting = tk.Button(f3_btn, height=3, width=24, text="Testing", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#E87F39', bd=0, command=tracerGraphe, state="disabled")
 btnTesting.pack(padx=20, pady=5, side=tk.RIGHT)
 
 accuracyLbl = tk.Label(f_model, text="Accuracy : ", fg="#588AA8", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
