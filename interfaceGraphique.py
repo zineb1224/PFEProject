@@ -10,7 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import accuracy_score, precision_score, ConfusionMatrixDisplay, f1_score
+from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, f1_score
 from sklearn.model_selection import train_test_split
 
 from models.SVMModelPenguin import SVMModelPenguin, import_dataPenguin
@@ -60,19 +60,23 @@ def check_fields():
 # Fonction appelée lors de la sélection d'une option dans la ComboBox
 def update_label(event):
     selected_value = combo_box.get()
-    if selected_value == "Dataset Spam Email" :
+    if selected_value == "Dataset Spam Email":
         descriptiontxt.configure(text="Le fichier csv contient 5172 lignes, chaque ligne"
                                       " pour chaque e-mail. Il y a 3002 colonnes. La première colonne indique le nom de l'e-mail."
                                       " Le nom a été défini avec des chiffres et non avec le nom des destinataires pour protéger la confidentialité. "
                                       "La dernière colonne contient les libellés de prédiction : 1 pour spam, 0 pour non spam."
                                       " Les 3000 colonnes restantes sont les 3000 mots les plus courants dans tous les e-mails,"
-                                      " après exclusion des caractères/mots non alphabétiques. Pour chaque ligne, "
-                                      "le nombre de chaque mot (colonne) dans cet e-mail (ligne) est stocké dans les cellules respectives. "
+                                      " après exclusion des caractères/mots non alphabétiques."
                                        )
     elif selected_value == "Dataset Maladies Cardiaques":
-        descriptiontxt.configure(text="description de maladie cardiaque ")
+        descriptiontxt.configure(text="Le fichier csv contient 303 lignes, chaque ligne pour chaque personne. "
+                                      " Il y a 14 colonnes. La dernière colonne contient les libellés de prédiction : "
+                                      " 1 pour malade, 0 pour non malade. il est preféré d'utiliser le kernel rbf pour entrainer cette dataset."
+                                 )
     elif selected_value == "Dataset Penguin":
-        descriptiontxt.configure(text="description de penguin ")
+        descriptiontxt.configure(text="Le fichier csv contient 344 lignes, chaque ligne pour chaque penguin. "
+                                      " Il y a 9 colonnes. La colonne species contient les types de punguins de prédiction : "
+                                      " Adelie, Gentoo , Chinstrap. il est preféré d'utiliser le kernel linear pour entrainer cette dataset.")
     check_fields()
 
 
@@ -448,13 +452,13 @@ splash_root.config(bg=BG_COLOR)
 # Rendre la fenêtre non-redimensionnable
 splash_root.resizable(width=False, height=False)
 # Créez un canvas pour ajouter une image
-splash_canvas = Canvas(splash_root, width=1600, height=950, bg=BG_COLOR, highlightthickness=0)
+splash_canvas = Canvas(splash_root, width=1350, height=950, bg=BG_COLOR, highlightthickness=0)
 splash_canvas.pack()
 
 # Charger l'image et la convertir pour Tkinter
 image = Image.open("imgs/splashScreen.png")
-largeur = 800
-hauteur = 600
+largeur = 950
+hauteur = 780
 image_redimensionnee = image.resize((largeur, hauteur))
 photo = ImageTk.PhotoImage(image_redimensionnee)
 splash_canvas.create_image(650, 375, anchor=CENTER, image=photo)
@@ -499,7 +503,7 @@ f_graphe.pack(side=tk.LEFT)
 
 
 # creations des composants de frame des parametres
-datalabel = tk.Label(f_parametre, text="choisir le dataset : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13))
+datalabel = tk.Label(f_parametre, text="Choisir le dataset : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 datalabel.pack(padx=50, pady=10)
 
 # Créer une liste déroulante
@@ -510,7 +514,7 @@ combo_box = ttk.Combobox(f_parametre, values=datasets, font=("Helvetica", 12), w
 combo_box.configure(background=LABEL_BG_COLOR, foreground="black")
 combo_box.pack(padx=50, pady=5)
 
-description = tk.Label(f_parametre, text="description : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13))
+description = tk.Label(f_parametre, text="Description : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 description.pack(padx=20, pady=5)
 
 # Création du Label pour afficher la valeur sélectionnée
@@ -520,44 +524,43 @@ descriptiontxt.pack(padx=5, pady=5)
 # Configuration de la ComboBox pour appeler la fonction update_label lors de la sélection d'une option
 combo_box.bind("<<ComboboxSelected>>", update_label)
 
-# Création d'un style personnalisé pour Entry
-style = ttk.Style()
-style.theme_use("clam")
-# Configuration de la bordure et du relief pour l'Entry
-style.configure("Custom.TEntry", fieldbackground=ENTRY_BG_COLOR, foreground=FG_COLOR)
-
-tstsize = tk.Label(f_parametre, text="test size: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13))
+tstsize = tk.Label(f_parametre, text="Test size: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 tstsize.pack(padx=50, pady=10)
 
-testSize = ttk.Entry(f_parametre, style="Custom.TEntry", width=40, font=("Helvetica", 11))
-testSize.pack(pady=8,ipady=5)
+testSize = ttk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=bg_color_frame)
+testSize.pack(pady=8, ipady=5)
 
-parac = tk.Label(f_parametre, text="parametre C: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13))
+parac = tk.Label(f_parametre, text="Parametre C: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 parac.pack(padx=50, pady=10)
 
-paramC = ttk.Entry(f_parametre, style="Custom.TEntry", width=40, font=("Helvetica", 11))
-paramC.pack(pady=8,ipady=5)
+paramC = ttk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=bg_color_frame)
+paramC.pack(pady=8, ipady=5)
 
-paramk = tk.Label(f_parametre, text="parametre Kernel: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13))
+paramk = tk.Label(f_parametre, text="Parametre Kernel: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 paramk.pack(padx=50, pady=10)
 
-paramKernel = ttk.Entry(f_parametre, style="Custom.TEntry", width=40, font=("Helvetica", 11))
+paramKernel = ttk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=bg_color_frame)
 paramKernel.pack(pady=8, ipady=5)
 
 # Charger l'image et la convertir pour Tkinter
 # icon_training = PhotoImage(file="imgs/training_80px.gif")
 
 # creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f3_btn, height=4, width=26, text="Training", font=('Helvetica', 15), fg='#FFFFFF', bg='#87431D', bd=0, command=fitModel, state="disabled")
+btnTraining = tk.Button(f3_btn, height=4, width=26, text="Training", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#ED6663', bd=0, command=fitModel, state="disabled")
 btnTraining.pack(padx=20, pady=5, side=tk.LEFT)
 
 # creation de boutton pour tester le modele
-btnTesting = tk.Button(f3_btn, height=4, width=26, text="Testing", font=('Helvetica', 15), fg='#FFFFFF', bg='#C87941', bd=0, command=tracerGraphe, state="disabled")
+btnTesting = tk.Button(f3_btn, height=4, width=26, text="Testing", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#ED6663', bd=0, command=tracerGraphe, state="disabled")
 btnTesting.pack(padx=20, pady=5, side=tk.RIGHT)
 
-accuracyLabel = tk.Label(f_model, text="", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 12))
+accuracyLbl = tk.Label(f_model, text="Accuracy : ", fg="#FB5B5A", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+accuracyLbl.pack(padx=50, pady=10)
+accuracyLabel = tk.Label(f_model, text="", fg="#D8E9A8", bg=bg_color_frame, font=("Helvetica", 12, "bold"))
 accuracyLabel.pack(padx=50, pady=10)
-scoreLabel = tk.Label(f_model, text="", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 12))
+
+scoref1Lbl = tk.Label(f_model, text="F1_Score : ", fg="#EE4540", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+scoref1Lbl.pack(padx=50, pady=10)
+scoreLabel = tk.Label(f_model, text="", fg="#D8E9A8", bg=bg_color_frame, font=("Helvetica", 12, "bold"))
 scoreLabel.pack(padx=50, pady=10)
 # liason des evenement avec les composants pour checker
 testSize.bind("<KeyRelease>", lambda event: check_fields())
