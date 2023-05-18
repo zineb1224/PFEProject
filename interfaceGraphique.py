@@ -18,11 +18,11 @@ from models.SVMModelMaladieCardiaque import SVMModelMaladieCardiaque, import_dat
 
 
 # Définition de la palette de couleurs
-BG_COLOR = "#000000"
+BG_COLOR = "#071119"
 FG_COLOR = "#121212"
 LABEL_BG_COLOR = "#3a3a3a"
-ENTRY_BG_COLOR = "#3a3a3a"
-bg_color_frame = "#121212"
+ENTRY_BG_COLOR = "#071119"
+bg_color_frame = "#1B272C"
 
 
 # définition des fonctions
@@ -486,12 +486,14 @@ appSVM.config(bg=BG_COLOR)
 appSVM.resizable(width=False, height=False)
 
 # creation des frames
-f_parametre = tk.LabelFrame(appSVM, bd=2, text="", bg=FG_COLOR, relief="groove", width=200, height=100)
-f_model = tk.LabelFrame(appSVM, bd=2, text="", bg=FG_COLOR, relief="groove", width=200, height=200)
-f3_btn = tk.LabelFrame(f_model, bd=2, text="", bg=FG_COLOR, highlightthickness=0)
-f4_grp = tk.LabelFrame(f_model, bd=2, text="", bg=FG_COLOR, highlightthickness=0)
-f_matriceC = tk.LabelFrame(f4_grp, bd=2, text="", bg=FG_COLOR, highlightthickness=0)
-f_graphe = tk.LabelFrame(f4_grp, bd=2, text="", bg=FG_COLOR, highlightthickness=0)
+f_description = tk.LabelFrame(appSVM, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
+f_parametre = tk.LabelFrame(appSVM, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
+f_model = tk.LabelFrame(appSVM, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=200)
+f3_btn = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0)
+f4_grp = tk.LabelFrame(f_model, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
+f_matriceC = tk.LabelFrame(f4_grp, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
+f_graphe = tk.LabelFrame(f4_grp, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
+f_description.pack(side=tk.TOP , padx=20, pady=20, ipady=20)
 f_parametre.pack(side=tk.LEFT, padx=20, pady=20)
 f_model.pack(side=tk.RIGHT, padx=20, pady=20)
 f3_btn.pack(side=tk.TOP)
@@ -501,6 +503,9 @@ f_graphe.pack(side=tk.LEFT)
 
 
 # creations des composants de frame des parametres
+descrProjetlabel = tk.Label(f_description, text="Notre interface graphique consiste à implémenter un model SVM pour des diffrenetes datasets", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 14, "bold"))
+descrProjetlabel.pack(padx=50, pady=10)
+
 datalabel = tk.Label(f_parametre, text="Choisir le dataset : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 datalabel.pack(padx=50, pady=10)
 
@@ -525,38 +530,38 @@ combo_box.bind("<<ComboboxSelected>>", update_label)
 tstsize = tk.Label(f_parametre, text="Test size: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 tstsize.pack(padx=50, pady=10)
 
-testSize = ttk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=bg_color_frame)
+testSize = tk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
 testSize.pack(pady=8, ipady=5)
 
 parac = tk.Label(f_parametre, text="Parametre C: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 parac.pack(padx=50, pady=10)
 
-paramC = ttk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=bg_color_frame)
+paramC = tk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
 paramC.pack(pady=8, ipady=5)
 
 paramk = tk.Label(f_parametre, text="Parametre Kernel: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 paramk.pack(padx=50, pady=10)
 
-paramKernel = ttk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=bg_color_frame)
+paramKernel = tk.Entry(f_parametre, width=40, font=("Helvetica", 11), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
 paramKernel.pack(pady=8, ipady=5)
 
 # Charger l'image et la convertir pour Tkinter
 # icon_training = PhotoImage(file="imgs/training_80px.gif")
 
 # creation de boutton pour entrainer le modele
-btnTraining = tk.Button(f3_btn, height=4, width=26, text="Training", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#90B8F8', bd=0, command=fitModel, state="disabled")
+btnTraining = tk.Button(f3_btn, height=3, width=24, text="Training", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', bd=0, command=fitModel, state="disabled")
 btnTraining.pack(padx=20, pady=5, side=tk.LEFT)
 
 # creation de boutton pour tester le modele
-btnTesting = tk.Button(f3_btn, height=4, width=26, text="Testing", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#90B8F8', bd=0, command=tracerGraphe, state="disabled")
+btnTesting = tk.Button(f3_btn, height=3, width=24, text="Testing", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#996045', bd=0, command=tracerGraphe, state="disabled")
 btnTesting.pack(padx=20, pady=5, side=tk.RIGHT)
 
-accuracyLbl = tk.Label(f_model, text="Accuracy : ", fg="#5F85DB", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+accuracyLbl = tk.Label(f_model, text="Accuracy : ", fg="#588AA8", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 accuracyLbl.pack(padx=50, pady=10)
 accuracyLabel = tk.Label(f_model, text="", fg="#D8E9A8", bg=bg_color_frame, font=("Helvetica", 12, "bold"))
 accuracyLabel.pack(padx=50, pady=10)
 
-scoref1Lbl = tk.Label(f_model, text="F1_Score : ", fg="#5F85DB", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+scoref1Lbl = tk.Label(f_model, text="F1_Score : ", fg="#588AA8", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 scoref1Lbl.pack(padx=50, pady=10)
 scoreLabel = tk.Label(f_model, text="", fg="#D8E9A8", bg=bg_color_frame, font=("Helvetica", 12, "bold"))
 scoreLabel.pack(padx=50, pady=10)
