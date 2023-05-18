@@ -447,13 +447,13 @@ x = int((screen_width / 2) - (1600 / 2))
 y = int((screen_height / 2) - (950 / 2))
 splash_root.geometry(f"1600x950+{x}+{y}")
 splash_root.config(bg=BG_COLOR)
-
 # Rendre la fenêtre non-redimensionnable
 splash_root.resizable(width=False, height=False)
 # Créez un canvas pour ajouter une image
 splash_canvas = Canvas(splash_root, width=1350, height=950, bg=BG_COLOR, highlightthickness=0)
 splash_canvas.pack()
-
+# icon_training = Image.open("imgs/training_80px.gif")
+# icn_training = ImageTk.PhotoImage(icon_training)
 # Charger l'image et la convertir pour Tkinter
 image = Image.open("imgs/splashScreen.png")
 largeur = 950
@@ -558,7 +558,7 @@ paramKernel = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background
 paramKernel.pack(pady=8, ipady=5)
 
 # Charger l'image et la convertir pour Tkinter
-# icon_training = PhotoImage(file="imgs/training_80px.gif")
+# icon_training = PhotoImage(file=r"imgs/training_80px.gif")
 
 # creation de boutton pour entrainer le modele
 btnTraining = Button(f3_btn, height=3, width=24, text="Training", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', bd=0, command=fitModel, state="disabled")
