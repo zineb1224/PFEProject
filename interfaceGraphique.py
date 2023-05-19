@@ -788,13 +788,16 @@ notebook.add(ongletPrincipale, text='Onglet 1')
 f_description = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
 f_parametre = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
 f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=200)
+f_descriptionDataset = tk.LabelFrame(f_parametre, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
 f3_btn = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0)
 f4_grp = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_matriceC = tk.LabelFrame(f4_grp, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_graphe = tk.LabelFrame(f4_grp, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
-f_description.pack(side=tk.TOP , padx=20, pady=20, ipady=20)
+
+f_description.pack(side=tk.TOP, padx=20, pady=20, ipady=20)
 f_parametre.pack(side=tk.LEFT, padx=20, pady=20)
 f_model.pack(side=tk.RIGHT, padx=20, pady=20)
+f_descriptionDataset.pack(padx=20, pady=20)
 f3_btn.pack(side=tk.TOP)
 f4_grp.pack(side=tk.BOTTOM)
 f_matriceC.pack(side=tk.RIGHT)
@@ -842,11 +845,11 @@ description = tk.Label(f_parametre, text="Description : ", fg="#d9d9d9", bg=bg_c
 description.pack(padx=20, pady=5)
 
 # Création du Label pour afficher la valeur sélectionnée
-descriptiontxt = tk.Label(f_parametre, text=" ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 11), wraplength=360, justify="left")
-descriptiontxt.pack(padx=5, pady=5)
+descriptiontxt = tk.Label(f_descriptionDataset, text=" ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 11), wraplength=360, justify="left")
+descriptiontxt.pack(side=tk.TOP, padx=5, pady=5)
 
 # Création du bouton pour afficher plus de details
-bouton_onglet1 = Button(f_parametre, font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', text="Voir plus de description", command=afficher_description)
+bouton_onglet1 = Button(f_descriptionDataset, height=2, width=22, font=('Helvetica', 13, "bold"), fg='#FFFFFF', bg='#76B8E0', text="Voir plus de description", bd=0, command=afficher_description)
 
 # Configuration de la ComboBox pour appeler la fonction update_label lors de la sélection d'une option
 combo_box.bind("<<ComboboxSelected>>", update_label)
