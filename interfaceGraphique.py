@@ -824,7 +824,7 @@ paramk.pack(padx=50, pady=10)
 # Créer une liste déroulante
 kernels = ["linear", "rbf", "poly"]
 paramKernel = Combobox(f_parametre, values=kernels, font=("Helvetica", 12), width=35)
-
+paramKernel.pack(padx=50, pady=5)
 
 # Charger l'image et la convertir pour Tkinter
 # icon_training = PhotoImage(file=r"imgs/training_80px.gif")
@@ -849,7 +849,7 @@ scoreLabel.pack(padx=50, pady=10)
 # liason des evenement avec les composants pour checker
 testSize.bind("<KeyRelease>", lambda event: check_fields())
 paramC.bind("<KeyRelease>", lambda event: check_fields())
-paramKernel.bind("<KeyRelease>", lambda event: check_fields())
+paramKernel.bind("<<ComboboxSelected>>", lambda event: check_fields())
 combo_box.bind("<<ComboboxSelected>>", update_label)
 
 appSVM.mainloop()
