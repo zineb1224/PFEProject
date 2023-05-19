@@ -799,7 +799,7 @@ notebook = ttk.Notebook(appSVM)
 
 # Création du premier onglet
 ongletPrincipale = tk.LabelFrame(notebook, background=BG_COLOR)
-notebook.add(ongletPrincipale, text='Onglet 1')
+notebook.add(ongletPrincipale, text='Onglet Principale')
 
 
 # creation des frames
