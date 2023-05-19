@@ -13,9 +13,10 @@ from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, f1_score
 from sklearn.model_selection import train_test_split
 
+from models.SVMModelIris import SVMModelIris, import_dataIris
 from models.SVMModelPenguin import SVMModelPenguin, import_dataPenguin
-from models.SVMModelSpam import SVMModelSpam, import_dataSpam
 from models.SVMModelMaladieCardiaque import SVMModelMaladieCardiaque, import_dataMaladie
+from models.SVMModelDiabets import SVMModelDiabets, import_dataDiabets
 
 
 # Définition de la palette de couleurs
@@ -60,14 +61,7 @@ def check_fields():
 # Fonction appelée lors de la sélection d'une option dans la ComboBox
 def update_label(event):
     selected_value = combo_box.get()
-    if selected_value == "Dataset Spam Email":
-        descriptiontxt.configure(text="Le fichier csv contient 5172 lignes, chaque ligne"
-                                      " pour chaque e-mail. Il y a 3002 colonnes. La première colonne indique le nom de l'e-mail."
-                                      " Le nom a été défini avec des chiffres et non avec le nom des destinataires pour protéger la confidentialité. "
-                                      "La dernière colonne contient les libellés de prédiction : 1 pour spam, 0 pour non spam."
-                                      " Les 3000 colonnes restantes sont les 3000 mots les plus courants dans tous les e-mails,"
-                                      " après exclusion des caractères/mots non alphabétiques.")
-    elif selected_value == "Dataset Maladies Cardiaques":
+    if selected_value == "Dataset Maladies Cardiaques":
         descriptiontxt.configure(text="Le fichier csv contient 303 lignes, chaque ligne pour chaque personne. "
                                       " Il y a 14 colonnes. La dernière colonne contient les libellés de prédiction : "
                                       " 1 pour malade, 0 pour non malade. il est preféré d'utiliser le kernel rbf pour entrainer cette dataset."
@@ -76,6 +70,14 @@ def update_label(event):
         descriptiontxt.configure(text="Le fichier csv contient 344 lignes, chaque ligne pour chaque penguin. "
                                       " Il y a 9 colonnes. La colonne species contient les types de punguins de prédiction : "
                                       " Adelie, Gentoo , Chinstrap. il est preféré d'utiliser le kernel linear pour entrainer cette dataset.")
+    elif selected_value == "Dataset Iris":
+        descriptiontxt.configure(text="Le fichier csv contient 150 lignes, chaque ligne pour chaque fleur Iris. "
+                                      " Il y a 4 colonnes. La colonne target contient les types de fleurs de prédiction : "
+                                      " setosa, versicolor , virginica. il est preféré d'utiliser le kernel linear pour entrainer cette dataset.")
+    elif selected_value == "Dataset Diabets":
+        descriptiontxt.configure(text="Le fichier csv contient 768 lignes, chaque ligne pour chaque personne diabet. "
+                                      " Il y a 9 colonnes. La colonne outcome contient les personnes diabets : "
+                                      " 1 pour malade, 0 pour non malade. il est preféré d'utiliser le kernel linear pour entrainer cette dataset.")
     check_fields()
 
 
@@ -85,15 +87,16 @@ def fitModel():
     kernel = getValeurParamKernel()
     C = getValeurParamC()
     selected_value = combo_box.get()
-    if selected_value == "Dataset Spam Email":
-        trainModelSvmSpam(kernel, float(sizetest), float(C))
-        # tracer_grapheSpam_train(kernel, sizetest)
-    elif selected_value == "Dataset Maladies Cardiaques":
+    if selected_value == "Dataset Maladies Cardiaques":
         trainModelSVMMaladie(kernel, float(sizetest), float(C))
         tracer_grapheMaladie_train(kernel, float(sizetest), float(C))
     elif selected_value == "Dataset Penguin":
         trainModelSVMPenguin(kernel, float(sizetest), float(C))
         tracer_graphePenguin_train(kernel, float(sizetest), float(C))
+    elif selected_value == "Dataset Iris":
+        trainModelSVMIris(kernel, float(sizetest), float(C))
+    elif selected_value == "Dataset Diabets":
+        trainModelSVMDiabets(kernel, float(sizetest), float(C))
 
 
 # fct pour tester les models et afficher les graphes du test et la matrice de confusion
@@ -102,10 +105,7 @@ def tracerGraphe():
     kernel = getValeurParamKernel()
     C = getValeurParamC()
     selected_value = combo_box.get()
-    if selected_value == "Dataset Spam Email":
-        testModelSvmSpam(kernel, float(sizetest), float(C))
-        # tracer_grapheSpam_test(kernel, float(sizetest))
-    elif selected_value == "Dataset Maladies Cardiaques":
+    if selected_value == "Dataset Maladies Cardiaques":
         testModelSvmMaladie(kernel, float(sizetest), float(C))
         tracer_grapheMaladie_test(kernel, float(sizetest), float(C))
         tracer_matriceConfusionMaladie(kernel, float(sizetest), float(C))
@@ -113,37 +113,212 @@ def tracerGraphe():
         testModelSvmPenguin(kernel, float(sizetest), float(C))
         tracer_graphePenguin_test(kernel, float(sizetest), float(C))
         tracer_matriceConfusionPenguin(kernel, float(sizetest), float(C))
+    elif selected_value == "Dataset Iris":
+        testModelSvmIris(kernel, float(sizetest), float(C))
+        tracer_matriceConfusionIris(kernel, float(sizetest), float(C))
+        tracer_grapheIris_test(kernel, float(sizetest), float(C))
+    elif selected_value == "Dataset Diabets":
+        testModelSvmDiabets(kernel, float(sizetest), float(C))
+        tracer_matriceConfusionDiabets(kernel, float(sizetest), float(C))
+        tracer_grapheDiabets_test(kernel, float(sizetest), float(C))
 
 
-# model spam
-# fct pour entrainer le model du Spam
-def trainModelSvmSpam(kernel, testsize, c):
-    # model spam email
-    svmmodelSpam = SVMModelSpam(kernel, c)
+# model iris
+# fct pour entrainer le model des maladies cardiaques
+def trainModelSVMIris(kernel, testsize, c):
+    # model maladie cardiaque
+    svmModelIris = SVMModelIris(kernel, c)
     # Chargement des données
-    emails_data = import_dataSpam('datasets/labeled_emails.csv')
-    # Séparation des données en ensembles d'entraînement et de test
-    emails = emails_data['email']
-    labels = np.where(emails_data['label'] == 'spam', 1, 0)  # Encoder les étiquettes en 0 et 1
-    # Vectoriser les courriers électroniques en utilisant la transformation TF-IDF
-    vectorizer = TfidfVectorizer()
-    features = vectorizer.fit_transform(emails)
+    irisData = import_dataIris()
+    # Séparation des données et de target
+    X_iris = irisData.data[:, :2]  # Utiliser seulement les deux premières caractéristiques
+    y_iris = irisData.target
     # Diviser les données en ensembles d'entraînement et de test
-    features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size=testsize, random_state=42)
+    featuresIris_train, featuresIris_test, targetIris_train, targetIris_test = train_test_split(X_iris, y_iris, test_size=testsize, random_state=0)
     # faire le train
-    svmmodelSpam.fit(features_train, labels_train)
-    return features_train, labels_train, svmmodelSpam, labels_test, features_test
+    svmModelIris.fit(featuresIris_train, targetIris_train)
+    return featuresIris_train, featuresIris_test, svmModelIris, targetIris_train, targetIris_test
 
 
-# fct pour faire le test du model de Spam
-def testModelSvmSpam(kernel, testsize, c):
-    # récuperer les caracteristiques et target retournés par la fct d'entrainement
-    features_train, labelstrain, svmmodelSpam, labels_test, features_test = trainModelSvmSpam(kernel, testsize, c)
-    mail_pred = svmmodelSpam.predict(features_test)
+# fct pour faire le test du model des maladies cardiaques
+def testModelSvmIris(kernel, testsize, c):
+    featuresIris_train, featuresIris_test, svmModelIris, targetIris_train, targetIris_test = trainModelSVMIris(kernel, testsize, c)
+    iris_pred = svmModelIris.predict(featuresIris_test)
     # Évaluer les performances du modèle
-    accuracy = accuracy_score(labels_test, mail_pred)
-    # afficher l'accuracy dans un label
+    accuracy = accuracy_score(targetIris_test, iris_pred)
+    # Calcul du score F1
+    f1 = f1_score(targetIris_test, iris_pred, average='weighted')
+    # Affichage du score F1 et accuracy dans les labels
     accuracyLabel.configure(text=str(accuracy))
+    scoreLabel.configure(text=str(f1))
+
+
+# fct pour tracer la matrice de confusion de model des maladies cardiaques
+canvas_metricsIris = None
+
+
+def tracer_matriceConfusionIris(kernel, testSize, C):
+    global canvas_metricsIris
+    # Détruire le canvas s'il existe déjà
+    if canvas_metricsIris:
+        canvas_metricsIris.get_tk_widget().destroy()
+
+    # Entraîner le modèle SVM et extraire l'objet de modèle SVM
+    model_tuple = trainModelSVMIris(kernel, testSize, C)
+    svmmodelIris = model_tuple[2]
+    cm = ConfusionMatrixDisplay.from_predictions(model_tuple[4], svmmodelIris.predict(model_tuple[1]))
+    # Obtenir la figure de la matrice de confusion
+    fig, ax = plt.subplots(figsize=(3.5, 3.5))
+    cm.plot(ax=ax)
+    # Créer un widget Tkinter pour afficher la figure
+    canvas_metricsIris = FigureCanvasTkAgg(fig, master=f_matriceC)
+    canvas_metricsIris.draw()
+    canvas_metricsIris.get_tk_widget().pack(side=tk.RIGHT)
+
+
+# Fonction pour tracer le graphe avec les données d'entraînement du diabet
+canvas_testIris = None
+
+
+def tracer_grapheIris_test(kernel, testSize, C):
+    global canvas_testIris
+    # Détruire le canvas s'il existe déjà
+    if canvas_testIris:
+        canvas_testIris.get_tk_widget().destroy()
+    # Entraîner le modèle SVM et extraire l'objet de modèle SVM
+    model_tuple = trainModelSVMIris(kernel, testSize, C)
+    svmmodelIris = model_tuple[2]
+    # Création du graphe avec la marge et les vecteurs de support
+    fig = plt.figure(figsize=(3.5, 3.5))
+    # afficher les données
+    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 0], model_tuple[1][:, 1][model_tuple[4] == 0], "yo", label="0:non malade")
+    # afficher les données
+    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 1], model_tuple[1][:, 1][model_tuple[4] == 1], "bo", label="1:malade")
+    # Limites du cadre
+    ax = plt.gca()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    support_vectors_ = svmmodelIris.support_vectors_()
+    # Marquer les vecteurs de support d'une croix
+    ax.scatter(support_vectors_[:, 0], support_vectors_[:, 1], linewidth=1, facecolors='#FFAAAA', s=180)
+    # Grille de points sur lesquels appliquer le modèle
+    xx = np.linspace(xlim[0], xlim[1], 30)
+    yy = np.linspace(ylim[0], ylim[1], 30)
+    YY, XX = np.meshgrid(yy, xx)
+    xy = np.vstack([XX.ravel(), YY.ravel()]).T
+    # Prédire pour les points de la grille
+    Z = svmmodelIris.decision_function(xy).reshape(XX.shape)
+    # Afficher la frontière de décision et la marge
+    ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
+    # Tracé du graphe avec les vecteurs de support et les marges
+    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+    plt.xlabel('Longueur des sépales')
+    plt.ylabel('Largeur des sépales')
+    # Créer le canvas pour afficher le graphe
+    canvas_testIris = FigureCanvasTkAgg(fig, master=f_matriceC)
+    canvas_testIris.draw()
+    canvas_testIris.get_tk_widget().pack(side=tk.LEFT)
+
+
+# model diabet
+# fct pour entrainer le model des personnes diabetes
+def trainModelSVMDiabets(kernel, testsize, c):
+    # model maladie cardiaque
+    svmModelDiabets = SVMModelDiabets(kernel, c)
+    # Chargement des données
+    diabetData = import_dataDiabets("datasets/diabetes.csv")
+    # Séparation des données et de target
+    X_diabet = diabetData[["Glucose",
+         "BloodPressure",
+         "Insulin",
+         "DiabetesPedigreeFunction"]].to_numpy()
+    y_diabets = diabetData["Outcome"]
+    X = X_diabet[:, :2]
+    # Diviser les données en ensembles d'entraînement et de test
+    featuresDiabets_train, featuresDiabets_test, targetDiabets_train, targetDiabets_test = train_test_split(X, y_diabets, test_size=testsize, random_state=0)
+    # faire le train
+    svmModelDiabets.fit(featuresDiabets_train, targetDiabets_train)
+    return featuresDiabets_train, featuresDiabets_test, svmModelDiabets, targetDiabets_train, targetDiabets_test
+
+
+# fct pour faire le test du model des maladies cardiaques
+def testModelSvmDiabets(kernel, testsize, c):
+    featuresDiabets_train, featuresDiabets_test, svmModelDiabets, targetDiabets_train, targetDiabets_test = trainModelSVMDiabets(kernel, testsize, c)
+    diabet_pred = svmModelDiabets.predict(featuresDiabets_test)
+    # Évaluer les performances du modèle
+    accuracy = accuracy_score(targetDiabets_test, diabet_pred)
+    # Calcul du score F1
+    f1 = f1_score(targetDiabets_test, diabet_pred)
+    # Affichage du score F1 et accuracy dans les labels
+    accuracyLabel.configure(text=str(accuracy))
+    scoreLabel.configure(text=str(f1))
+
+
+# fct pour tracer la matrice de confusion de model des diabets
+canvas_metricsDiabets = None
+
+
+def tracer_matriceConfusionDiabets(kernel, testSize, C):
+    global canvas_metricsDiabets
+    # Détruire le canvas s'il existe déjà
+    if canvas_metricsDiabets:
+        canvas_metricsDiabets.get_tk_widget().destroy()
+
+    # Entraîner le modèle SVM et extraire l'objet de modèle SVM
+    model_tuple = trainModelSVMDiabets(kernel, testSize, C)
+    svmmodelDiabet = model_tuple[2]
+    cm = ConfusionMatrixDisplay.from_predictions(model_tuple[4], svmmodelDiabet.predict(model_tuple[1]))
+    # Obtenir la figure de la matrice de confusion
+    fig, ax = plt.subplots(figsize=(3.5, 3.5))
+    cm.plot(ax=ax)
+    # Créer un widget Tkinter pour afficher la figure
+    canvas_metricsDiabets = FigureCanvasTkAgg(fig, master=f_matriceC)
+    canvas_metricsDiabets.draw()
+    canvas_metricsDiabets.get_tk_widget().pack(side=tk.RIGHT)
+
+
+# Fonction pour tracer le graphe avec les données d'entraînement du diabet
+canvas_testDiabets = None
+
+
+def tracer_grapheDiabets_test(kernel, testSize, C):
+    global canvas_testDiabets
+    # Détruire le canvas s'il existe déjà
+    if canvas_testDiabets:
+        canvas_testDiabets.get_tk_widget().destroy()
+    # Entraîner le modèle SVM et extraire l'objet de modèle SVM
+    model_tuple = trainModelSVMDiabets(kernel, testSize, C)
+    svmmodelDiabets = model_tuple[2]
+    # Création du graphe avec la marge et les vecteurs de support
+    fig = plt.figure(figsize=(3.5, 3.5))
+    # afficher les données
+    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 0], model_tuple[1][:, 1][model_tuple[4] == 0], "yo", label="0:non malade")
+    # afficher les données
+    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 1], model_tuple[1][:, 1][model_tuple[4] == 1], "bo", label="1:malade")
+    # Limites du cadre
+    ax = plt.gca()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    support_vectors_ = svmmodelDiabets.support_vectors_()
+    # Marquer les vecteurs de support d'une croix
+    ax.scatter(support_vectors_[:, 0], support_vectors_[:, 1], linewidth=1, facecolors='#FFAAAA', s=180)
+    # Grille de points sur lesquels appliquer le modèle
+    xx = np.linspace(xlim[0], xlim[1], 30)
+    yy = np.linspace(ylim[0], ylim[1], 30)
+    YY, XX = np.meshgrid(yy, xx)
+    xy = np.vstack([XX.ravel(), YY.ravel()]).T
+    # Prédire pour les points de la grille
+    Z = svmmodelDiabets.decision_function(xy).reshape(XX.shape)
+    # Afficher la frontière de décision et la marge
+    ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
+    # Tracé du graphe avec les vecteurs de support et les marges
+    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+    plt.xlabel('Âge')
+    plt.ylabel('Thalach')
+    # Créer le canvas pour afficher le graphe
+    canvas_testDiabets = FigureCanvasTkAgg(fig, master=f_matriceC)
+    canvas_testDiabets.draw()
+    canvas_testDiabets.get_tk_widget().pack(side=tk.LEFT)
 
 
 # model maladies cardiaques
@@ -166,11 +341,11 @@ def trainModelSVMMaladie(kernel, testsize, c):
 # fct pour faire le test du model des maladies cardiaques
 def testModelSvmMaladie(kernel, testsize, c):
     featuresMaladie_train, featuresMaladie_test, svmmodelMaladieCardiaque, targetMaladie_train, targetMaladie_test = trainModelSVMMaladie(kernel, testsize, c)
-    mail_pred = svmmodelMaladieCardiaque.predict(featuresMaladie_test)
+    maladie_pred = svmmodelMaladieCardiaque.predict(featuresMaladie_test)
     # Évaluer les performances du modèle
-    accuracy = accuracy_score(targetMaladie_test, mail_pred)
+    accuracy = accuracy_score(targetMaladie_test, maladie_pred)
     # Calcul du score F1
-    f1 = f1_score(targetMaladie_test, mail_pred)
+    f1 = f1_score(targetMaladie_test, maladie_pred)
     # Affichage du score F1 et accuracy dans les labels
     accuracyLabel.configure(text=str(accuracy))
     scoreLabel.configure(text=str(f1))
@@ -187,7 +362,7 @@ def tracer_matriceConfusionMaladie(kernel, testSize, C):
         canvas_metricsMaladie.get_tk_widget().destroy()
 
     # Entraîner le modèle SVM et extraire l'objet de modèle SVM
-    model_tuple = trainModelSVMMaladie(kernel, float(testSize), C)
+    model_tuple = trainModelSVMMaladie(kernel, testSize, C)
     svmmodelMaladieCardiaque = model_tuple[2]
     cm = ConfusionMatrixDisplay.from_predictions(model_tuple[4], svmmodelMaladieCardiaque.predict(model_tuple[1]))
     # Obtenir la figure de la matrice de confusion
@@ -209,7 +384,7 @@ def tracer_grapheMaladie_test(kernel, testSize, C):
     if canvas_testMaladie:
         canvas_testMaladie.get_tk_widget().destroy()
     # Entraîner le modèle SVM et extraire l'objet de modèle SVM
-    model_tuple = trainModelSVMMaladie(kernel, float(testSize), C)
+    model_tuple = trainModelSVMMaladie(kernel, testSize, C)
     svmmodelMaladieCardiaque = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
     fig = plt.figure(figsize=(3.5, 3.5))
@@ -253,7 +428,7 @@ def tracer_grapheMaladie_train(kernel, testSize, C):
     if canvas_trainMaladie:
         canvas_trainMaladie.get_tk_widget().destroy()
     # Entraîner le modèle SVM et extraire l'objet de modèle SVM
-    model_tuple = trainModelSVMMaladie(kernel, float(testSize), C)
+    model_tuple = trainModelSVMMaladie(kernel, testSize, C)
     svmmodelMaladieCardiaque = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
     fig = plt.figure(figsize=(3.5, 3.5))
@@ -338,7 +513,7 @@ def tracer_matriceConfusionPenguin(kernel, testSize, C):
         canvas_metricsPenguin.get_tk_widget().destroy()
 
     # Entraîner le modèle SVM et extraire l'objet de modèle SVM
-    model_tuple = trainModelSVMPenguin(kernel, float(testSize), C)
+    model_tuple = trainModelSVMPenguin(kernel, testSize, C)
     svmmodelPenguin = model_tuple[2]
     cm = ConfusionMatrixDisplay.from_predictions(model_tuple[4], svmmodelPenguin.predict(model_tuple[1]))
     # Obtenir la figure de la matrice de confusion
@@ -360,7 +535,7 @@ def tracer_graphePenguin_test(kernel, testSize, C):
     if canvas_testPenguin:
         canvas_testPenguin.get_tk_widget().destroy()
     # Entraîner le modèle SVM et extraire l'objet de modèle SVM
-    model_tuple = trainModelSVMPenguin(kernel, float(testSize), C)
+    model_tuple = trainModelSVMPenguin(kernel, testSize, C)
     svmmodelPenguin = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
     fig = plt.figure(figsize=(3.5, 3.5))
@@ -404,7 +579,7 @@ def tracer_graphePenguin_train(kernel, testSize, C):
     if canvas_trainPenguin:
         canvas_trainPenguin.get_tk_widget().destroy()
     # Entraîner le modèle SVM et extraire l'objet de modèle SVM
-    model_tuple = trainModelSVMPenguin(kernel, float(testSize), C)
+    model_tuple = trainModelSVMPenguin(kernel, testSize, C)
     svmmodelPenguin = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
     fig = plt.figure(figsize=(3.5, 3.5))
@@ -519,7 +694,7 @@ datalabel = tk.Label(f_parametre, text="Choisir le dataset : ", fg="#d9d9d9", bg
 datalabel.pack(padx=50, pady=10)
 
 # Créer une liste déroulante
-datasets = ["Dataset Spam Email", "Dataset Maladies Cardiaques", "Dataset Penguin"]
+datasets = ["Dataset Maladies Cardiaques", "Dataset Penguin", "Dataset Iris", "Dataset Diabets"]
 combo_box = Combobox(f_parametre, values=datasets, font=("Helvetica", 12), width=35)
 # Création d'un style personnalisé
 style = Style()

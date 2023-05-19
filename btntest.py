@@ -1,19 +1,34 @@
-from tkinter import Tk, Button, Canvas
+import tkinter as tk
+import tkinter.ttk as ttk
 
-from PIL import Image, ImageTk
+# Create the root window
+root = tk.Tk()
 
+# Create the notebook widget
+notebook = ttk.Notebook(root)
 
-# Fonction de gestion de l'événement lors du clic sur le bouton
-def clic():
-    print("Clic !")
+# Create the first tab
+tab1 = tk.Frame(notebook)
+tab1.pack()
 
-# Créer la fenêtre principale
-fenetre = Tk()
-# Charger l'image et la convertir pour Tkinter
-icon_training = Image.open("imgs/16x16.png")
-icn_training = ImageTk.PhotoImage(icon_training)
-btnTraining = Button(fenetre, height=3, width=24, text="Training", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', bd=0, image=icn_training)
-btnTraining.pack(padx=20, pady=5)
+# Create a label in the first tab
+label1 = tk.Label(tab1, text="This is the first tab.")
+label1.pack()
 
-# Lancer la boucle principale
-fenetre.mainloop()
+# Create the second tab
+tab2 = tk.Frame(notebook)
+tab2.pack()
+
+# Create a label in the second tab
+label2 = tk.Label(tab2, text="This is the second tab.")
+label2.pack()
+
+# Add the tabs to the notebook
+notebook.add(tab1, text="Tab 1")
+notebook.add(tab2, text="Tab 2")
+
+# Pack the notebook
+notebook.pack()
+
+# Start the main loop
+root.mainloop()
