@@ -62,6 +62,16 @@ def hide_button():
     bouton_onglet1.pack_forget()
 
 
+def show_entryGamma():
+    paraGamma.pack(padx=50, pady=10)
+    paramGamma.pack(padx=20, ipady=5, pady=5)
+
+
+def hide_entryGamma():
+    paramGamma.pack_forget()
+    paraGamma.pack_forget()
+
+
 # fct pour verifier que les inputs sont bien remplis et rendre le boutton de train et de test normal
 def check_fields():
     if len(getValeurTestSize()) > 0 and len(getValeurParamC()) > 0 and len(getValeurParamKernel()) > 0 and len(combo_box.get()) > 0:
@@ -99,6 +109,14 @@ def update_label(event):
         show_button()
     else:
         hide_button()
+    check_fields()
+
+
+def showGamma(event):
+    if getValeurParamKernel() == "rbf":
+        show_entryGamma()
+    else:
+        hide_entryGamma()
     check_fields()
 
 
@@ -786,23 +804,28 @@ notebook.add(ongletPrincipale, text='Onglet 1')
 
 # creation des frames
 f_description = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
-f_parametre = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
-f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=200)
-f_descriptionDataset = tk.LabelFrame(f_parametre, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
+f_parametre = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=420, height=760)
+f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1000, height=760)
+f_desc = tk.LabelFrame(f_parametre, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=200)
+f_descriptionDataset = tk.LabelFrame(f_desc, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
 f3_btn = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0)
 f4_grp = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_matriceC = tk.LabelFrame(f4_grp, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_graphe = tk.LabelFrame(f4_grp, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
 
 f_description.pack(side=tk.TOP, padx=20, pady=20, ipady=20)
-f_parametre.pack(side=tk.LEFT, padx=20, pady=20)
-f_model.pack(side=tk.RIGHT, padx=20, pady=20)
-f_descriptionDataset.pack(padx=20, pady=20)
+f_parametre.pack(side=tk.LEFT, padx=10, pady=15)
+f_model.pack(side=tk.RIGHT, padx=10, pady=15)
+f_desc.pack(padx=10, pady=20)
+f_descriptionDataset.pack(side=tk.BOTTOM, padx=10, pady=20)
 f3_btn.pack(side=tk.TOP)
 f4_grp.pack(side=tk.BOTTOM)
 f_matriceC.pack(side=tk.RIGHT)
 f_graphe.pack(side=tk.LEFT)
 
+# Fixer la taille du cadre
+f_parametre.pack_propagate(0)
+f_model.pack_propagate(0)
 
 # Création du deuxième onglet
 ongletDescription = ttk.Frame(notebook)
@@ -827,44 +850,41 @@ descrProjetlabel.pack(padx=50, pady=10)
 # logo_canvas.pack()
 # logo_canvas.create_image(0, 0, anchor=CENTER, image=photo_logo)
 
-datalabel = tk.Label(f_parametre, text="Choisir le dataset : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+datalabel = tk.Label(f_desc, text="Choisir le dataset : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 datalabel.pack(padx=50, pady=10)
 
 # Créer une liste déroulante
 datasets = ["Dataset Maladies Cardiaques", "Dataset Penguin", "Dataset Iris", "Dataset Diabets"]
-combo_box = Combobox(f_parametre, values=datasets, font=("Helvetica", 12), width=35)
+combo_box = Combobox(f_desc, values=datasets, font=("Helvetica", 12), width=35)
 # Création d'un style personnalisé
 style = Style()
 style.configure('Custom.TCombobox', background=bg_color_frame)
 # Appliquer le style personnalisé au Combobox
 combo_box['style'] = 'Custom.TCombobox'
 
-combo_box.pack(padx=50, pady=5)
+combo_box.pack(padx=10, pady=5, ipady=2)
 
-description = tk.Label(f_parametre, text="Description : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
-description.pack(padx=20, pady=5)
+description = tk.Label(f_desc, text="Description : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+description.pack(padx=10, pady=5)
 
 # Création du Label pour afficher la valeur sélectionnée
 descriptiontxt = tk.Label(f_descriptionDataset, text=" ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 11), wraplength=360, justify="left")
-descriptiontxt.pack(side=tk.TOP, padx=5, pady=5)
+descriptiontxt.pack(side=tk.TOP, padx=2, pady=5)
 
 # Création du bouton pour afficher plus de details
-bouton_onglet1 = Button(f_descriptionDataset, height=2, width=22, font=('Helvetica', 13, "bold"), fg='#FFFFFF', bg='#76B8E0', text="Voir plus de description", bd=0, command=afficher_description)
-
-# Configuration de la ComboBox pour appeler la fonction update_label lors de la sélection d'une option
-combo_box.bind("<<ComboboxSelected>>", update_label)
+bouton_onglet1 = Button(f_descriptionDataset, height=2, width=20, font=('Helvetica', 13, "bold"), fg='#FFFFFF', bg='#76B8E0', text="Voir plus de description", bd=0, command=afficher_description)
 
 tstsize = tk.Label(f_parametre, text="Test size: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 tstsize.pack(padx=50, pady=10)
 
 testSize = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
-testSize.pack(pady=8, ipady=5)
+testSize.pack(padx=2, pady=8, ipady=5)
 
 parac = tk.Label(f_parametre, text="Parametre C: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 parac.pack(padx=50, pady=10)
 
 paramC = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
-paramC.pack(pady=8, ipady=5)
+paramC.pack(padx=2, pady=8, ipady=5)
 
 paramk = tk.Label(f_parametre, text="Parametre Kernel: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 paramk.pack(padx=50, pady=10)
@@ -872,7 +892,12 @@ paramk.pack(padx=50, pady=10)
 # Créer une liste déroulante
 kernels = ["linear", "rbf", "poly"]
 paramKernel = Combobox(f_parametre, values=kernels, font=("Helvetica", 12), width=35)
-paramKernel.pack(padx=50, pady=5)
+paramKernel.pack(padx=5, pady=5, ipady=2)
+
+paraGamma = tk.Label(f_parametre, text="Parametre Gamma: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+
+paramGamma = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
+
 
 # Charger l'image et la convertir pour Tkinter
 # icon_training = PhotoImage(file=r"imgs/training_80px.gif")
@@ -897,7 +922,7 @@ scoreLabel.pack(padx=50, pady=10)
 # liason des evenement avec les composants pour checker
 testSize.bind("<KeyRelease>", lambda event: check_fields())
 paramC.bind("<KeyRelease>", lambda event: check_fields())
-paramKernel.bind("<<ComboboxSelected>>", lambda event: check_fields())
+paramKernel.bind("<<ComboboxSelected>>", showGamma)
 combo_box.bind("<<ComboboxSelected>>", update_label)
 
 appSVM.mainloop()
