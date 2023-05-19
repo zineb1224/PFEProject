@@ -95,8 +95,10 @@ def fitModel():
         tracer_graphePenguin_train(kernel, float(sizetest), float(C))
     elif selected_value == "Dataset Iris":
         trainModelSVMIris(kernel, float(sizetest), float(C))
+        tracer_grapheIris_train(kernel, float(sizetest), float(C))
     elif selected_value == "Dataset Diabets":
         trainModelSVMDiabets(kernel, float(sizetest), float(C))
+        tracer_grapheDiabets_train(kernel, float(sizetest), float(C))
 
 
 # fct pour tester les models et afficher les graphes du test et la matrice de confusion
@@ -207,7 +209,8 @@ def tracer_grapheIris_test(kernel, testSize, C):
     YY, XX = np.meshgrid(yy, xx)
     xy = np.vstack([XX.ravel(), YY.ravel()]).T
     # Prédire pour les points de la grille
-    Z = svmmodelIris.decision_function(xy).reshape(XX.shape)
+    Z = svmmodelIris.predict(xy)
+    Z = Z.reshape(XX.shape)
     # Afficher la frontière de décision et la marge
     ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
     # Tracé du graphe avec les vecteurs de support et les marges
@@ -218,6 +221,51 @@ def tracer_grapheIris_test(kernel, testSize, C):
     canvas_testIris = FigureCanvasTkAgg(fig, master=f_matriceC)
     canvas_testIris.draw()
     canvas_testIris.get_tk_widget().pack(side=tk.LEFT)
+
+
+# Fonction pour tracer le graphe avec les données d'entraînement du iris
+canvas_trainIris = None
+
+
+def tracer_grapheIris_train(kernel, testSize, C):
+    global canvas_trainIris
+    # Détruire le canvas s'il existe déjà
+    if canvas_trainIris:
+        canvas_trainIris.get_tk_widget().destroy()
+    # Entraîner le modèle SVM et extraire l'objet de modèle SVM
+    model_tuple = trainModelSVMIris(kernel, testSize, C)
+    svmmodelIris = model_tuple[2]
+    # Création du graphe avec la marge et les vecteurs de support
+    fig = plt.figure(figsize=(3.5, 3.5))
+    # afficher les données
+    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 0], model_tuple[0][:, 1][model_tuple[3] == 0], "yo", label="0:non malade")
+    # afficher les données
+    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 1], model_tuple[0][:, 1][model_tuple[3] == 1], "bo", label="1:malade")
+    # Limites du cadre
+    ax = plt.gca()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    support_vectors_ = svmmodelIris.support_vectors_()
+    # Marquer les vecteurs de support d'une croix
+    ax.scatter(support_vectors_[:, 0], support_vectors_[:, 1], linewidth=1, facecolors='#FFAAAA', s=180)
+    # Grille de points sur lesquels appliquer le modèle
+    xx = np.linspace(xlim[0], xlim[1], 30)
+    yy = np.linspace(ylim[0], ylim[1], 30)
+    YY, XX = np.meshgrid(yy, xx)
+    xy = np.vstack([XX.ravel(), YY.ravel()]).T
+    # Prédire pour les points de la grille
+    Z = svmmodelIris.predict(xy)
+    Z = Z.reshape(XX.shape)
+    # Afficher la frontière de décision et la marge
+    ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
+    # Tracé du graphe avec les vecteurs de support et les marges
+    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+    plt.xlabel('Âge')
+    plt.ylabel('Thalach')
+    # Créer le canvas pour afficher le graphe
+    canvas_trainIris = FigureCanvasTkAgg(fig, master=f_graphe)
+    canvas_trainIris.draw()
+    canvas_trainIris.get_tk_widget().pack(side=tk.LEFT)
 
 
 # model diabet
@@ -319,6 +367,50 @@ def tracer_grapheDiabets_test(kernel, testSize, C):
     canvas_testDiabets = FigureCanvasTkAgg(fig, master=f_matriceC)
     canvas_testDiabets.draw()
     canvas_testDiabets.get_tk_widget().pack(side=tk.LEFT)
+
+
+# Fonction pour tracer le graphe avec les données d'entraînement du diabets
+canvas_trainDiabets = None
+
+
+def tracer_grapheDiabets_train(kernel, testSize, C):
+    global canvas_trainDiabets
+    # Détruire le canvas s'il existe déjà
+    if canvas_trainDiabets:
+        canvas_trainDiabets.get_tk_widget().destroy()
+    # Entraîner le modèle SVM et extraire l'objet de modèle SVM
+    model_tuple = trainModelSVMDiabets(kernel, testSize, C)
+    svmmodelDiabets = model_tuple[2]
+    # Création du graphe avec la marge et les vecteurs de support
+    fig = plt.figure(figsize=(3.5, 3.5))
+    # afficher les données
+    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 0], model_tuple[0][:, 1][model_tuple[3] == 0], "yo", label="0:non malade")
+    # afficher les données
+    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 1], model_tuple[0][:, 1][model_tuple[3] == 1], "bo", label="1:malade")
+    # Limites du cadre
+    ax = plt.gca()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    support_vectors_ = svmmodelDiabets.support_vectors_()
+    # Marquer les vecteurs de support d'une croix
+    ax.scatter(support_vectors_[:, 0], support_vectors_[:, 1], linewidth=1, facecolors='#FFAAAA', s=180)
+    # Grille de points sur lesquels appliquer le modèle
+    xx = np.linspace(xlim[0], xlim[1], 30)
+    yy = np.linspace(ylim[0], ylim[1], 30)
+    YY, XX = np.meshgrid(yy, xx)
+    xy = np.vstack([XX.ravel(), YY.ravel()]).T
+    # Prédire pour les points de la grille
+    Z = svmmodelDiabets.decision_function(xy).reshape(XX.shape)
+    # Afficher la frontière de décision et la marge
+    ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
+    # Tracé du graphe avec les vecteurs de support et les marges
+    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+    plt.xlabel('Âge')
+    plt.ylabel('Thalach')
+    # Créer le canvas pour afficher le graphe
+    canvas_trainDiabets = FigureCanvasTkAgg(fig, master=f_graphe)
+    canvas_trainDiabets.draw()
+    canvas_trainDiabets.get_tk_widget().pack(side=tk.LEFT)
 
 
 # model maladies cardiaques
@@ -729,8 +821,10 @@ paramC.pack(pady=8, ipady=5)
 paramk = tk.Label(f_parametre, text="Parametre Kernel: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 paramk.pack(padx=50, pady=10)
 
-paramKernel = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
-paramKernel.pack(pady=8, ipady=5)
+# Créer une liste déroulante
+kernels = ["linear", "rbf", "poly"]
+paramKernel = Combobox(f_parametre, values=kernels, font=("Helvetica", 12), width=35)
+
 
 # Charger l'image et la convertir pour Tkinter
 # icon_training = PhotoImage(file=r"imgs/training_80px.gif")
