@@ -1,9 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 
+
 def afficher_description():
     # Sélectionner l'onglet 2
     notebook.select(onglet2)
+
 
 # Création de la fenêtre principale
 fenetre_principale = tk.Tk()

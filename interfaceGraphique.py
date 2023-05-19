@@ -1,6 +1,7 @@
 # import les biblio
 import tkinter as tk
 from tkinter import *
+from tkinter import ttk
 from tkinter.ttk import Combobox, Style
 
 from PIL import Image, ImageTk
@@ -48,6 +49,19 @@ def getValeurParamC():
     return val
 
 
+def afficher_description():
+    # Sélectionner l'onglet 2
+    notebook.select(ongletDescription)
+
+
+def show_button():
+    bouton_onglet1.pack(padx=5, pady=5)
+
+
+def hide_button():
+    bouton_onglet1.pack_forget()
+
+
 # fct pour verifier que les inputs sont bien remplis et rendre le boutton de train et de test normal
 def check_fields():
     if len(getValeurTestSize()) > 0 and len(getValeurParamC()) > 0 and len(getValeurParamKernel()) > 0 and len(combo_box.get()) > 0:
@@ -66,18 +80,25 @@ def update_label(event):
                                       " Il y a 14 colonnes. La dernière colonne contient les libellés de prédiction : "
                                       " 1 pour malade, 0 pour non malade. il est preféré d'utiliser le kernel rbf pour entrainer cette dataset."
                                  )
+        show_button()
     elif selected_value == "Dataset Penguin":
         descriptiontxt.configure(text="Le fichier csv contient 344 lignes, chaque ligne pour chaque penguin. "
                                       " Il y a 9 colonnes. La colonne species contient les types de punguins de prédiction : "
                                       " Adelie, Gentoo , Chinstrap. il est preféré d'utiliser le kernel linear pour entrainer cette dataset.")
+        show_button()
+
     elif selected_value == "Dataset Iris":
         descriptiontxt.configure(text="Le fichier csv contient 150 lignes, chaque ligne pour chaque fleur Iris. "
                                       " Il y a 4 colonnes. La colonne target contient les types de fleurs de prédiction : "
                                       " setosa, versicolor , virginica. il est preféré d'utiliser le kernel linear pour entrainer cette dataset.")
+        show_button()
     elif selected_value == "Dataset Diabets":
         descriptiontxt.configure(text="Le fichier csv contient 768 lignes, chaque ligne pour chaque personne diabet. "
                                       " Il y a 9 colonnes. La colonne outcome contient les personnes diabets : "
                                       " 1 pour malade, 0 pour non malade. il est preféré d'utiliser le kernel linear pour entrainer cette dataset.")
+        show_button()
+    else:
+        hide_button()
     check_fields()
 
 
@@ -753,10 +774,20 @@ appSVM.config(bg=BG_COLOR)
 # Rendre la fenêtre non-redimensionnable
 appSVM.resizable(width=False, height=False)
 
+
+# Création du Notebook (les onglets)
+notebook = ttk.Notebook(appSVM)
+
+
+# Création du premier onglet
+ongletPrincipale = tk.LabelFrame(notebook, background=BG_COLOR)
+notebook.add(ongletPrincipale, text='Onglet 1')
+
+
 # creation des frames
-f_description = tk.LabelFrame(appSVM, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
-f_parametre = tk.LabelFrame(appSVM, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
-f_model = tk.LabelFrame(appSVM, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=200)
+f_description = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
+f_parametre = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
+f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=200)
 f3_btn = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0)
 f4_grp = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_matriceC = tk.LabelFrame(f4_grp, bd=0, text="", bg="#26333A", highlightthickness=0)
@@ -768,6 +799,17 @@ f3_btn.pack(side=tk.TOP)
 f4_grp.pack(side=tk.BOTTOM)
 f_matriceC.pack(side=tk.RIGHT)
 f_graphe.pack(side=tk.LEFT)
+
+
+# Création du deuxième onglet
+ongletDescription = ttk.Frame(notebook)
+notebook.add(ongletDescription, text='onglet de Description')
+
+# L'onglet 2 est initialisé masqué
+notebook.hide(ongletDescription)
+
+# Affichage du Notebook
+notebook.pack(expand=True, fill="both")
 
 
 # creations des composants de frame des parametres
@@ -802,6 +844,9 @@ description.pack(padx=20, pady=5)
 # Création du Label pour afficher la valeur sélectionnée
 descriptiontxt = tk.Label(f_parametre, text=" ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 11), wraplength=360, justify="left")
 descriptiontxt.pack(padx=5, pady=5)
+
+# Création du bouton pour afficher plus de details
+bouton_onglet1 = Button(f_parametre, font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', text="Voir plus de description", command=afficher_description)
 
 # Configuration de la ComboBox pour appeler la fonction update_label lors de la sélection d'une option
 combo_box.bind("<<ComboboxSelected>>", update_label)
