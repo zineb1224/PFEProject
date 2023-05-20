@@ -23,9 +23,10 @@ def afficher_description():
         notebook.tab(onglet2, text="Iris Dataset")
         column_headings = ["Sepal Length", "Sepal Width", "Petal Length", "Petal Width"]
         description_text="Description de l'ensemble de données Iris"
+        titre_onglet2.config(text=description_text)
     elif option == "Maladie":
         # Charger les données depuis le fichier CSV
-        maladie_data = pd.read_csv('datasets/dataset_maladie.csv')
+        maladie_data = pd.read_csv('datasets/maladie.csv')
 
         # Obtenir 10 lignes aléatoires de l'ensemble de données Maladie
         maladie_data_subset = maladie_data.sample(10)
@@ -38,6 +39,7 @@ def afficher_description():
         # Définir le titre de l'onglet 2 pour l'ensemble de données Maladie
         notebook.tab(onglet2, text="Maladie Dataset")
         description_text="Description de l'ensemble de données Maladie"
+        titre_onglet2.config(text=description_text)
 
     elif option == "Penguins":
         # Charger les données depuis le fichier CSV
@@ -52,6 +54,7 @@ def afficher_description():
         # Définir le titre de l'onglet 2 pour l'ensemble de données diabetes
         notebook.tab(onglet2, text="Diabetes Dataset")
         description_text="Description de l'ensemble de données Penguins"
+        titre_onglet2.config(text=description_text)
 
     elif option == "Diabetes":
         # Charger les données depuis le fichier CSV
@@ -66,11 +69,12 @@ def afficher_description():
         # Définir le titre de l'onglet 2 pour l'ensemble de données Diabetes
         notebook.tab(onglet2, text="Diabetes Dataset")
         description_text="Description de l'ensemble de données Diabetes"
+        titre_onglet2.config(text=description_text)
 
         # Sélectionner l'onglet 2
     notebook.select(onglet2)
     # Modifier le titre de l'onglet 2 avec le texte de description correspondant
-    titre_onglet2.config(text=description_text)
+
 # Définir les en-têtes des colonnes dans le Treeview
     donnees_treeview["columns"] = column_headings
     for i, heading in enumerate(column_headings):
@@ -91,7 +95,7 @@ onglet1 = ttk.Frame(notebook)
 notebook.add(onglet1, text='Onglet 1')
 
 # Création du combobox dans l'onglet 1
-combobox_onglet1 = ttk.Combobox(onglet1, values=["Iris", "Maladie", "Penguins", "Diabetes"], state="readonly")
+combobox_onglet1 = ttk.Combobox(onglet1, values=["Iris","Maladie","Penguins","Diabetes"], state="readonly")
 combobox_onglet1.current(0)
 combobox_onglet1.pack(padx=20, pady=20)
 
