@@ -1049,7 +1049,7 @@ donnees_treeview = ttk.Treeview(ongletDescription, show="headings", height=20)
 # Modifier l'arrière-plan du TreeView
 donnees_treeview.configure(style='Custom.Treeview')
 # Appliquer le style personnalisé au TreeView
-donnees_treeview.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF")
+donnees_treeview.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF", font=("Arial", 12))
 
 # Créer un style personnalisé pour le TreeView
 style = ttk.Style()
