@@ -7,8 +7,9 @@ def import_dataPenguin(file_path):
     # effectuer les opérations de prétraitement nécessaires
     return data
 
+
 class SVMModelPenguin:
-    def __init__(self, kernel='linear', C=1.0, gamma=0.05):
+    def __init__(self, kernel='linear', C=1.0, gamma=0):
         self.model = SVC(kernel=kernel, C=C, gamma=gamma)
 
     def fit(self, x_train, y_train):
