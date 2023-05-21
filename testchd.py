@@ -38,7 +38,7 @@ canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 tk.mainloop()
 
 
-# Charger le dataset à partir d'un fichier CSV
+# Charger le dataset à partir du fichier CSV
 dataset = pd.read_csv("datasets/dataset_maladie.csv")
 
 # Calculer la moyenne pour chaque colonne
@@ -53,23 +53,29 @@ minimum = dataset.min()
 # Trouver la valeur maximale pour chaque colonne
 maximum = dataset.max()
 
-# Afficher les résultats
-print("Moyenne :")
-print(moyenne)
-print("\nÉcart-type :")
-print(ecart_type)
-print("\nMinimum :")
-print(minimum)
-print("\nMaximum :")
-print(maximum)
 # Créer un DataFrame avec les statistiques
 stats_df = pd.DataFrame({'Moyenne': moyenne, 'Écart-type': ecart_type, 'Minimum': minimum, 'Maximum': maximum})
 
+# Créer une fenêtre tkinter
+window = tk.Tk()
+window.title('Graphique')
 
+# Créer une instance de la figure matplotlib et ajouter le graphique
+figure = Figure(figsize=(10, 6))
+ax = figure.add_subplot(111)
+stats_df.plot(kind='bar', ax=ax)
+ax.set_title('Statistiques descriptives du dataset maladie')
+ax.set_xlabel('Variables')
+ax.set_ylabel('Valeurs')
+ax.legend(loc='best')
 
-# Afficher les statistiques dans un seul graphique
-stats_df.plot(kind='bar', title='Statistiques descriptives du dataset maladie')
+# Créer un widget de canevas tkinter pour afficher la figure
+canvas = FigureCanvasTkAgg(figure, master=window)
+canvas.draw()
+canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
+# Démarrer la boucle principale tkinter
+tk.mainloop()
 
 
 # Charger le dataset à partir d'un fichier CSV
