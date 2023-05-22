@@ -76,6 +76,7 @@ def getValeurYlabelTest():
 
 
 def afficher_description():
+    global canvas
     # Obtenir l'option sélectionnée dans le combobox
     option = combo_box.get()
 
@@ -109,6 +110,10 @@ def afficher_description():
         # Transposer le DataFrame pour faciliter la visualisation
         stats = stats.transpose()
 
+        # Détruire le canevas existant s'il existe
+        if 'canvas' in locals():
+            canvas.get_tk_widget().destroy()
+
         # Créer une instance de la figure matplotlib et ajouter le graphique
         figure = Figure(figsize=(6, 4))
         ax = figure.add_subplot(111)
@@ -124,6 +129,7 @@ def afficher_description():
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
     elif option == "Dataset Maladies Cardiaques":
+
         # Charger les données depuis le fichier CSV
         maladie_data = pd.read_csv('datasets/dataset_maladie.csv')
 
@@ -145,6 +151,36 @@ def afficher_description():
             donnees_treeview.heading(i, text=heading)
             donnees_treeview.column(i, width=120)  # Définir la largeur de la colonne
 
+        # Calculer la moyenne pour chaque colonne
+        moyenne = maladie_data.mean()
+        # Calculer l'écart-type pour chaque colonne
+        ecart_type = maladie_data.std()
+        # Trouver la valeur minimale pour chaque colonne
+        minimum = maladie_data.min()
+        # Trouver la valeur maximale pour chaque colonne
+        maximum = maladie_data.max()
+        # Créer un DataFrame avec les statistiques
+        stats_df = pd.DataFrame({'Moyenne': moyenne, 'Écart-type': ecart_type, 'Minimum': minimum, 'Maximum': maximum})
+        # Afficher les statistiques dans un seul graphique
+
+        # Détruire le canevas existant s'il existe
+        if 'canvas' in locals():
+            canvas.get_tk_widget().destroy()
+
+        # Créer une instance de la figure matplotlib et ajouter le graphique
+        figure = Figure(figsize=(10, 6))
+        ax = figure.add_subplot(111)
+        stats_df.plot(kind='bar', ax=ax)
+        ax.set_title('Statistiques descriptives du dataset maladie')
+        ax.set_xlabel('Variables')
+        ax.set_ylabel('Valeurs')
+        ax.legend(loc='best')
+
+        # Créer un widget de canevas tkinter pour afficher la figure
+        canvas = FigureCanvasTkAgg(figure, master=frame_statistique)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
     elif option == "Dataset Penguin":
         # Charger les données depuis le fichier CSV
         penguin_data = pd.read_csv('datasets/penguins.csv')
@@ -165,6 +201,37 @@ def afficher_description():
             donnees_treeview.heading(i, text=heading)
             donnees_treeview.column(i, width=180)  # Définir la largeur de la colonne
 
+        # Sélectionner les colonnes numériques pour le calcul des statistiques
+        numeric_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g']
+
+        # Calculer la moyenne pour chaque colonne
+        moyenne = penguin_data[numeric_columns].mean()
+        # Calculer l'écart-type pour chaque colonne
+        ecart_type = penguin_data[numeric_columns].std()
+        # Trouver la valeur minimale pour chaque colonne
+        minimum = penguin_data[numeric_columns].min()
+        # Trouver la valeur maximale pour chaque colonne
+        maximum = penguin_data[numeric_columns].max()
+        # Créer un DataFrame avec les statistiques
+        stats_df = pd.DataFrame({'Moyenne': moyenne, 'Écart-type': ecart_type, 'Minimum': minimum, 'Maximum': maximum})
+        # Créer une instance de la figure matplotlib et ajouter le graphique
+        figure = Figure(figsize=(10, 6))
+        ax = figure.add_subplot(111)
+        stats_df.plot(kind='bar', ax=ax)
+        ax.set_title('Statistiques descriptives du dataset penguin')
+        ax.set_xlabel('Variables')
+        ax.set_ylabel('Valeurs')
+        ax.legend(loc='best')
+
+        # Détruire le canevas existant s'il existe
+        if 'canvas' in locals():
+            canvas.get_tk_widget().destroy()
+
+        # Créer un widget de canevas tkinter pour afficher la figure
+        canvas = FigureCanvasTkAgg(figure, master=frame_statistique)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
     elif option == "Dataset Diabets":
         # Charger les données depuis le fichier CSV
         diabet_data = pd.read_csv('datasets/diabetes.csv')
@@ -184,6 +251,33 @@ def afficher_description():
         for i, heading in enumerate(column_headings):
             donnees_treeview.heading(i, text=heading)
             donnees_treeview.column(i, width=180)  # Définir la largeur de la colonne
+
+        # Calculer la moyenne pour chaque colonne
+        moyenne = diabet_data.mean()
+        # Calculer l'écart-type pour chaque colonne
+        ecart_type = diabet_data.std()
+        # Trouver la valeur minimale pour chaque colonne
+        minimum = diabet_data.min()
+        # Trouver la valeur maximale pour chaque colonne
+        maximum = diabet_data.max()
+        # Créer un DataFrame avec les statistiques
+        stats_df = pd.DataFrame({'Moyenne': moyenne, 'Écart-type': ecart_type, 'Minimum': minimum, 'Maximum': maximum})
+        # Créer une instance de la figure matplotlib et ajouter le graphique
+        figure = Figure(figsize=(10, 6))
+        ax = figure.add_subplot(111)
+        stats_df.plot(kind='bar', ax=ax)
+        ax.set_title('Statistiques descriptives du dataset diabets')
+        ax.set_xlabel('Variables')
+        ax.set_ylabel('Valeurs')
+        ax.legend(loc='best')
+
+        # Détruire le canevas existant s'il existe
+        if 'canvas' in locals():
+            canvas.get_tk_widget().destroy()
+        # Créer un widget de canevas tkinter pour afficher la figure
+        canvas = FigureCanvasTkAgg(figure, master=frame_statistique)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         # Sélectionner l'onglet 2
     notebook.select(ongletDescription)
