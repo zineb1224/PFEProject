@@ -1,5 +1,9 @@
-import pandas as pd
 import matplotlib.pyplot as plt
+
+import tkinter as tk
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import pandas as pd
 from sklearn.datasets import load_iris
 
 # Charger le dataset Iris
@@ -12,12 +16,26 @@ stats = df.describe().loc[['min', 'max', 'mean', 'std']]
 # Transposer le DataFrame pour faciliter la visualisation
 stats = stats.transpose()
 
-# Créer le graphique en barres
-stats.plot(kind='bar', figsize=(10, 6))
-plt.title('Statistiques descriptives du dataset Iris')
-plt.xlabel('Variables')
-plt.ylabel('Valeurs')
-plt.legend(loc='best')
+# Créer une fenêtre tkinter
+window = tk.Tk()
+window.title('Graphique')
+
+# Créer une instance de la figure matplotlib et ajouter le graphique
+figure = Figure(figsize=(10, 6))
+ax = figure.add_subplot(111)
+stats.plot(kind='bar', ax=ax)
+ax.set_title('Statistiques descriptives du dataset Iris')
+ax.set_xlabel('Variables')
+ax.set_ylabel('Valeurs')
+ax.legend(loc='best')
+
+# Créer un widget de canevas tkinter pour afficher la figure
+canvas = FigureCanvasTkAgg(figure, master=window)
+canvas.draw()
+canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+# Démarrer la boucle principale tkinter
+tk.mainloop()
 
 
 # Charger le dataset à partir d'un fichier CSV
@@ -124,7 +142,3 @@ stats_df.plot(kind='bar', title='Statistiques descriptives du dataset diabetes')
 
 # Afficher le graphique
 plt.show()
-
-
-
-

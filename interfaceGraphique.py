@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 from sklearn.datasets import load_iris
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, f1_score
@@ -19,8 +20,6 @@ from models.SVMModelPenguin import SVMModelPenguin, import_dataPenguin
 from models.SVMModelMaladieCardiaque import SVMModelMaladieCardiaque, import_dataMaladie
 from models.SVMModelDiabets import SVMModelDiabets, import_dataDiabets
 from random import sample
-
-from testchd import moyenne
 
 # Définition de la palette de couleurs
 BG_COLOR = "#071119"
@@ -87,11 +86,10 @@ def afficher_description():
     if option == "Dataset Iris":
         # Chargement du jeu de données iris
         iris = load_iris()
+        df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
         iris_data = iris.data.tolist()  # Convertir les données en liste
-        dataset = pd.read_csv("datasets/diabetes.csv")
-
         # Obtenir 10 lignes aléatoires
-        iris_data_subset = sample(iris_data, 20)
+        iris_data_subset = sample(iris_data, 10)
         for data in iris_data_subset:
             donnees_treeview.insert("", "end", values=data, tags=("Custom.Treeview",))
 
@@ -105,7 +103,25 @@ def afficher_description():
             donnees_treeview.heading(i, text=heading)
             donnees_treeview.column(i, width=220)  # Définir la largeur de la colonne
 
-        description_text2="Statistiques descriptives du dataset Iris"
+        # Calculer les statistiques descriptives
+        stats = df.describe().loc[['min', 'max', 'mean', 'std']]
+
+        # Transposer le DataFrame pour faciliter la visualisation
+        stats = stats.transpose()
+
+        # Créer une instance de la figure matplotlib et ajouter le graphique
+        figure = Figure(figsize=(6, 4))
+        ax = figure.add_subplot(111)
+        stats.plot(kind='bar', ax=ax)
+        ax.set_title('Statistiques descriptives du dataset Iris')
+        ax.set_xlabel('Variables')
+        ax.set_ylabel('Valeurs')
+        ax.legend(loc='best')
+
+        # Créer un widget de canevas tkinter pour afficher la figure
+        canvas = FigureCanvasTkAgg(figure, master=frame_statistique)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
     elif option == "Dataset Maladies Cardiaques":
         # Charger les données depuis le fichier CSV
@@ -121,8 +137,6 @@ def afficher_description():
 
         # Définir le titre de l'onglet 2 pour l'ensemble de données Maladie
         notebook.tab(ongletDescription, text="Maladie Dataset")
-
-
         description_text = "Description de l'ensemble de données Maladie"
 
         # Définir les en-têtes des colonnes dans le Treeview
@@ -130,7 +144,6 @@ def afficher_description():
         for i, heading in enumerate(column_headings):
             donnees_treeview.heading(i, text=heading)
             donnees_treeview.column(i, width=120)  # Définir la largeur de la colonne
-        description_text2 = "Statistiques descriptives du dataset Maladie"
 
     elif option == "Dataset Penguin":
         # Charger les données depuis le fichier CSV
@@ -151,10 +164,8 @@ def afficher_description():
         for i, heading in enumerate(column_headings):
             donnees_treeview.heading(i, text=heading)
             donnees_treeview.column(i, width=180)  # Définir la largeur de la colonne
-        description_text2 = "Statistiques descriptives du dataset penguins"
 
     elif option == "Dataset Diabets":
-
         # Charger les données depuis le fichier CSV
         diabet_data = pd.read_csv('datasets/diabetes.csv')
 
@@ -173,14 +184,11 @@ def afficher_description():
         for i, heading in enumerate(column_headings):
             donnees_treeview.heading(i, text=heading)
             donnees_treeview.column(i, width=180)  # Définir la largeur de la colonne
-        description_text2 = "Statistiques descriptives du dataset Diabetes"
 
         # Sélectionner l'onglet 2
     notebook.select(ongletDescription)
     # Modifier le titre de l'onglet 2 avec le texte de description correspondant
     titre_onglet2.config(text=description_text)
-    titre2_onglet2.config(text=description_text2)
-
 
 
 def show_button():
@@ -228,7 +236,7 @@ def update_label(event):
                                  )
         show_button()
         paraXtrain['values'] = ('age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal')
-        paraYtrain['values'] = ('age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak','slope', 'ca', 'thal')
+        paraYtrain['values'] = ('age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal')
         paraXtest['values'] = ('age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal')
         paraYtest['values'] = ('age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal')
     elif selected_value == "Dataset Penguin":
@@ -276,7 +284,6 @@ def showGamma(event):
 
 
 # fct pour entrainer les differents models de svm et afficher les graphe d'entrainement
-
 def fitModel():
     sizetest = getValeurTestSize()
     kernel = getValeurParamKernel()
@@ -325,7 +332,6 @@ def tracerGraphe():
 def trainModelSVMIris(kernel, testsize, c, gamma=0):
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
-
     # model maladie cardiaque
     svmModelIris = SVMModelIris(kernel, c, gamma)
     # Chargement des données
@@ -384,6 +390,15 @@ def tracer_matriceConfusionIris(kernel, testSize, C, gamma=0):
 canvas_testIris = None
 
 
+def getFeatureIndex(feature):
+    feature_names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    try:
+        return feature_names.index(feature)
+    except ValueError:
+        print("La caractéristique spécifiée n'existe pas dans le jeu de données.")
+        return None
+
+
 def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
     global canvas_testIris
     # Détruire le canvas s'il existe déjà
@@ -392,15 +407,19 @@ def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
+
     # Entraîner le modèle SVM et extraire l'objet de modèle SVM
     model_tuple = trainModelSVMIris(kernel, testSize, C, gamma)
     svmmodelIris = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
     fig = plt.figure(figsize=(4, 4))
+    # Afficher les données en fonction de la caractéristique sélectionnée
+    feature_index_x = getFeatureIndex(getValeurXlabelTest())
+    feature_index_y = getFeatureIndex(getValeurYlabelTest())
     # afficher les données
     plt.plot(model_tuple[1][:, 0][model_tuple[4] == 0], model_tuple[1][:, 1][model_tuple[4] == 0], "yo", label="0:non malade")
     # afficher les données
-    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 1], model_tuple[1][:, 1][model_tuple[4] == 1], "bo", label= "1:malade")
+    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 1], model_tuple[1][:, 1][model_tuple[4] == 1], "bo", label="1:malade")
     # Limites du cadre
     ax = plt.gca()
     xlim = ax.get_xlim()
@@ -1062,8 +1081,7 @@ titre_onglet2 = ttk.Label(ongletDescription, foreground="#FFFFFF", font=("Arial"
 titre_onglet2.pack(pady=20)
 
 # Création du Treeview pour afficher les données dans l'onglet 2
-donnees_treeview = ttk.Treeview(ongletDescription, show="headings", height=20)
-
+donnees_treeview = ttk.Treeview(ongletDescription, show="headings", height=10)
 # Modifier l'arrière-plan du TreeView
 donnees_treeview.configure(style='Custom.Treeview')
 # Appliquer le style personnalisé au TreeView
@@ -1075,9 +1093,10 @@ style.configure('Custom.Treeview', background=bg_color_frame)
 # Ajouter le Treeview dans l'onglet 2
 donnees_treeview.pack(padx=20, pady=20)
 
-#titre 2 pour statistique
-titre2_onglet2 = ttk.Label(ongletDescription, foreground="#FFFFFF", font=("Arial", 16, "bold"), background="#74B0FF", padding=25)
-titre2_onglet2.pack(pady=20)
+frame_statistique = tk.LabelFrame(ongletDescription, bd=0, text="", bg="#26333A", highlightthickness=0, width=600, height=300)
+frame_statistique.pack(padx=10, pady=10)
+frame_statistique.pack_propagate(0)
+
 # L'onglet 2 est initialisé masqué
 notebook.hide(ongletDescription)
 
