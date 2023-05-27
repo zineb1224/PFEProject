@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
 from sklearn.datasets import load_iris
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, f1_score
@@ -75,8 +74,8 @@ def getValeurYlabelTest():
     return val
 
 
+# fct pour afficher la description des differentes datasets (treeview pour affihcer 10 lignes aleatoire de dataset et un treeview pour afficher les statistiques )
 def afficher_description():
-    global canvas
     # Obtenir l'option sélectionnée dans le combobox
     option = combo_box.get()
 
@@ -89,6 +88,7 @@ def afficher_description():
         iris = load_iris()
         df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
         iris_data = iris.data.tolist()  # Convertir les données en liste
+        feature_names = iris.feature_names
         # Obtenir 10 lignes aléatoires
         iris_data_subset = sample(iris_data, 10)
         for data in iris_data_subset:
@@ -105,28 +105,28 @@ def afficher_description():
             donnees_treeview.column(i, width=220)  # Définir la largeur de la colonne
 
         # Calculer les statistiques descriptives
-        stats = df.describe().loc[['min', 'max', 'mean', 'std']]
+        stats = df.describe()
 
-        # Transposer le DataFrame pour faciliter la visualisation
-        stats = stats.transpose()
+        # Rename the columns to match the feature names
+        stats.columns = feature_names
 
-        # Détruire le canevas existant s'il existe
-        if 'canvas' in locals():
-            canvas.get_tk_widget().destroy()
+        # Create a Treeview widget for displaying the table
+        tree["columns"] = ["Statistic"] + list(stats.columns)
+        # Modifier l'arrière-plan du TreeView
+        donnees_treeview.configure(style='Custom.Treeview')
+        # Appliquer le style personnalisé au TreeView
+        donnees_treeview.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF",
+                                       font=("Arial", 12))
 
-        # Créer une instance de la figure matplotlib et ajouter le graphique
-        figure = Figure(figsize=(6, 4))
-        ax = figure.add_subplot(111)
-        stats.plot(kind='bar', ax=ax)
-        ax.set_title('Statistiques descriptives du dataset Iris')
-        ax.set_xlabel('Variables')
-        ax.set_ylabel('Valeurs')
-        ax.legend(loc='best')
+        # Add column headings to the Treeview
+        tree.heading("Statistic", text="Statistic")
+        for column in stats.columns:
+            tree.heading(column, text=column)
 
-        # Créer un widget de canevas tkinter pour afficher la figure
-        canvas = FigureCanvasTkAgg(figure, master=frame_statistique)
-        canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        # Add rows to the Treeview
+        for index, row in stats.iterrows():
+            values = [index.capitalize()] + list(row)
+            tree.insert("", "end", values=values, tags=("Custom.Treeview",))
 
     elif option == "Dataset Maladies Cardiaques":
 
@@ -151,35 +151,22 @@ def afficher_description():
             donnees_treeview.heading(i, text=heading)
             donnees_treeview.column(i, width=120)  # Définir la largeur de la colonne
 
-        # Calculer la moyenne pour chaque colonne
-        moyenne = maladie_data.mean()
-        # Calculer l'écart-type pour chaque colonne
-        ecart_type = maladie_data.std()
-        # Trouver la valeur minimale pour chaque colonne
-        minimum = maladie_data.min()
-        # Trouver la valeur maximale pour chaque colonne
-        maximum = maladie_data.max()
-        # Créer un DataFrame avec les statistiques
-        stats_df = pd.DataFrame({'Moyenne': moyenne, 'Écart-type': ecart_type, 'Minimum': minimum, 'Maximum': maximum})
+        # Calculer les statistiques descriptives
+        statsMaladie = maladie_data.describe()
         # Afficher les statistiques dans un seul graphique
 
-        # Détruire le canevas existant s'il existe
-        if 'canvas' in locals():
-            canvas.get_tk_widget().destroy()
+        # Create a Treeview widget for displaying the table
+        tree["columns"] = ["Statistic"] + column_headings
 
-        # Créer une instance de la figure matplotlib et ajouter le graphique
-        figure = Figure(figsize=(10, 6))
-        ax = figure.add_subplot(111)
-        stats_df.plot(kind='bar', ax=ax)
-        ax.set_title('Statistiques descriptives du dataset maladie')
-        ax.set_xlabel('Variables')
-        ax.set_ylabel('Valeurs')
-        ax.legend(loc='best')
+        # Add column headings to the Treeview
+        tree.heading("Statistic", text="Statistic")
+        for column in column_headings:
+            tree.heading(column, text=column)
 
-        # Créer un widget de canevas tkinter pour afficher la figure
-        canvas = FigureCanvasTkAgg(figure, master=frame_statistique)
-        canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        # Add rows to the Treeview
+        for index, row in statsMaladie.iterrows():
+            values = [index.capitalize()] + list(row)
+            tree.insert("", "end", values=values, tags=("Custom.Treeview",))
 
     elif option == "Dataset Penguin":
         # Charger les données depuis le fichier CSV
@@ -201,36 +188,22 @@ def afficher_description():
             donnees_treeview.heading(i, text=heading)
             donnees_treeview.column(i, width=180)  # Définir la largeur de la colonne
 
-        # Sélectionner les colonnes numériques pour le calcul des statistiques
-        numeric_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g']
+        # Calculer les statistiques descriptives
+        statsPenguin = penguin_data.describe()
+        # Afficher les statistiques dans un seul graphique
 
-        # Calculer la moyenne pour chaque colonne
-        moyenne = penguin_data[numeric_columns].mean()
-        # Calculer l'écart-type pour chaque colonne
-        ecart_type = penguin_data[numeric_columns].std()
-        # Trouver la valeur minimale pour chaque colonne
-        minimum = penguin_data[numeric_columns].min()
-        # Trouver la valeur maximale pour chaque colonne
-        maximum = penguin_data[numeric_columns].max()
-        # Créer un DataFrame avec les statistiques
-        stats_df = pd.DataFrame({'Moyenne': moyenne, 'Écart-type': ecart_type, 'Minimum': minimum, 'Maximum': maximum})
-        # Créer une instance de la figure matplotlib et ajouter le graphique
-        figure = Figure(figsize=(10, 6))
-        ax = figure.add_subplot(111)
-        stats_df.plot(kind='bar', ax=ax)
-        ax.set_title('Statistiques descriptives du dataset penguin')
-        ax.set_xlabel('Variables')
-        ax.set_ylabel('Valeurs')
-        ax.legend(loc='best')
+        # Create a Treeview widget for displaying the table
+        tree["columns"] = ["Statistic"] + column_headings
 
-        # Détruire le canevas existant s'il existe
-        if 'canvas' in locals():
-            canvas.get_tk_widget().destroy()
+        # Add column headings to the Treeview
+        tree.heading("Statistic", text="Statistic")
+        for column in column_headings:
+            tree.heading(column, text=column)
 
-        # Créer un widget de canevas tkinter pour afficher la figure
-        canvas = FigureCanvasTkAgg(figure, master=frame_statistique)
-        canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        # Add rows to the Treeview
+        for index, row in statsPenguin.iterrows():
+            values = [index.capitalize()] + list(row)
+            tree.insert("", "end", values=values, tags=("Custom.Treeview",))
 
     elif option == "Dataset Diabets":
         # Charger les données depuis le fichier CSV
@@ -252,34 +225,24 @@ def afficher_description():
             donnees_treeview.heading(i, text=heading)
             donnees_treeview.column(i, width=180)  # Définir la largeur de la colonne
 
-        # Calculer la moyenne pour chaque colonne
-        moyenne = diabet_data.mean()
-        # Calculer l'écart-type pour chaque colonne
-        ecart_type = diabet_data.std()
-        # Trouver la valeur minimale pour chaque colonne
-        minimum = diabet_data.min()
-        # Trouver la valeur maximale pour chaque colonne
-        maximum = diabet_data.max()
-        # Créer un DataFrame avec les statistiques
-        stats_df = pd.DataFrame({'Moyenne': moyenne, 'Écart-type': ecart_type, 'Minimum': minimum, 'Maximum': maximum})
-        # Créer une instance de la figure matplotlib et ajouter le graphique
-        figure = Figure(figsize=(10, 6))
-        ax = figure.add_subplot(111)
-        stats_df.plot(kind='bar', ax=ax)
-        ax.set_title('Statistiques descriptives du dataset diabets')
-        ax.set_xlabel('Variables')
-        ax.set_ylabel('Valeurs')
-        ax.legend(loc='best')
+        # Calculer les statistiques descriptives
+        statsDiabet = diabet_data.describe()
+        # Afficher les statistiques dans un seul graphique
 
-        # Détruire le canevas existant s'il existe
-        if 'canvas' in locals():
-            canvas.get_tk_widget().destroy()
-        # Créer un widget de canevas tkinter pour afficher la figure
-        canvas = FigureCanvasTkAgg(figure, master=frame_statistique)
-        canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        # Create a Treeview widget for displaying the table
+        tree["columns"] = ["Statistic"] + column_headings
 
-        # Sélectionner l'onglet 2
+        # Add column headings to the Treeview
+        tree.heading("Statistic", text="Statistic")
+        for column in column_headings:
+            tree.heading(column, text=column)
+
+        # Add rows to the Treeview
+        for index, row in statsDiabet.iterrows():
+            values = [index.capitalize()] + list(row)
+            tree.insert("", "end", values=values, tags=("Custom.Treeview",))
+
+    # Sélectionner l'onglet 2
     notebook.select(ongletDescription)
     # Modifier le titre de l'onglet 2 avec le texte de description correspondant
     titre_onglet2.config(text=description_text)
@@ -430,6 +393,8 @@ def trainModelSVMIris(kernel, testsize, c, gamma=0):
     svmModelIris = SVMModelIris(kernel, c, gamma)
     # Chargement des données
     irisData = import_dataIris()
+    feature_index_x = getFeatureIndex(getValeurXlabelTest())
+    feature_index_y = getFeatureIndex(getValeurYlabelTest())
     # Séparation des données et de target
     X_iris = irisData.data[:, :2]  # Utiliser seulement les deux premières caractéristiques
     y_iris = irisData.target
@@ -437,6 +402,12 @@ def trainModelSVMIris(kernel, testsize, c, gamma=0):
     featuresIris_train, featuresIris_test, targetIris_train, targetIris_test = train_test_split(X_iris, y_iris, test_size=testsize, random_state=0)
     # faire le train
     svmModelIris.fit(featuresIris_train, targetIris_train)
+    iris_pred = svmModelIris.predict(featuresIris_train)
+    # Évaluer les performances du modèle
+    accuracy = accuracy_score(targetIris_train, iris_pred)
+    f1 = f1_score(targetIris_train, iris_pred, average='weighted')
+    accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
+    scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
     return featuresIris_train, featuresIris_test, svmModelIris, targetIris_train, targetIris_test
 
 
@@ -451,8 +422,8 @@ def testModelSvmIris(kernel, testsize, c, gamma=0):
     # Calcul du score F1
     f1 = f1_score(targetIris_test, iris_pred, average='weighted')
     # Affichage du score F1 et accuracy dans les labels
-    accuracyLabel.configure(text=str(accuracy))
-    scoreLabel.configure(text=str(f1))
+    accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
+    scoreLabel.configure(text=str("{:.3f}".format(f1)))
 
 
 # fct pour tracer la matrice de confusion de model des maladies cardiaques
@@ -485,7 +456,7 @@ canvas_testIris = None
 
 
 def getFeatureIndex(feature):
-    feature_names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    feature_names = ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']
     try:
         return feature_names.index(feature)
     except ValueError:
@@ -511,9 +482,9 @@ def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
     feature_index_x = getFeatureIndex(getValeurXlabelTest())
     feature_index_y = getFeatureIndex(getValeurYlabelTest())
     # afficher les données
-    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 0], model_tuple[1][:, 1][model_tuple[4] == 0], "yo", label="0:non malade")
+    plt.plot(model_tuple[1][:, feature_index_x][model_tuple[4] == 0], model_tuple[1][:, feature_index_y][model_tuple[4] == 0], "yo")
     # afficher les données
-    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 1], model_tuple[1][:, 1][model_tuple[4] == 1], "bo", label="1:malade")
+    plt.plot(model_tuple[1][:, feature_index_x][model_tuple[4] == 1], model_tuple[1][:, feature_index_y][model_tuple[4] == 1], "bo")
     # Limites du cadre
     ax = plt.gca()
     xlim = ax.get_xlim()
@@ -606,6 +577,14 @@ def trainModelSVMDiabets(kernel, testsize, c, gamma=0):
     featuresDiabets_train, featuresDiabets_test, targetDiabets_train, targetDiabets_test = train_test_split(X, y_diabets, test_size=testsize, random_state=0)
     # faire le train
     svmModelDiabets.fit(featuresDiabets_train, targetDiabets_train)
+    diabet_pred = svmModelDiabets.predict(featuresDiabets_test)
+    # Évaluer les performances du modèle
+    accuracy = accuracy_score(targetDiabets_test, diabet_pred)
+    # Calcul du score F1
+    f1 = f1_score(targetDiabets_test, diabet_pred)
+    # Affichage du score F1 et accuracy dans les labels
+    accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
+    scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
     return featuresDiabets_train, featuresDiabets_test, svmModelDiabets, targetDiabets_train, targetDiabets_test
 
 
@@ -620,8 +599,8 @@ def testModelSvmDiabets(kernel, testsize, c, gamma=0):
     # Calcul du score F1
     f1 = f1_score(targetDiabets_test, diabet_pred)
     # Affichage du score F1 et accuracy dans les labels
-    accuracyLabel.configure(text=str(accuracy))
-    scoreLabel.configure(text=str(f1))
+    accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
+    scoreLabel.configure(text=str("{:.3f}".format(f1)))
 
 
 # fct pour tracer la matrice de confusion de model des diabets
@@ -667,9 +646,9 @@ def tracer_grapheDiabets_test(kernel, testSize, C, gamma=0):
     # Création du graphe avec la marge et les vecteurs de support
     fig = plt.figure(figsize=(4, 4))
     # afficher les données
-    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 0], model_tuple[1][:, 1][model_tuple[4] == 0], "yo", label="0:non malade")
+    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 0], model_tuple[1][:, 1][model_tuple[4] == 0], "yo")
     # afficher les données
-    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 1], model_tuple[1][:, 1][model_tuple[4] == 1], "bo", label="1:malade")
+    plt.plot(model_tuple[1][:, 0][model_tuple[4] == 1], model_tuple[1][:, 1][model_tuple[4] == 1], "bo")
     # Limites du cadre
     ax = plt.gca()
     xlim = ax.get_xlim()
@@ -714,9 +693,9 @@ def tracer_grapheDiabets_train(kernel, testSize, C, gamma=0):
     # Création du graphe avec la marge et les vecteurs de support
     fig = plt.figure(figsize=(4, 4))
     # afficher les données
-    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 0], model_tuple[0][:, 1][model_tuple[3] == 0], "yo", label="0:non malade")
+    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 0], model_tuple[0][:, 1][model_tuple[3] == 0], "yo")
     # afficher les données
-    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 1], model_tuple[0][:, 1][model_tuple[3] == 1], "bo", label="1:malade")
+    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 1], model_tuple[0][:, 1][model_tuple[3] == 1], "bo")
     # Limites du cadre
     ax = plt.gca()
     xlim = ax.get_xlim()
@@ -759,6 +738,14 @@ def trainModelSVMMaladie(kernel, testsize, c, gamma=0):
     featuresMaladie_train, featuresMaladie_test, targetMaladie_train, targetMaladie_test = train_test_split(X_maladie, y_maladie, test_size=testsize, random_state=0)
     # faire le train
     svmmodelMaladieCardiaque.fit(featuresMaladie_train, targetMaladie_train)
+    maladie_pred = svmmodelMaladieCardiaque.predict(featuresMaladie_test)
+    # Évaluer les performances du modèle
+    accuracy = accuracy_score(targetMaladie_test, maladie_pred)
+    # Calcul du score F1
+    f1 = f1_score(targetMaladie_test, maladie_pred)
+    # Affichage du score F1 et accuracy dans les labels
+    accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
+    scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
     return featuresMaladie_train, featuresMaladie_test, svmmodelMaladieCardiaque, targetMaladie_train, targetMaladie_test
 
 
@@ -773,8 +760,8 @@ def testModelSvmMaladie(kernel, testsize, c, gamma=0):
     # Calcul du score F1
     f1 = f1_score(targetMaladie_test, maladie_pred)
     # Affichage du score F1 et accuracy dans les labels
-    accuracyLabel.configure(text=str(accuracy))
-    scoreLabel.configure(text=str(f1))
+    accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
+    scoreLabel.configure(text=str("{:.3f}".format(f1)))
 
 
 # fct pour tracer la matrice de confusion de model des maladies cardiaques
@@ -922,6 +909,14 @@ def trainModelSVMPenguin(kernel, testsize, c, gamma=0):
     featuresPenguin_train, featuresPenguin_test, targetPenguin_train, targetPenguin_test = train_test_split(X_penguin, y_penguin, test_size=testsize, random_state=0)
     # Prédiction sur l'ensemble de test
     svmmodelPenguin.fit(featuresPenguin_train, targetPenguin_train)
+    penguin_pred = svmmodelPenguin.predict(featuresPenguin_test)
+    # Évaluer les performances du modèle
+    accuracy = accuracy_score(targetPenguin_test, penguin_pred)
+    # Calcul du score F1
+    f1 = f1_score(targetPenguin_test, penguin_pred, pos_label=0)
+    # Affichage du score F1 et accuracy
+    accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
+    scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
     return featuresPenguin_train, featuresPenguin_test, svmmodelPenguin, targetPenguin_train, targetPenguin_test
 
 
@@ -936,8 +931,8 @@ def testModelSvmPenguin(kernel, testsize, c, gamma=0):
     # Calcul du score F1
     f1 = f1_score(targetPenguin_test, penguin_pred, pos_label=0)
     # Affichage du score F1 et accuracy
-    accuracyLabel.configure(text=str(accuracy))
-    scoreLabel.configure(text=str(f1))
+    accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
+    scoreLabel.configure(text=str("{:.3f}".format(f1)))
 
 
 # fct pour afficher la matrice de confusion de model penguin
@@ -1132,6 +1127,9 @@ f_graphetest = tk.LabelFrame(f4_grp, bd=0, text="", bg="#26333A", highlightthick
 f_labelsTest = tk.LabelFrame(f3_btn_test, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_accuracy = tk.LabelFrame(f_labelsTest, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_score = tk.LabelFrame(f_labelsTest, bd=0, text="", bg="#26333A", highlightthickness=0)
+f_labelsTrain = tk.LabelFrame(f3_btn_train, bd=0, text="", bg="#26333A", highlightthickness=0)
+f_accuracyTrain = tk.LabelFrame(f_labelsTrain, bd=0, text="", bg="#26333A", highlightthickness=0)
+f_scoreTrain = tk.LabelFrame(f_labelsTrain, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_comboboxTrain = tk.LabelFrame(f3_btn_train, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_comboboxTest = tk.LabelFrame(f3_btn_test, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_comboboxTrainL1 = tk.LabelFrame(f_comboboxTrain, bd=0, text="", bg="#26333A", highlightthickness=0)
@@ -1158,6 +1156,9 @@ f_comboboxTestL2.pack(side=tk.BOTTOM)
 f_labelsTest.place(x=98, y=210)
 f_accuracy.pack(side=tk.TOP)
 f_score.pack(side=tk.BOTTOM)
+f_labelsTrain.place(x=8, y=210)
+f_accuracyTrain.pack(side=tk.TOP)
+f_scoreTrain.pack(side=tk.BOTTOM)
 
 # Fixer la taille du cadre
 f_parametre.pack_propagate(0)
@@ -1181,15 +1182,20 @@ donnees_treeview.configure(style='Custom.Treeview')
 # Appliquer le style personnalisé au TreeView
 donnees_treeview.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF", font=("Arial", 12))
 
-# Créer un style personnalisé pour le TreeView
-style = ttk.Style()
-style.configure('Custom.Treeview', background=bg_color_frame)
 # Ajouter le Treeview dans l'onglet 2
 donnees_treeview.pack(padx=20, pady=20)
 
-frame_statistique = tk.LabelFrame(ongletDescription, bd=0, text="", bg="#26333A", highlightthickness=0, width=600, height=300)
+frame_statistique = tk.LabelFrame(ongletDescription, bd=0, text="", bg=BG_COLOR, highlightthickness=0, width=1600, height=760)
 frame_statistique.pack(padx=10, pady=10)
 frame_statistique.pack_propagate(0)
+
+# Create a Treeview widget for displaying the table
+tree = ttk.Treeview(frame_statistique, show="headings", height=8)
+# Modifier l'arrière-plan du TreeView
+tree.configure(style='Custom.Treeview')
+# Appliquer le style personnalisé au TreeView
+tree.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF", font=("Arial", 12))
+tree.pack()
 
 # L'onglet 2 est initialisé masqué
 notebook.hide(ongletDescription)
@@ -1213,14 +1219,25 @@ descrProjetlabel.pack(padx=50, pady=10)
 datalabel = tk.Label(f_desc, text="Choisir un dataset : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 datalabel.pack(padx=50, pady=10)
 
+
+# Créer un style avec un thème personnalisé
+combostyle = ttk.Style()
+
+combostyle.theme_create('combostyle', parent='alt',
+                         settings = {'TCombobox':
+                                     {'configure':
+                                      {'selectbackground': 'blue',
+                                       'fieldbackground': 'red',
+                                       'background': 'green'
+                                       }}}
+                         )
+# ATTENTION: this applies the new style 'combostyle' to all ttk.Combobox
+combostyle.theme_use('combostyle')
+
 # Créer une liste déroulante
 datasets = ["Dataset Maladies Cardiaques", "Dataset Penguin", "Dataset Iris", "Dataset Diabets"]
 combo_box = Combobox(f_desc, values=datasets, font=("Helvetica", 12), width=35)
-# Création d'un style personnalisé
-style = Style()
-style.configure('Custom.TCombobox', background=bg_color_frame)
 # Appliquer le style personnalisé au Combobox
-combo_box['style'] = 'Custom.TCombobox'
 combo_box.state(["readonly"])
 combo_box.pack(padx=10, pady=5, ipady=2)
 
@@ -1280,6 +1297,17 @@ scoref1Lbl = tk.Label(f_score, text="F1_Score : ", fg="#588AA8", bg="#26333A", f
 scoref1Lbl.pack(padx=30, pady=10, side=tk.LEFT)
 scoreLabel = tk.Label(f_score, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
 scoreLabel.pack(padx=50, pady=10, side=tk.RIGHT)
+
+
+accuracyLbltrain = tk.Label(f_accuracyTrain, text="Accuracy : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+accuracyLbltrain.pack(padx=10, pady=10, side=tk.LEFT)
+accuracyLabeltrain = tk.Label(f_accuracyTrain, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+accuracyLabeltrain.pack(padx=10, pady=10, side=tk.RIGHT)
+
+scoref1Lbltrain = tk.Label(f_scoreTrain, text="F1_Score : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+scoref1Lbltrain.pack(padx=10, pady=10, side=tk.LEFT)
+scoreLabeltrain = tk.Label(f_scoreTrain, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+scoreLabeltrain.pack(padx=10, pady=10, side=tk.RIGHT)
 
 
 paramXlabelTrain = tk.Label(f_comboboxTrainL1, text="X label : ", fg="#d9d9d9", bg="#26333A", font=("Helvetica", 13, "bold"))
