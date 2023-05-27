@@ -24,3 +24,9 @@ class SVMModelIris:
 
     def support_vectors_(self):
         return self.model.support_vectors_
+
+    def dual_coef_(self):
+        return self.model.dual_coef_
+
+    def intercept_(self):
+        return self.model.intercept_

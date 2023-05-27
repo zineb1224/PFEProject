@@ -1,41 +1,43 @@
-import tkinter as tk
-from tkinter import ttk
-import pandas as pd
-from sklearn.datasets import load_iris
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
 
-# Load the Iris dataset
-iris = load_iris()
-data = iris.data
-target = iris.target
-feature_names = iris.feature_names
+# Chargement des données d'iris
+iris = datasets.load_iris()
+X = iris.data[:, :2]  # On utilise seulement les deux premières caractéristiques pour faciliter la visualisation
+y = iris.target
 
-# Create a DataFrame with the statistics from describe
-statistics = pd.DataFrame(data).describe()
+# Division des données en ensembles d'entraînement et de test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Rename the columns to match the feature names
-statistics.columns = feature_names
+# Entraînement du modèle SVM avec le noyau RBF
+model = SVC(kernel='rbf')
+model.fit(X_train, y_train)
 
-# Create the GUI window
-window = tk.Tk()
-window.title("Summary Statistics of Iris Dataset")
+# Extraction des vecteurs de support
+support_vectors = model.support_vectors_
 
-# Create a Treeview widget for displaying the table
-tree = ttk.Treeview(window)
-tree["columns"] = ["Statistic"] + list(statistics.columns)
-tree["show"] = "headings"
+# Obtention des poids et du biais
+dual_coef = model.dual_coef_
+intercept = model.intercept_
 
-# Add column headings to the Treeview
-tree.heading("Statistic", text="Statistic")
-for column in statistics.columns:
-    tree.heading(column, text=column)
+# Plot des données de test et des vecteurs de support
+plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap='viridis')
+plt.scatter(support_vectors[:, 0], support_vectors[:, 1], s=70, facecolors='none', edgecolors='k')
 
-# Add rows to the Treeview
-for index, row in statistics.iterrows():
-    values = [index.capitalize()] + list(row)
-    tree.insert("", "end", values=values)
+# Calcul des coordonnées de l'hyperplan
+x_min, x_max = X_test[:, 0].min() - 1, X_test[:, 0].max() + 1
+y_min, y_max = X_test[:, 1].min() - 1, X_test[:, 1].max() + 1
+xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
+Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
 
-# Place the Treeview in the GUI window
-tree.pack()
-
-# Run the GUI event loop
-window.mainloop()
+# Plot de l'hyperplan et des marges
+plt.contourf(xx, yy, Z, alpha=0.8, cmap='viridis')
+plt.scatter(support_vectors[:, 0], support_vectors[:, 1], s=70, facecolors='none', edgecolors='k')
+plt.xlabel('Caractéristique 1')
+plt.ylabel('Caractéristique 2')
+plt.title('Hyperplan et marges du modèle SVM')
+plt.show()

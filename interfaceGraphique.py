@@ -427,14 +427,14 @@ def testModelSvmIris(kernel, testsize, c, gamma=0):
 
 
 # fct pour tracer la matrice de confusion de model des maladies cardiaques
-canvas_metricsIris = None
+canvas_metrics = None
 
 
 def tracer_matriceConfusionIris(kernel, testSize, C, gamma=0):
-    global canvas_metricsIris
+    global canvas_metrics
     # Détruire le canvas s'il existe déjà
-    if canvas_metricsIris:
-        canvas_metricsIris.get_tk_widget().destroy()
+    if canvas_metrics:
+        canvas_metrics.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -446,13 +446,13 @@ def tracer_matriceConfusionIris(kernel, testSize, C, gamma=0):
     fig, ax = plt.subplots(figsize=(4, 4))
     cm.plot(ax=ax)
     # Créer un widget Tkinter pour afficher la figure
-    canvas_metricsIris = FigureCanvasTkAgg(fig, master=f_graphetest)
-    canvas_metricsIris.draw()
-    canvas_metricsIris.get_tk_widget().pack(side=tk.RIGHT)
+    canvas_metrics = FigureCanvasTkAgg(fig, master=f_graphetest)
+    canvas_metrics.draw()
+    canvas_metrics.get_tk_widget().pack(side=tk.RIGHT)
 
 
 # Fonction pour tracer le graphe avec les données d'entraînement du diabet
-canvas_testIris = None
+canvas_test = None
 
 
 def getFeatureIndex(feature):
@@ -465,10 +465,10 @@ def getFeatureIndex(feature):
 
 
 def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
-    global canvas_testIris
+    global canvas_test
     # Détruire le canvas s'il existe déjà
-    if canvas_testIris:
-        canvas_testIris.get_tk_widget().destroy()
+    if canvas_test:
+        canvas_test.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -482,45 +482,37 @@ def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
     feature_index_x = getFeatureIndex(getValeurXlabelTest())
     feature_index_y = getFeatureIndex(getValeurYlabelTest())
     # afficher les données
-    plt.plot(model_tuple[1][:, feature_index_x][model_tuple[4] == 0], model_tuple[1][:, feature_index_y][model_tuple[4] == 0], "yo")
-    # afficher les données
-    plt.plot(model_tuple[1][:, feature_index_x][model_tuple[4] == 1], model_tuple[1][:, feature_index_y][model_tuple[4] == 1], "bo")
-    # Limites du cadre
-    ax = plt.gca()
-    xlim = ax.get_xlim()
-    ylim = ax.get_ylim()
+    plt.scatter(model_tuple[1][:, 0], model_tuple[1][:, 1], c=model_tuple[4], cmap='viridis')
     support_vectors_ = svmmodelIris.support_vectors_()
     # Marquer les vecteurs de support d'une croix
-    ax.scatter(support_vectors_[:, 0], support_vectors_[:, 1], linewidth=1, facecolors='#FFAAAA', s=180)
-    # Grille de points sur lesquels appliquer le modèle
-    xx = np.linspace(xlim[0], xlim[1], 30)
-    yy = np.linspace(ylim[0], ylim[1], 30)
-    YY, XX = np.meshgrid(yy, xx)
-    xy = np.vstack([XX.ravel(), YY.ravel()]).T
-    # Prédire pour les points de la grille
-    Z = svmmodelIris.predict(xy)
-    Z = Z.reshape(XX.shape)
-    # Afficher la frontière de décision et la marge
-    ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
+    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, linewidth=1, facecolors='#FFAAAA',  edgecolors='k')
+    # Calcul des coordonnées de l'hyperplan
+    x_min, x_max = model_tuple[1][:, 0].min() - 1, model_tuple[1][:, 0].max() + 1
+    y_min, y_max = model_tuple[1][:, 1].min() - 1, model_tuple[1][:, 1].max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
+    Z = svmmodelIris.predict(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
     # Tracé du graphe avec les vecteurs de support et les marges
+    # Plot de l'hyperplan et des marges
+    plt.contourf(xx, yy, Z, alpha=0.8, cmap='viridis')
     plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
     plt.xlabel(getValeurXlabelTest())
     plt.ylabel(getValeurYlabelTest())
     # Créer le canvas pour afficher le graphe
-    canvas_testIris = FigureCanvasTkAgg(fig, master=f_graphetest)
-    canvas_testIris.draw()
-    canvas_testIris.get_tk_widget().pack(side=tk.LEFT)
+    canvas_test = FigureCanvasTkAgg(fig, master=f_graphetest)
+    canvas_test.draw()
+    canvas_test.get_tk_widget().pack(side=tk.LEFT)
 
 
 # Fonction pour tracer le graphe avec les données d'entraînement du iris
-canvas_trainIris = None
+canvas_train = None
 
 
 def tracer_grapheIris_train(kernel, testSize, C, gamma=0):
-    global canvas_trainIris
+    global canvas_train
     # Détruire le canvas s'il existe déjà
-    if canvas_trainIris:
-        canvas_trainIris.get_tk_widget().destroy()
+    if canvas_train:
+        canvas_train.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -530,34 +522,28 @@ def tracer_grapheIris_train(kernel, testSize, C, gamma=0):
     # Création du graphe avec la marge et les vecteurs de support
     fig = plt.figure(figsize=(4, 4))
     # afficher les données
-    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 0], model_tuple[0][:, 1][model_tuple[3] == 0], "yo", label="0:non malade")
     # afficher les données
-    plt.plot(model_tuple[0][:, 0][model_tuple[3] == 1], model_tuple[0][:, 1][model_tuple[3] == 1], "bo", label="1:malade")
-    # Limites du cadre
-    ax = plt.gca()
-    xlim = ax.get_xlim()
-    ylim = ax.get_ylim()
+    plt.scatter(model_tuple[0][:, 0], model_tuple[0][:, 1], c=model_tuple[3], cmap='viridis')
     support_vectors_ = svmmodelIris.support_vectors_()
     # Marquer les vecteurs de support d'une croix
-    ax.scatter(support_vectors_[:, 0], support_vectors_[:, 1], linewidth=1, facecolors='#FFAAAA', s=180)
-    # Grille de points sur lesquels appliquer le modèle
-    xx = np.linspace(xlim[0], xlim[1], 30)
-    yy = np.linspace(ylim[0], ylim[1], 30)
-    YY, XX = np.meshgrid(yy, xx)
-    xy = np.vstack([XX.ravel(), YY.ravel()]).T
-    # Prédire pour les points de la grille
-    Z = svmmodelIris.predict(xy)
-    Z = Z.reshape(XX.shape)
-    # Afficher la frontière de décision et la marge
-    ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
+    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, linewidth=1, facecolors='#FFAAAA',
+                edgecolors='k')
+    # Calcul des coordonnées de l'hyperplan
+    x_min, x_max = model_tuple[0][:, 0].min() - 1, model_tuple[0][:, 0].max() + 1
+    y_min, y_max = model_tuple[0][:, 1].min() - 1, model_tuple[0][:, 1].max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
+    Z = svmmodelIris.predict(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
     # Tracé du graphe avec les vecteurs de support et les marges
+    # Plot de l'hyperplan et des marges
+    plt.contourf(xx, yy, Z, alpha=0.8, cmap='viridis')
     plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
     plt.xlabel(getValeurXlabelTrain())
     plt.ylabel(getValeurYlabelTrain())
     # Créer le canvas pour afficher le graphe
-    canvas_trainIris = FigureCanvasTkAgg(fig, master=f_graphetrain)
-    canvas_trainIris.draw()
-    canvas_trainIris.get_tk_widget().pack(side=tk.LEFT)
+    canvas_train = FigureCanvasTkAgg(fig, master=f_graphetrain)
+    canvas_train.draw()
+    canvas_train.get_tk_widget().pack(side=tk.LEFT)
 
 
 # model diabet
@@ -604,14 +590,13 @@ def testModelSvmDiabets(kernel, testsize, c, gamma=0):
 
 
 # fct pour tracer la matrice de confusion de model des diabets
-canvas_metricsDiabets = None
 
 
 def tracer_matriceConfusionDiabets(kernel, testSize, C, gamma=0):
-    global canvas_metricsDiabets
+    global canvas_metrics
     # Détruire le canvas s'il existe déjà
-    if canvas_metricsDiabets:
-        canvas_metricsDiabets.get_tk_widget().destroy()
+    if canvas_metrics:
+        canvas_metrics.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -623,20 +608,19 @@ def tracer_matriceConfusionDiabets(kernel, testSize, C, gamma=0):
     fig, ax = plt.subplots(figsize=(4, 4))
     cm.plot(ax=ax)
     # Créer un widget Tkinter pour afficher la figure
-    canvas_metricsDiabets = FigureCanvasTkAgg(fig, master=f_graphetest)
-    canvas_metricsDiabets.draw()
-    canvas_metricsDiabets.get_tk_widget().pack(side=tk.RIGHT)
+    canvas_metrics = FigureCanvasTkAgg(fig, master=f_graphetest)
+    canvas_metrics.draw()
+    canvas_metrics.get_tk_widget().pack(side=tk.RIGHT)
 
 
 # Fonction pour tracer le graphe avec les données d'entraînement du diabet
-canvas_testDiabets = None
 
 
 def tracer_grapheDiabets_test(kernel, testSize, C, gamma=0):
-    global canvas_testDiabets
+    global canvas_test
     # Détruire le canvas s'il existe déjà
-    if canvas_testDiabets:
-        canvas_testDiabets.get_tk_widget().destroy()
+    if canvas_test:
+        canvas_test.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -670,20 +654,20 @@ def tracer_grapheDiabets_test(kernel, testSize, C, gamma=0):
     plt.xlabel(getValeurXlabelTest())
     plt.ylabel(getValeurYlabelTest())
     # Créer le canvas pour afficher le graphe
-    canvas_testDiabets = FigureCanvasTkAgg(fig, master=f_graphetest)
-    canvas_testDiabets.draw()
-    canvas_testDiabets.get_tk_widget().pack(side=tk.LEFT)
+    canvas_test = FigureCanvasTkAgg(fig, master=f_graphetest)
+    canvas_test.draw()
+    canvas_test.get_tk_widget().pack(side=tk.LEFT)
 
 
 # Fonction pour tracer le graphe avec les données d'entraînement du diabets
-canvas_trainDiabets = None
+canvas_train = None
 
 
 def tracer_grapheDiabets_train(kernel, testSize, C, gamma=0):
-    global canvas_trainDiabets
+    global canvas_train
     # Détruire le canvas s'il existe déjà
-    if canvas_trainDiabets:
-        canvas_trainDiabets.get_tk_widget().destroy()
+    if canvas_train:
+        canvas_train.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -717,9 +701,9 @@ def tracer_grapheDiabets_train(kernel, testSize, C, gamma=0):
     plt.xlabel(getValeurXlabelTrain())
     plt.ylabel(getValeurYlabelTrain())
     # Créer le canvas pour afficher le graphe
-    canvas_trainDiabets = FigureCanvasTkAgg(fig, master=f_graphetrain)
-    canvas_trainDiabets.draw()
-    canvas_trainDiabets.get_tk_widget().pack(side=tk.LEFT)
+    canvas_train = FigureCanvasTkAgg(fig, master=f_graphetrain)
+    canvas_train.draw()
+    canvas_train.get_tk_widget().pack(side=tk.LEFT)
 
 
 # model maladies cardiaques
@@ -765,14 +749,13 @@ def testModelSvmMaladie(kernel, testsize, c, gamma=0):
 
 
 # fct pour tracer la matrice de confusion de model des maladies cardiaques
-canvas_metricsMaladie = None
 
 
 def tracer_matriceConfusionMaladie(kernel, testSize, C, gamma=0):
-    global canvas_metricsMaladie
+    global canvas_metrics
     # Détruire le canvas s'il existe déjà
-    if canvas_metricsMaladie:
-        canvas_metricsMaladie.get_tk_widget().destroy()
+    if canvas_metrics:
+        canvas_metrics.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -785,20 +768,19 @@ def tracer_matriceConfusionMaladie(kernel, testSize, C, gamma=0):
     fig, ax = plt.subplots(figsize=(4, 4))
     cm.plot(ax=ax)
     # Créer un widget Tkinter pour afficher la figure
-    canvas_metricsMaladie = FigureCanvasTkAgg(fig, master=f_graphetest)
-    canvas_metricsMaladie.draw()
-    canvas_metricsMaladie.get_tk_widget().pack(side=tk.RIGHT)
+    canvas_metrics = FigureCanvasTkAgg(fig, master=f_graphetest)
+    canvas_metrics.draw()
+    canvas_metrics.get_tk_widget().pack(side=tk.RIGHT)
 
 
 # Fonction pour tracer le graphe avec les données d'entraînement du maladie
-canvas_testMaladie = None
 
 
 def tracer_grapheMaladie_test(kernel, testSize, C, gamma=0):
-    global canvas_testMaladie
+    global canvas_test
     # Détruire le canvas s'il existe déjà
-    if canvas_testMaladie:
-        canvas_testMaladie.get_tk_widget().destroy()
+    if canvas_test:
+        canvas_test.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -832,20 +814,19 @@ def tracer_grapheMaladie_test(kernel, testSize, C, gamma=0):
     plt.xlabel(getValeurXlabelTest())
     plt.ylabel(getValeurYlabelTest())
     # Créer le canvas pour afficher le graphe
-    canvas_testMaladie = FigureCanvasTkAgg(fig, master=f_graphetest)
-    canvas_testMaladie.draw()
-    canvas_testMaladie.get_tk_widget().pack(side=tk.LEFT)
+    canvas_test = FigureCanvasTkAgg(fig, master=f_graphetest)
+    canvas_test.draw()
+    canvas_test.get_tk_widget().pack(side=tk.LEFT)
 
 
 # Fonction pour tracer le graphe avec les données d'entraînement du maladie
-canvas_trainMaladie = None
 
 
 def tracer_grapheMaladie_train(kernel, testSize, C, gamma=0):
-    global canvas_trainMaladie
+    global canvas_train
     # Détruire le canvas s'il existe déjà
-    if canvas_trainMaladie:
-        canvas_trainMaladie.get_tk_widget().destroy()
+    if canvas_train:
+        canvas_train.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -879,9 +860,9 @@ def tracer_grapheMaladie_train(kernel, testSize, C, gamma=0):
     plt.xlabel(getValeurXlabelTrain())
     plt.ylabel(getValeurYlabelTrain())
     # Créer le canvas pour afficher le graphe
-    canvas_trainMaladie = FigureCanvasTkAgg(fig, master=f_graphetrain)
-    canvas_trainMaladie.draw()
-    canvas_trainMaladie.get_tk_widget().pack(side=tk.LEFT)
+    canvas_train = FigureCanvasTkAgg(fig, master=f_graphetrain)
+    canvas_train.draw()
+    canvas_train.get_tk_widget().pack(side=tk.LEFT)
 
 
 # model penguin
@@ -936,14 +917,13 @@ def testModelSvmPenguin(kernel, testsize, c, gamma=0):
 
 
 # fct pour afficher la matrice de confusion de model penguin
-canvas_metricsPenguin = None
 
 
 def tracer_matriceConfusionPenguin(kernel, testSize, C, gamma=0):
-    global canvas_metricsPenguin
+    global canvas_metrics
     # Détruire le canvas s'il existe déjà
-    if canvas_metricsPenguin:
-        canvas_metricsPenguin.get_tk_widget().destroy()
+    if canvas_metrics:
+        canvas_metrics.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -956,20 +936,19 @@ def tracer_matriceConfusionPenguin(kernel, testSize, C, gamma=0):
     fig, ax = plt.subplots(figsize=(4, 4))
     cm.plot(ax=ax)
     # Créer un widget Tkinter pour afficher la figure
-    canvas_metricsPenguin = FigureCanvasTkAgg(fig, master=f_graphetest)
-    canvas_metricsPenguin.draw()
-    canvas_metricsPenguin.get_tk_widget().pack(side=tk.RIGHT)
+    canvas_metrics = FigureCanvasTkAgg(fig, master=f_graphetest)
+    canvas_metrics.draw()
+    canvas_metrics.get_tk_widget().pack(side=tk.RIGHT)
 
 
 # Fonction pour tracer le graphe avec les données d'entraînement du penguin
-canvas_testPenguin = None
 
 
 def tracer_graphePenguin_test(kernel, testSize, C, gamma=0):
-    global canvas_testPenguin
+    global canvas_test
     # Détruire le canvas s'il existe déjà
-    if canvas_testPenguin:
-        canvas_testPenguin.get_tk_widget().destroy()
+    if canvas_test:
+        canvas_test.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -1003,20 +982,19 @@ def tracer_graphePenguin_test(kernel, testSize, C, gamma=0):
     plt.xlabel(getValeurXlabelTest())
     plt.ylabel(getValeurYlabelTest())
     # Créer le canvas pour afficher le graphe
-    canvas_testPenguin = FigureCanvasTkAgg(fig, master=f_graphetest)
-    canvas_testPenguin.draw()
-    canvas_testPenguin.get_tk_widget().pack(side=tk.LEFT)
+    canvas_test = FigureCanvasTkAgg(fig, master=f_graphetest)
+    canvas_test.draw()
+    canvas_test.get_tk_widget().pack(side=tk.LEFT)
 
 
 # Fonction pour tracer le graphe avec les données d'entraînement du penguin
-canvas_trainPenguin = None
 
 
 def tracer_graphePenguin_train(kernel, testSize, C, gamma=0):
-    global canvas_trainPenguin
+    global canvas_train
     # Détruire le canvas s'il existe déjà
-    if canvas_trainPenguin:
-        canvas_trainPenguin.get_tk_widget().destroy()
+    if canvas_train:
+        canvas_train.get_tk_widget().destroy()
 
     if getValeurParamKernel() == "rbf":
         gamma = float(getValeurGamma())
@@ -1050,9 +1028,9 @@ def tracer_graphePenguin_train(kernel, testSize, C, gamma=0):
     plt.xlabel(getValeurXlabelTrain())
     plt.ylabel(getValeurYlabelTrain())
     # Créer le canvas pour afficher le graphe
-    canvas_trainPenguin = FigureCanvasTkAgg(fig, master=f_graphetrain)
-    canvas_trainPenguin.draw()
-    canvas_trainPenguin.get_tk_widget().pack(side=tk.LEFT)
+    canvas_train = FigureCanvasTkAgg(fig, master=f_graphetrain)
+    canvas_train.draw()
+    canvas_train.get_tk_widget().pack(side=tk.LEFT)
 
 
 # creation de la fenetre de splash screen
