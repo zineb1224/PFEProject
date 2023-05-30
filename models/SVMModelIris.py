@@ -30,3 +30,6 @@ class SVMModelIris:
 
     def intercept_(self):
         return self.model.intercept_
+
+    def support_(self):
+        return self.model.support_

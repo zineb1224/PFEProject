@@ -481,11 +481,26 @@ def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
     # Afficher les données en fonction de la caractéristique sélectionnée
     feature_index_x = getFeatureIndex(getValeurXlabelTest())
     feature_index_y = getFeatureIndex(getValeurYlabelTest())
-    # afficher les données
+    # Extraction des indices des vecteurs de support
+    support_indices = svmmodelIris.support_()
+    dual_coef = np.abs(svmmodelIris.dual_coef_())
+    # Limiter le nombre de vecteurs de support à afficher
+
+    num_support_vectors = 3  # Nombre souhaité de vecteurs de support à afficher par classe
+    selected_support_vectors = []
+
+    for class_label in np.unique(model_tuple[3]):
+        class_dual_coef = dual_coef[class_label - 1]
+        class_support_indices = support_indices[np.where(model_tuple[3][support_indices] == class_label)]
+        num_vectors = min(num_support_vectors, len(class_support_indices))
+        random_indices = np.random.choice(class_support_indices, num_vectors, replace=False)
+        selected_support_vectors.extend(model_tuple[0][random_indices])
+
+    selected_support_vectors = np.array(selected_support_vectors)
+
     plt.scatter(model_tuple[1][:, 0], model_tuple[1][:, 1], c=model_tuple[4], cmap='viridis')
-    support_vectors_ = svmmodelIris.support_vectors_()
     # Marquer les vecteurs de support d'une croix
-    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, linewidth=1, facecolors='#FFAAAA',  edgecolors='k')
+    plt.scatter(selected_support_vectors[:, 0], selected_support_vectors[:, 1], s=100, linewidth=1, facecolors='#FFAAAA',  edgecolors='k')
     # Calcul des coordonnées de l'hyperplan
     x_min, x_max = model_tuple[1][:, 0].min() - 1, model_tuple[1][:, 0].max() + 1
     y_min, y_max = model_tuple[1][:, 1].min() - 1, model_tuple[1][:, 1].max() + 1
@@ -495,7 +510,7 @@ def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
     # Tracé du graphe avec les vecteurs de support et les marges
     # Plot de l'hyperplan et des marges
     plt.contourf(xx, yy, Z, alpha=0.8, cmap='viridis')
-    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+    plt.scatter(selected_support_vectors[:, 0], selected_support_vectors[:, 1], s=100, facecolors='none', edgecolors='k')
     plt.xlabel(getValeurXlabelTest())
     plt.ylabel(getValeurYlabelTest())
     # Créer le canvas pour afficher le graphe
@@ -521,12 +536,26 @@ def tracer_grapheIris_train(kernel, testSize, C, gamma=0):
     svmmodelIris = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
     fig = plt.figure(figsize=(4, 4))
-    # afficher les données
+    # Extraction des indices des vecteurs de support
+    support_indices = svmmodelIris.support_()
+    dual_coef = np.abs(svmmodelIris.dual_coef_())
+    # Limiter le nombre de vecteurs de support à afficher
+
+    num_support_vectors = 4  # Nombre souhaité de vecteurs de support à afficher par classe
+    selected_support_vectors = []
+
+    for class_label in np.unique(model_tuple[3]):
+        class_dual_coef = dual_coef[class_label - 1]
+        class_support_indices = support_indices[np.where(model_tuple[3][support_indices] == class_label)]
+        num_vectors = min(num_support_vectors, len(class_support_indices))
+        random_indices = np.random.choice(class_support_indices, num_vectors, replace=False)
+        selected_support_vectors.extend(model_tuple[0][random_indices])
+
+    selected_support_vectors = np.array(selected_support_vectors)
     # afficher les données
     plt.scatter(model_tuple[0][:, 0], model_tuple[0][:, 1], c=model_tuple[3], cmap='viridis')
-    support_vectors_ = svmmodelIris.support_vectors_()
     # Marquer les vecteurs de support d'une croix
-    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, linewidth=1, facecolors='#FFAAAA',
+    plt.scatter(selected_support_vectors[:, 0], selected_support_vectors[:, 1], s=100, linewidth=1, facecolors='#FFAAAA',
                 edgecolors='k')
     # Calcul des coordonnées de l'hyperplan
     x_min, x_max = model_tuple[0][:, 0].min() - 1, model_tuple[0][:, 0].max() + 1
@@ -537,7 +566,7 @@ def tracer_grapheIris_train(kernel, testSize, C, gamma=0):
     # Tracé du graphe avec les vecteurs de support et les marges
     # Plot de l'hyperplan et des marges
     plt.contourf(xx, yy, Z, alpha=0.8, cmap='viridis')
-    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+    plt.scatter(selected_support_vectors[:, 0], selected_support_vectors[:, 1], s=100, facecolors='none', edgecolors='k')
     plt.xlabel(getValeurXlabelTrain())
     plt.ylabel(getValeurYlabelTrain())
     # Créer le canvas pour afficher le graphe
