@@ -1,29 +1,14 @@
 import tkinter as tk
-from tkinter import ttk
+from ttkbootstrap import Style
+from ttkbootstrap.widgets import Combobox
 
 root = tk.Tk()
 
-combostyle = ttk.Style()
+style = Style(theme='flatly')
 
-combostyle.theme_create('combostyle', parent='alt',
-                         settings = {'TCombobox':
-                                     {'configure':
-                                      {'selectbackground': 'blue',
-                                       'fieldbackground': 'red',
-                                       'background': 'green'
-                                       }}}
-                         )
-# ATTENTION: this applies the new style 'combostyle' to all ttk.Combobox
-combostyle.theme_use('combostyle')
-
-# show the current styles
-# print(combostyle.theme_names())
-
-combo = ttk.Combobox(root, values=['1', '2', '3'])
-combo['state'] = 'readonly'
-combo.pack()
-
-entry = tk.Entry(root)
-entry.pack()
+combo_box = Combobox(root, values=['Option 1', 'Option 2', 'Option 3'], font=('Helvetica', 12), width=35)
+combo_box.theme_use('custom')
+combo_box.configure(style='primary', background='red')
+combo_box.pack(padx=10, pady=5, ipady=2)
 
 root.mainloop()

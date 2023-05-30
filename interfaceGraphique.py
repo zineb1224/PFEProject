@@ -13,6 +13,7 @@ from sklearn.datasets import load_iris
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, f1_score
 from sklearn.model_selection import train_test_split
+from ttkthemes.themed_style import ThemedStyle
 
 from models.SVMModelIris import SVMModelIris, import_dataIris
 from models.SVMModelPenguin import SVMModelPenguin, import_dataPenguin
@@ -102,7 +103,7 @@ def afficher_description():
         donnees_treeview["columns"] = column_headings
         for i, heading in enumerate(column_headings):
             donnees_treeview.heading(i, text=heading)
-            donnees_treeview.column(i, width=220)  # Définir la largeur de la colonne
+            donnees_treeview.column(i, width=220)# Définir la largeur de la colonne
 
         # Calculer les statistiques descriptives
         stats = df.describe()
@@ -264,6 +265,7 @@ def show_entryGamma():
 def hide_entryGamma():
     paramGamma.pack_forget()
     paraGamma.pack_forget()
+
 
 
 # fct pour verifier que les inputs sont bien remplis et rendre le boutton de train et de test normal
@@ -1121,13 +1123,13 @@ notebook.add(ongletPrincipale, text='Onglet Principale')
 
 
 # creation des frames
-f_description = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
+f_description = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1200, height=70)
 f_parametre = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=420, height=760)
-f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1230, height=760)
+f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1240, height=760)
 f_desc = tk.LabelFrame(f_parametre, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=200)
 f_descriptionDataset = tk.LabelFrame(f_desc, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
-f3_btn_train = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=400, height=720)
-f3_btn_test = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=790, height=720)
+f3_btn_train = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=420, height=720)
+f3_btn_test = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=800, height=720)
 f4_grp = tk.LabelFrame(f3_btn_test, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_graphetrain = tk.LabelFrame(f3_btn_train, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_graphetest = tk.LabelFrame(f4_grp, bd=0, text="", bg="#26333A", highlightthickness=0)
@@ -1168,6 +1170,7 @@ f_accuracyTrain.pack(side=tk.TOP)
 f_scoreTrain.pack(side=tk.BOTTOM)
 
 # Fixer la taille du cadre
+f_description.pack_propagate(0)
 f_parametre.pack_propagate(0)
 f_model.pack_propagate(0)
 f3_btn_train.pack_propagate(0)
@@ -1187,8 +1190,7 @@ donnees_treeview = ttk.Treeview(ongletDescription, show="headings", height=10)
 # Modifier l'arrière-plan du TreeView
 donnees_treeview.configure(style='Custom.Treeview')
 # Appliquer le style personnalisé au TreeView
-donnees_treeview.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF", font=("Arial", 12))
-
+donnees_treeview.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF", font=("Arial", 13))
 # Ajouter le Treeview dans l'onglet 2
 donnees_treeview.pack(padx=20, pady=20)
 
@@ -1201,8 +1203,10 @@ tree = ttk.Treeview(frame_statistique, show="headings", height=8)
 # Modifier l'arrière-plan du TreeView
 tree.configure(style='Custom.Treeview')
 # Appliquer le style personnalisé au TreeView
-tree.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF", font=("Arial", 12))
+tree.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF", font=("Arial", 13))
 tree.pack()
+
+
 
 # L'onglet 2 est initialisé masqué
 notebook.hide(ongletDescription)
@@ -1212,7 +1216,9 @@ notebook.pack(expand=True, fill="both")
 
 
 # creations des composants de frame des parametres
-descrProjetlabel = tk.Label(f_description, text="Notre interface graphique consiste à implémenter un model SVM pour des differentes datasets", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 14, "bold"))
+descrProjetlabel = tk.Label(f_description, text="Notre interface graphique consiste à implémenter des models SVM pour des differentes datasets, "
+                                                "ainsi elle fournit desd ivers fonctionnalités à l'utilisitateur pour facilité l'implementation "
+                                                "des modèles et la visualisation claire des données", fg="#d9d9d9", bg=bg_color_frame, wraplength=1100, font=("Helvetica", 14, "bold"))
 descrProjetlabel.pack(padx=50, pady=10)
 
 # Charger l'image et la convertir pour Tkinter
@@ -1227,23 +1233,12 @@ datalabel = tk.Label(f_desc, text="Choisir un dataset : ", fg="#d9d9d9", bg=bg_c
 datalabel.pack(padx=50, pady=10)
 
 
-# Créer un style avec un thème personnalisé
-combostyle = ttk.Style()
-
-combostyle.theme_create('combostyle', parent='alt',
-                         settings = {'TCombobox':
-                                     {'configure':
-                                      {'selectbackground': 'blue',
-                                       'fieldbackground': 'red',
-                                       'background': 'green'
-                                       }}}
-                         )
-# ATTENTION: this applies the new style 'combostyle' to all ttk.Combobox
-combostyle.theme_use('combostyle')
+style = ttk.Style()
+style.map("Custom.TCombobox", fieldbackground=[('readonly', 'red')])
 
 # Créer une liste déroulante
 datasets = ["Dataset Maladies Cardiaques", "Dataset Penguin", "Dataset Iris", "Dataset Diabets"]
-combo_box = Combobox(f_desc, values=datasets, font=("Helvetica", 12), width=35)
+combo_box = ttk.Combobox(f_desc, values=datasets, font=("Helvetica", 12), width=35, style="Custom.TCombobox")
 # Appliquer le style personnalisé au Combobox
 combo_box.state(["readonly"])
 combo_box.pack(padx=10, pady=5, ipady=2)
@@ -1252,8 +1247,8 @@ description = tk.Label(f_desc, text="Description : ", fg="#d9d9d9", bg=bg_color_
 description.pack(padx=10, pady=5)
 
 # Création du Label pour afficher la valeur sélectionnée
-descriptiontxt = tk.Label(f_descriptionDataset, text=" ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 11), wraplength=360, justify="left")
-descriptiontxt.pack(side=tk.TOP, padx=2, pady=5)
+descriptiontxt = tk.Label(f_descriptionDataset, text=" ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 12), wraplength=360, justify="left")
+descriptiontxt.pack(side=tk.TOP, padx=2, pady=2)
 
 # Création du bouton pour afficher plus de details
 bouton_onglet1 = Button(f_descriptionDataset, height=2, width=20, font=('Helvetica', 13, "bold"), fg='#FFFFFF', bg='#76B8E0', text="Voir plus de description", bd=0, command=afficher_description)
