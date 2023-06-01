@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-from tkinter.ttk import Combobox, Style
+from tkinter.ttk import Combobox
 
 from PIL import Image, ImageTk
 import matplotlib.pyplot as plt
@@ -13,7 +13,6 @@ from sklearn.datasets import load_iris
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, f1_score
 from sklearn.model_selection import train_test_split
-from ttkthemes.themed_style import ThemedStyle
 
 from models.SVMModelIris import SVMModelIris, import_dataIris
 from models.SVMModelPenguin import SVMModelPenguin, import_dataPenguin
@@ -75,7 +74,8 @@ def getValeurYlabelTest():
     return val
 
 
-# fct pour afficher la description des differentes datasets (treeview pour affihcer 10 lignes aleatoire de dataset et un treeview pour afficher les statistiques )
+# fct pour afficher la description des differentes datasets (treeview pour affihcer 10 lignes aleatoire de dataset et
+# un treeview pour afficher les statistiques )
 def afficher_description():
     # Obtenir l'option sélectionnée dans le combobox
     option = combo_box.get()
@@ -103,7 +103,7 @@ def afficher_description():
         donnees_treeview["columns"] = column_headings
         for i, heading in enumerate(column_headings):
             donnees_treeview.heading(i, text=heading)
-            donnees_treeview.column(i, width=220)# Définir la largeur de la colonne
+            donnees_treeview.column(i, width=220)  # Définir la largeur de la colonne
 
         # Calculer les statistiques descriptives
         stats = df.describe()
@@ -265,7 +265,6 @@ def show_entryGamma():
 def hide_entryGamma():
     paramGamma.pack_forget()
     paraGamma.pack_forget()
-
 
 
 # fct pour verifier que les inputs sont bien remplis et rendre le boutton de train et de test normal
@@ -540,14 +539,12 @@ def tracer_grapheIris_train(kernel, testSize, C, gamma=0):
     fig = plt.figure(figsize=(4, 4))
     # Extraction des indices des vecteurs de support
     support_indices = svmmodelIris.support_()
-    dual_coef = np.abs(svmmodelIris.dual_coef_())
     # Limiter le nombre de vecteurs de support à afficher
 
     num_support_vectors = 4  # Nombre souhaité de vecteurs de support à afficher par classe
     selected_support_vectors = []
 
     for class_label in np.unique(model_tuple[3]):
-        class_dual_coef = dual_coef[class_label - 1]
         class_support_indices = support_indices[np.where(model_tuple[3][support_indices] == class_label)]
         num_vectors = min(num_support_vectors, len(class_support_indices))
         random_indices = np.random.choice(class_support_indices, num_vectors, replace=False)
@@ -1207,7 +1204,6 @@ tree.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FF
 tree.pack()
 
 
-
 # L'onglet 2 est initialisé masqué
 notebook.hide(ongletDescription)
 
@@ -1277,10 +1273,6 @@ paramKernel.state(["readonly"])
 paraGamma = tk.Label(f_parametre, text="Parametre Gamma: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
 
 paramGamma = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
-
-
-# Charger l'image et la convertir pour Tkinter
-# icon_training = PhotoImage(file=r"imgs/training_80px.gif")
 
 # creation de boutton pour entrainer le modele
 btnTraining = Button(f3_btn_train, height=3, width=20, text="Entrainer", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', bd=0, command=fitModel, state="disabled")
