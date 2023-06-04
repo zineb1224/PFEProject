@@ -1254,13 +1254,15 @@ paraGamma = tk.Label(f_parametre, text="Parametre Gamma: ", fg="#d9d9d9", bg=bg_
 
 paramGamma = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
 
-
 # Charger l'image et la convertir pour Tkinter
 # icon_training = PhotoImage(file=r"imgs/training_80px.gif")
+image = Image.open("imgs/16x16.png")
+icone = ImageTk.PhotoImage(image)
 
 # creation de boutton pour entrainer le modele
-btnTraining = Button(f3_btn_train, height=3, width=20, text="Entrainer", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', bd=0, command=fitModel, state="disabled")
+btnTraining = Button(f3_btn_train, height=3, width=20, text="Entrainer", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', bd=0, command=fitModel, state="disabled",image=icone)
 btnTraining.pack(padx=20, pady=10, side=tk.TOP)
+btnTraining.config(image=icone)  # Afficher l'icône sur le bouton
 
 # creation de boutton pour tester le modele
 btnTesting = tk.Button(f3_btn_test, height=3, width=20, text="Tester", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#E87F39', bd=0, command=tracerGraphe, state="disabled")
