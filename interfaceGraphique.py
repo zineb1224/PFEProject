@@ -1095,7 +1095,7 @@ splash_canvas.pack()
 # icon_training = Image.open("imgs/training_80px.gif")
 # icn_training = ImageTk.PhotoImage(icon_training)
 # Charger l'image et la convertir pour Tkinter
-image = Image.open("imgs/splashScreen.png")
+image = Image.open("imgs/logo.png")
 largeur = 950
 hauteur = 780
 image_redimensionnee = image.resize((largeur, hauteur))
@@ -1296,11 +1296,11 @@ paraGamma = tk.Label(f_parametre, text="Parametre Gamma: ", fg="#d9d9d9", bg=bg_
 paramGamma = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
 
 # creation de boutton pour entrainer le modele
-btnTraining = Button(f3_btn_train, height=3, width=20, text="Entrainer", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', bd=0, command=fitModel, state="disabled")
+btnTraining = Button(f3_btn_train, height=3, width=20, text="Entrainer", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#9ED8FA', bd=0, command=fitModel, state="disabled")
 btnTraining.pack(padx=20, pady=10, side=tk.TOP)
 
-# creation de boutton pour tester le modele
-btnTesting = tk.Button(f3_btn_test, height=3, width=20, text="Tester", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#E87F39', bd=0, command=tracerGraphe, state="disabled")
+# creation de boutton pour tester le modele   E87F39
+btnTesting = tk.Button(f3_btn_test, height=3, width=20, text="Tester", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#FA98D4', bd=0, command=tracerGraphe, state="disabled")
 btnTesting.pack(padx=20, pady=10, side=tk.TOP)
 
 accuracyLbl = tk.Label(f_accuracy, text="Accuracy : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
