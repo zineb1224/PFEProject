@@ -11,7 +11,7 @@ import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from sklearn.datasets import load_iris
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, f1_score
+from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, f1_score, precision_score
 from sklearn.model_selection import train_test_split
 
 from models.SVMModelIris import SVMModelIris, import_dataIris
@@ -407,8 +407,10 @@ def trainModelSVMIris(kernel, testsize, c, gamma=0):
     # Évaluer les performances du modèle
     accuracy = accuracy_score(targetIris_train, iris_pred)
     f1 = f1_score(targetIris_train, iris_pred, average='weighted')
+    precision = precision_score(targetIris_train, iris_pred, average='weighted')
     accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
+    precisionLabeltrain.configure(text=str("{:.3f}".format(precision)))
     return featuresIris_train, featuresIris_test, svmModelIris, targetIris_train, targetIris_test
 
 
@@ -422,9 +424,11 @@ def testModelSvmIris(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetIris_test, iris_pred)
     # Calcul du score F1
     f1 = f1_score(targetIris_test, iris_pred, average='weighted')
+    precision = precision_score(targetIris_test, iris_pred, average='weighted')
     # Affichage du score F1 et accuracy dans les labels
     accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabel.configure(text=str("{:.3f}".format(f1)))
+    precisionLabel.configure(text=str("{:.3f}".format(precision)))
 
 
 # fct pour tracer la matrice de confusion de model des maladies cardiaques
@@ -444,7 +448,7 @@ def tracer_matriceConfusionIris(kernel, testSize, C, gamma=0):
     svmmodelIris = model_tuple[2]
     cm = ConfusionMatrixDisplay.from_predictions(model_tuple[4], svmmodelIris.predict(model_tuple[1]))
     # Obtenir la figure de la matrice de confusion
-    fig, ax = plt.subplots(figsize=(4, 4))
+    fig, ax = plt.subplots(figsize=(3.6, 3.6))
     cm.plot(ax=ax)
     # Créer un widget Tkinter pour afficher la figure
     canvas_metrics = FigureCanvasTkAgg(fig, master=f_graphetest)
@@ -478,7 +482,7 @@ def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
     model_tuple = trainModelSVMIris(kernel, testSize, C, gamma)
     svmmodelIris = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
-    fig = plt.figure(figsize=(4, 4))
+    fig = plt.figure(figsize=(3.6, 3.6))
     # Afficher les données en fonction de la caractéristique sélectionnée
     feature_index_x = getFeatureIndex(getValeurXlabelTest())
     feature_index_y = getFeatureIndex(getValeurYlabelTest())
@@ -536,7 +540,7 @@ def tracer_grapheIris_train(kernel, testSize, C, gamma=0):
     model_tuple = trainModelSVMIris(kernel, testSize, C, gamma)
     svmmodelIris = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
-    fig = plt.figure(figsize=(4, 4))
+    fig = plt.figure(figsize=(3.6, 3.6))
     # Extraction des indices des vecteurs de support
     support_indices = svmmodelIris.support_()
     # Limiter le nombre de vecteurs de support à afficher
@@ -596,9 +600,12 @@ def trainModelSVMDiabets(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetDiabets_test, diabet_pred)
     # Calcul du score F1
     f1 = f1_score(targetDiabets_test, diabet_pred)
+    # calcul de precision
+    precision = precision_score(targetDiabets_test, diabet_pred)
     # Affichage du score F1 et accuracy dans les labels
     accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
+    precisionLabeltrain.configure(text=str("{:.3f}".format(precision)))
     return featuresDiabets_train, featuresDiabets_test, svmModelDiabets, targetDiabets_train, targetDiabets_test
 
 
@@ -612,9 +619,11 @@ def testModelSvmDiabets(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetDiabets_test, diabet_pred)
     # Calcul du score F1
     f1 = f1_score(targetDiabets_test, diabet_pred)
+    precision = precision_score(targetDiabets_test, diabet_pred)
     # Affichage du score F1 et accuracy dans les labels
     accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabel.configure(text=str("{:.3f}".format(f1)))
+    precisionLabel.configure(text=str("{:.3f}".format(precision)))
 
 
 # fct pour tracer la matrice de confusion de model des diabets
@@ -755,9 +764,11 @@ def trainModelSVMMaladie(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetMaladie_test, maladie_pred)
     # Calcul du score F1
     f1 = f1_score(targetMaladie_test, maladie_pred)
+    precision = precision_score(targetMaladie_test, maladie_pred)
     # Affichage du score F1 et accuracy dans les labels
     accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
+    precisionLabeltrain.configure(text=str("{:.3f}".format(precision)))
     return featuresMaladie_train, featuresMaladie_test, svmmodelMaladieCardiaque, targetMaladie_train, targetMaladie_test
 
 
@@ -771,9 +782,11 @@ def testModelSvmMaladie(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetMaladie_test, maladie_pred)
     # Calcul du score F1
     f1 = f1_score(targetMaladie_test, maladie_pred)
+    precision = precision_score(targetMaladie_test, maladie_pred)
     # Affichage du score F1 et accuracy dans les labels
     accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabel.configure(text=str("{:.3f}".format(f1)))
+    precisionLabel.configure(text=str("{:.3f}".format(precision)))
 
 
 # fct pour tracer la matrice de confusion de model des maladies cardiaques
@@ -923,9 +936,11 @@ def trainModelSVMPenguin(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetPenguin_test, penguin_pred)
     # Calcul du score F1
     f1 = f1_score(targetPenguin_test, penguin_pred, pos_label=0)
+    precision = precision_score(targetPenguin_test, penguin_pred, pos_label=0)
     # Affichage du score F1 et accuracy
     accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
+    precisionLabeltrain.configure(text=str("{:.3f}".format(precision)))
     return featuresPenguin_train, featuresPenguin_test, svmmodelPenguin, targetPenguin_train, targetPenguin_test
 
 
@@ -939,9 +954,11 @@ def testModelSvmPenguin(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetPenguin_test, penguin_pred)
     # Calcul du score F1
     f1 = f1_score(targetPenguin_test, penguin_pred, pos_label=0)
+    precision = precision_score(targetPenguin_test, penguin_pred, pos_label=0)
     # Affichage du score F1 et accuracy
     accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabel.configure(text=str("{:.3f}".format(f1)))
+    precisionLabel.configure(text=str("{:.3f}".format(precision)))
 
 
 # fct pour afficher la matrice de confusion de model penguin
@@ -1133,9 +1150,11 @@ f_graphetest = tk.LabelFrame(f4_grp, bd=0, text="", bg="#26333A", highlightthick
 f_labelsTest = tk.LabelFrame(f3_btn_test, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_accuracy = tk.LabelFrame(f_labelsTest, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_score = tk.LabelFrame(f_labelsTest, bd=0, text="", bg="#26333A", highlightthickness=0)
+f_precision = tk.LabelFrame(f_labelsTest, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_labelsTrain = tk.LabelFrame(f3_btn_train, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_accuracyTrain = tk.LabelFrame(f_labelsTrain, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_scoreTrain = tk.LabelFrame(f_labelsTrain, bd=0, text="", bg="#26333A", highlightthickness=0)
+f_precisionTrain = tk.LabelFrame(f_labelsTrain, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_comboboxTrain = tk.LabelFrame(f3_btn_train, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_comboboxTest = tk.LabelFrame(f3_btn_test, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_comboboxTrainL1 = tk.LabelFrame(f_comboboxTrain, bd=0, text="", bg="#26333A", highlightthickness=0)
@@ -1162,9 +1181,11 @@ f_comboboxTestL2.pack(side=tk.BOTTOM)
 f_labelsTest.place(x=98, y=210)
 f_accuracy.pack(side=tk.TOP)
 f_score.pack(side=tk.BOTTOM)
+f_precision.pack(side=tk.BOTTOM)
 f_labelsTrain.place(x=8, y=210)
 f_accuracyTrain.pack(side=tk.TOP)
 f_scoreTrain.pack(side=tk.BOTTOM)
+f_precisionTrain.pack(side=tk.BOTTOM)
 
 # Fixer la taille du cadre
 f_description.pack_propagate(0)
@@ -1292,6 +1313,10 @@ scoref1Lbl.pack(padx=30, pady=10, side=tk.LEFT)
 scoreLabel = tk.Label(f_score, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
 scoreLabel.pack(padx=50, pady=10, side=tk.RIGHT)
 
+precisionLbl = tk.Label(f_precision, text="Precision : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+precisionLbl.pack(padx=30, pady=10, side=tk.LEFT)
+precisionLabel = tk.Label(f_precision, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+precisionLabel.pack(padx=50, pady=10, side=tk.RIGHT)
 
 accuracyLbltrain = tk.Label(f_accuracyTrain, text="Accuracy : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
 accuracyLbltrain.pack(padx=10, pady=10, side=tk.LEFT)
@@ -1303,6 +1328,10 @@ scoref1Lbltrain.pack(padx=10, pady=10, side=tk.LEFT)
 scoreLabeltrain = tk.Label(f_scoreTrain, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
 scoreLabeltrain.pack(padx=10, pady=10, side=tk.RIGHT)
 
+precisionLbltrain = tk.Label(f_precisionTrain, text="Precision : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+precisionLbltrain.pack(padx=10, pady=10, side=tk.LEFT)
+precisionLabeltrain = tk.Label(f_precisionTrain, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+precisionLabeltrain.pack(padx=10, pady=10, side=tk.RIGHT)
 
 paramXlabelTrain = tk.Label(f_comboboxTrainL1, text="X label : ", fg="#d9d9d9", bg="#26333A", font=("Helvetica", 13, "bold"))
 paramXlabelTrain.pack(padx=20, pady=10, side=tk.LEFT)
