@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-from tkinter.ttk import Combobox, Style
+from tkinter.ttk import Combobox
 
 from PIL import Image, ImageTk
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from sklearn.datasets import load_iris
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, f1_score
+from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, f1_score, precision_score
 from sklearn.model_selection import train_test_split
 
 from models.SVMModelIris import SVMModelIris, import_dataIris
@@ -74,7 +74,8 @@ def getValeurYlabelTest():
     return val
 
 
-# fct pour afficher la description des differentes datasets (treeview pour affihcer 10 lignes aleatoire de dataset et un treeview pour afficher les statistiques )
+# fct pour afficher la description des differentes datasets (treeview pour affihcer 10 lignes aleatoire de dataset et
+# un treeview pour afficher les statistiques )
 def afficher_description():
     # Obtenir l'option sélectionnée dans le combobox
     option = combo_box.get()
@@ -406,8 +407,10 @@ def trainModelSVMIris(kernel, testsize, c, gamma=0):
     # Évaluer les performances du modèle
     accuracy = accuracy_score(targetIris_train, iris_pred)
     f1 = f1_score(targetIris_train, iris_pred, average='weighted')
+    precision = precision_score(targetIris_train, iris_pred, average='weighted')
     accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
+    precisionLabeltrain.configure(text=str("{:.3f}".format(precision)))
     return featuresIris_train, featuresIris_test, svmModelIris, targetIris_train, targetIris_test
 
 
@@ -421,9 +424,11 @@ def testModelSvmIris(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetIris_test, iris_pred)
     # Calcul du score F1
     f1 = f1_score(targetIris_test, iris_pred, average='weighted')
+    precision = precision_score(targetIris_test, iris_pred, average='weighted')
     # Affichage du score F1 et accuracy dans les labels
     accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabel.configure(text=str("{:.3f}".format(f1)))
+    precisionLabel.configure(text=str("{:.3f}".format(precision)))
 
 
 # fct pour tracer la matrice de confusion de model des maladies cardiaques
@@ -443,7 +448,7 @@ def tracer_matriceConfusionIris(kernel, testSize, C, gamma=0):
     svmmodelIris = model_tuple[2]
     cm = ConfusionMatrixDisplay.from_predictions(model_tuple[4], svmmodelIris.predict(model_tuple[1]))
     # Obtenir la figure de la matrice de confusion
-    fig, ax = plt.subplots(figsize=(4, 4))
+    fig, ax = plt.subplots(figsize=(3.6, 3.6))
     cm.plot(ax=ax)
     # Créer un widget Tkinter pour afficher la figure
     canvas_metrics = FigureCanvasTkAgg(fig, master=f_graphetest)
@@ -477,15 +482,30 @@ def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
     model_tuple = trainModelSVMIris(kernel, testSize, C, gamma)
     svmmodelIris = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
-    fig = plt.figure(figsize=(4, 4))
+    fig = plt.figure(figsize=(3.6, 3.6))
     # Afficher les données en fonction de la caractéristique sélectionnée
     feature_index_x = getFeatureIndex(getValeurXlabelTest())
     feature_index_y = getFeatureIndex(getValeurYlabelTest())
-    # afficher les données
+    # Extraction des indices des vecteurs de support
+    support_indices = svmmodelIris.support_()
+    dual_coef = np.abs(svmmodelIris.dual_coef_())
+    # Limiter le nombre de vecteurs de support à afficher
+
+    num_support_vectors = 3  # Nombre souhaité de vecteurs de support à afficher par classe
+    selected_support_vectors = []
+
+    for class_label in np.unique(model_tuple[3]):
+        class_dual_coef = dual_coef[class_label - 1]
+        class_support_indices = support_indices[np.where(model_tuple[3][support_indices] == class_label)]
+        num_vectors = min(num_support_vectors, len(class_support_indices))
+        random_indices = np.random.choice(class_support_indices, num_vectors, replace=False)
+        selected_support_vectors.extend(model_tuple[0][random_indices])
+
+    selected_support_vectors = np.array(selected_support_vectors)
+
     plt.scatter(model_tuple[1][:, 0], model_tuple[1][:, 1], c=model_tuple[4], cmap='viridis')
-    support_vectors_ = svmmodelIris.support_vectors_()
     # Marquer les vecteurs de support d'une croix
-    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, linewidth=1, facecolors='#FFAAAA',  edgecolors='k')
+    plt.scatter(selected_support_vectors[:, 0], selected_support_vectors[:, 1], s=100, linewidth=1, facecolors='#FFAAAA',  edgecolors='k')
     # Calcul des coordonnées de l'hyperplan
     x_min, x_max = model_tuple[1][:, 0].min() - 1, model_tuple[1][:, 0].max() + 1
     y_min, y_max = model_tuple[1][:, 1].min() - 1, model_tuple[1][:, 1].max() + 1
@@ -495,7 +515,7 @@ def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
     # Tracé du graphe avec les vecteurs de support et les marges
     # Plot de l'hyperplan et des marges
     plt.contourf(xx, yy, Z, alpha=0.8, cmap='viridis')
-    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+    plt.scatter(selected_support_vectors[:, 0], selected_support_vectors[:, 1], s=100, facecolors='none', edgecolors='k')
     plt.xlabel(getValeurXlabelTest())
     plt.ylabel(getValeurYlabelTest())
     # Créer le canvas pour afficher le graphe
@@ -520,13 +540,25 @@ def tracer_grapheIris_train(kernel, testSize, C, gamma=0):
     model_tuple = trainModelSVMIris(kernel, testSize, C, gamma)
     svmmodelIris = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
-    fig = plt.figure(figsize=(4, 4))
-    # afficher les données
+    fig = plt.figure(figsize=(3.6, 3.6))
+    # Extraction des indices des vecteurs de support
+    support_indices = svmmodelIris.support_()
+    # Limiter le nombre de vecteurs de support à afficher
+
+    num_support_vectors = 4  # Nombre souhaité de vecteurs de support à afficher par classe
+    selected_support_vectors = []
+
+    for class_label in np.unique(model_tuple[3]):
+        class_support_indices = support_indices[np.where(model_tuple[3][support_indices] == class_label)]
+        num_vectors = min(num_support_vectors, len(class_support_indices))
+        random_indices = np.random.choice(class_support_indices, num_vectors, replace=False)
+        selected_support_vectors.extend(model_tuple[0][random_indices])
+
+    selected_support_vectors = np.array(selected_support_vectors)
     # afficher les données
     plt.scatter(model_tuple[0][:, 0], model_tuple[0][:, 1], c=model_tuple[3], cmap='viridis')
-    support_vectors_ = svmmodelIris.support_vectors_()
     # Marquer les vecteurs de support d'une croix
-    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, linewidth=1, facecolors='#FFAAAA',
+    plt.scatter(selected_support_vectors[:, 0], selected_support_vectors[:, 1], s=100, linewidth=1, facecolors='#FFAAAA',
                 edgecolors='k')
     # Calcul des coordonnées de l'hyperplan
     x_min, x_max = model_tuple[0][:, 0].min() - 1, model_tuple[0][:, 0].max() + 1
@@ -537,7 +569,7 @@ def tracer_grapheIris_train(kernel, testSize, C, gamma=0):
     # Tracé du graphe avec les vecteurs de support et les marges
     # Plot de l'hyperplan et des marges
     plt.contourf(xx, yy, Z, alpha=0.8, cmap='viridis')
-    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+    plt.scatter(selected_support_vectors[:, 0], selected_support_vectors[:, 1], s=100, facecolors='none', edgecolors='k')
     plt.xlabel(getValeurXlabelTrain())
     plt.ylabel(getValeurYlabelTrain())
     # Créer le canvas pour afficher le graphe
@@ -568,9 +600,12 @@ def trainModelSVMDiabets(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetDiabets_test, diabet_pred)
     # Calcul du score F1
     f1 = f1_score(targetDiabets_test, diabet_pred)
+    # calcul de precision
+    precision = precision_score(targetDiabets_test, diabet_pred)
     # Affichage du score F1 et accuracy dans les labels
     accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
+    precisionLabeltrain.configure(text=str("{:.3f}".format(precision)))
     return featuresDiabets_train, featuresDiabets_test, svmModelDiabets, targetDiabets_train, targetDiabets_test
 
 
@@ -584,9 +619,11 @@ def testModelSvmDiabets(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetDiabets_test, diabet_pred)
     # Calcul du score F1
     f1 = f1_score(targetDiabets_test, diabet_pred)
+    precision = precision_score(targetDiabets_test, diabet_pred)
     # Affichage du score F1 et accuracy dans les labels
     accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabel.configure(text=str("{:.3f}".format(f1)))
+    precisionLabel.configure(text=str("{:.3f}".format(precision)))
 
 
 # fct pour tracer la matrice de confusion de model des diabets
@@ -727,9 +764,11 @@ def trainModelSVMMaladie(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetMaladie_test, maladie_pred)
     # Calcul du score F1
     f1 = f1_score(targetMaladie_test, maladie_pred)
+    precision = precision_score(targetMaladie_test, maladie_pred)
     # Affichage du score F1 et accuracy dans les labels
     accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
+    precisionLabeltrain.configure(text=str("{:.3f}".format(precision)))
     return featuresMaladie_train, featuresMaladie_test, svmmodelMaladieCardiaque, targetMaladie_train, targetMaladie_test
 
 
@@ -743,9 +782,11 @@ def testModelSvmMaladie(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetMaladie_test, maladie_pred)
     # Calcul du score F1
     f1 = f1_score(targetMaladie_test, maladie_pred)
+    precision = precision_score(targetMaladie_test, maladie_pred)
     # Affichage du score F1 et accuracy dans les labels
     accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabel.configure(text=str("{:.3f}".format(f1)))
+    precisionLabel.configure(text=str("{:.3f}".format(precision)))
 
 
 # fct pour tracer la matrice de confusion de model des maladies cardiaques
@@ -895,9 +936,11 @@ def trainModelSVMPenguin(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetPenguin_test, penguin_pred)
     # Calcul du score F1
     f1 = f1_score(targetPenguin_test, penguin_pred, pos_label=0)
+    precision = precision_score(targetPenguin_test, penguin_pred, pos_label=0)
     # Affichage du score F1 et accuracy
     accuracyLabeltrain.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabeltrain.configure(text=str("{:.3f}".format(f1)))
+    precisionLabeltrain.configure(text=str("{:.3f}".format(precision)))
     return featuresPenguin_train, featuresPenguin_test, svmmodelPenguin, targetPenguin_train, targetPenguin_test
 
 
@@ -911,9 +954,11 @@ def testModelSvmPenguin(kernel, testsize, c, gamma=0):
     accuracy = accuracy_score(targetPenguin_test, penguin_pred)
     # Calcul du score F1
     f1 = f1_score(targetPenguin_test, penguin_pred, pos_label=0)
+    precision = precision_score(targetPenguin_test, penguin_pred, pos_label=0)
     # Affichage du score F1 et accuracy
     accuracyLabel.configure(text=str("{:.3f}".format(accuracy)))
     scoreLabel.configure(text=str("{:.3f}".format(f1)))
+    precisionLabel.configure(text=str("{:.3f}".format(precision)))
 
 
 # fct pour afficher la matrice de confusion de model penguin
@@ -1092,22 +1137,24 @@ notebook.add(ongletPrincipale, text='Onglet Principale')
 
 
 # creation des frames
-f_description = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=100)
+f_description = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1200, height=70)
 f_parametre = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=420, height=760)
-f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1230, height=760)
+f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1240, height=760)
 f_desc = tk.LabelFrame(f_parametre, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=200)
 f_descriptionDataset = tk.LabelFrame(f_desc, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
-f3_btn_train = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=400, height=720)
-f3_btn_test = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=790, height=720)
+f3_btn_train = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=420, height=720)
+f3_btn_test = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=800, height=720)
 f4_grp = tk.LabelFrame(f3_btn_test, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_graphetrain = tk.LabelFrame(f3_btn_train, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_graphetest = tk.LabelFrame(f4_grp, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_labelsTest = tk.LabelFrame(f3_btn_test, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_accuracy = tk.LabelFrame(f_labelsTest, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_score = tk.LabelFrame(f_labelsTest, bd=0, text="", bg="#26333A", highlightthickness=0)
+f_precision = tk.LabelFrame(f_labelsTest, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_labelsTrain = tk.LabelFrame(f3_btn_train, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_accuracyTrain = tk.LabelFrame(f_labelsTrain, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_scoreTrain = tk.LabelFrame(f_labelsTrain, bd=0, text="", bg="#26333A", highlightthickness=0)
+f_precisionTrain = tk.LabelFrame(f_labelsTrain, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_comboboxTrain = tk.LabelFrame(f3_btn_train, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_comboboxTest = tk.LabelFrame(f3_btn_test, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_comboboxTrainL1 = tk.LabelFrame(f_comboboxTrain, bd=0, text="", bg="#26333A", highlightthickness=0)
@@ -1134,11 +1181,14 @@ f_comboboxTestL2.pack(side=tk.BOTTOM)
 f_labelsTest.place(x=98, y=210)
 f_accuracy.pack(side=tk.TOP)
 f_score.pack(side=tk.BOTTOM)
+f_precision.pack(side=tk.BOTTOM)
 f_labelsTrain.place(x=8, y=210)
 f_accuracyTrain.pack(side=tk.TOP)
 f_scoreTrain.pack(side=tk.BOTTOM)
+f_precisionTrain.pack(side=tk.BOTTOM)
 
 # Fixer la taille du cadre
+f_description.pack_propagate(0)
 f_parametre.pack_propagate(0)
 f_model.pack_propagate(0)
 f3_btn_train.pack_propagate(0)
@@ -1158,8 +1208,7 @@ donnees_treeview = ttk.Treeview(ongletDescription, show="headings", height=10)
 # Modifier l'arrière-plan du TreeView
 donnees_treeview.configure(style='Custom.Treeview')
 # Appliquer le style personnalisé au TreeView
-donnees_treeview.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF", font=("Arial", 12))
-
+donnees_treeview.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF", font=("Arial", 13))
 # Ajouter le Treeview dans l'onglet 2
 donnees_treeview.pack(padx=20, pady=20)
 
@@ -1172,8 +1221,9 @@ tree = ttk.Treeview(frame_statistique, show="headings", height=8)
 # Modifier l'arrière-plan du TreeView
 tree.configure(style='Custom.Treeview')
 # Appliquer le style personnalisé au TreeView
-tree.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF", font=("Arial", 12))
+tree.tag_configure("Custom.Treeview", background=bg_color_frame, foreground="#FFFFFF", font=("Arial", 13))
 tree.pack()
+
 
 # L'onglet 2 est initialisé masqué
 notebook.hide(ongletDescription)
@@ -1183,7 +1233,9 @@ notebook.pack(expand=True, fill="both")
 
 
 # creations des composants de frame des parametres
-descrProjetlabel = tk.Label(f_description, text="Notre interface graphique consiste à implémenter un model SVM pour des differentes datasets", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 14, "bold"))
+descrProjetlabel = tk.Label(f_description, text="Notre interface graphique consiste à implémenter des models SVM pour des differentes datasets, "
+                                                "ainsi elle fournit desd ivers fonctionnalités à l'utilisitateur pour facilité l'implementation "
+                                                "des modèles et la visualisation claire des données", fg="#d9d9d9", bg=bg_color_frame, wraplength=1100, font=("Helvetica", 14, "bold"))
 descrProjetlabel.pack(padx=50, pady=10)
 
 # Charger l'image et la convertir pour Tkinter
@@ -1198,23 +1250,12 @@ datalabel = tk.Label(f_desc, text="Choisir un dataset : ", fg="#d9d9d9", bg=bg_c
 datalabel.pack(padx=50, pady=10)
 
 
-# Créer un style avec un thème personnalisé
-combostyle = ttk.Style()
-
-combostyle.theme_create('combostyle', parent='alt',
-                         settings = {'TCombobox':
-                                     {'configure':
-                                      {'selectbackground': 'blue',
-                                       'fieldbackground': 'red',
-                                       'background': 'green'
-                                       }}}
-                         )
-# ATTENTION: this applies the new style 'combostyle' to all ttk.Combobox
-combostyle.theme_use('combostyle')
+style = ttk.Style()
+style.map("Custom.TCombobox", fieldbackground=[('readonly', 'red')])
 
 # Créer une liste déroulante
 datasets = ["Dataset Maladies Cardiaques", "Dataset Penguin", "Dataset Iris", "Dataset Diabets"]
-combo_box = Combobox(f_desc, values=datasets, font=("Helvetica", 12), width=35)
+combo_box = ttk.Combobox(f_desc, values=datasets, font=("Helvetica", 12), width=35, style="Custom.TCombobox")
 # Appliquer le style personnalisé au Combobox
 combo_box.state(["readonly"])
 combo_box.pack(padx=10, pady=5, ipady=2)
@@ -1223,8 +1264,8 @@ description = tk.Label(f_desc, text="Description : ", fg="#d9d9d9", bg=bg_color_
 description.pack(padx=10, pady=5)
 
 # Création du Label pour afficher la valeur sélectionnée
-descriptiontxt = tk.Label(f_descriptionDataset, text=" ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 11), wraplength=360, justify="left")
-descriptiontxt.pack(side=tk.TOP, padx=2, pady=5)
+descriptiontxt = tk.Label(f_descriptionDataset, text=" ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 12), wraplength=360, justify="left")
+descriptiontxt.pack(side=tk.TOP, padx=2, pady=2)
 
 # Création du bouton pour afficher plus de details
 bouton_onglet1 = Button(f_descriptionDataset, height=2, width=20, font=('Helvetica', 13, "bold"), fg='#FFFFFF', bg='#76B8E0', text="Voir plus de description", bd=0, command=afficher_description)
@@ -1254,15 +1295,9 @@ paraGamma = tk.Label(f_parametre, text="Parametre Gamma: ", fg="#d9d9d9", bg=bg_
 
 paramGamma = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
 
-# Charger l'image et la convertir pour Tkinter
-# icon_training = PhotoImage(file=r"imgs/training_80px.gif")
-image = Image.open("imgs/16x16.png")
-icone = ImageTk.PhotoImage(image)
-
 # creation de boutton pour entrainer le modele
-btnTraining = Button(f3_btn_train, height=3, width=20, text="Entrainer", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', bd=0, command=fitModel, state="disabled",image=icone)
+btnTraining = Button(f3_btn_train, height=3, width=20, text="Entrainer", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#76B8E0', bd=0, command=fitModel, state="disabled")
 btnTraining.pack(padx=20, pady=10, side=tk.TOP)
-btnTraining.config(image=icone)  # Afficher l'icône sur le bouton
 
 # creation de boutton pour tester le modele
 btnTesting = tk.Button(f3_btn_test, height=3, width=20, text="Tester", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#E87F39', bd=0, command=tracerGraphe, state="disabled")
@@ -1278,6 +1313,10 @@ scoref1Lbl.pack(padx=30, pady=10, side=tk.LEFT)
 scoreLabel = tk.Label(f_score, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
 scoreLabel.pack(padx=50, pady=10, side=tk.RIGHT)
 
+precisionLbl = tk.Label(f_precision, text="Precision : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+precisionLbl.pack(padx=30, pady=10, side=tk.LEFT)
+precisionLabel = tk.Label(f_precision, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+precisionLabel.pack(padx=50, pady=10, side=tk.RIGHT)
 
 accuracyLbltrain = tk.Label(f_accuracyTrain, text="Accuracy : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
 accuracyLbltrain.pack(padx=10, pady=10, side=tk.LEFT)
@@ -1289,6 +1328,10 @@ scoref1Lbltrain.pack(padx=10, pady=10, side=tk.LEFT)
 scoreLabeltrain = tk.Label(f_scoreTrain, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
 scoreLabeltrain.pack(padx=10, pady=10, side=tk.RIGHT)
 
+precisionLbltrain = tk.Label(f_precisionTrain, text="Precision : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+precisionLbltrain.pack(padx=10, pady=10, side=tk.LEFT)
+precisionLabeltrain = tk.Label(f_precisionTrain, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+precisionLabeltrain.pack(padx=10, pady=10, side=tk.RIGHT)
 
 paramXlabelTrain = tk.Label(f_comboboxTrainL1, text="X label : ", fg="#d9d9d9", bg="#26333A", font=("Helvetica", 13, "bold"))
 paramXlabelTrain.pack(padx=20, pady=10, side=tk.LEFT)
