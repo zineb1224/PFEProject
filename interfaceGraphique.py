@@ -448,7 +448,7 @@ def tracer_matriceConfusionIris(kernel, testSize, C, gamma=0):
     svmmodelIris = model_tuple[2]
     cm = ConfusionMatrixDisplay.from_predictions(model_tuple[4], svmmodelIris.predict(model_tuple[1]))
     # Obtenir la figure de la matrice de confusion
-    fig, ax = plt.subplots(figsize=(3.6, 3.6))
+    fig, ax = plt.subplots(figsize=(4, 4))
     cm.plot(ax=ax)
     # Créer un widget Tkinter pour afficher la figure
     canvas_metrics = FigureCanvasTkAgg(fig, master=f_graphetest)
@@ -482,7 +482,7 @@ def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
     model_tuple = trainModelSVMIris(kernel, testSize, C, gamma)
     svmmodelIris = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
-    fig = plt.figure(figsize=(3.6, 3.6))
+    fig = plt.figure(figsize=(4, 4))
     # Afficher les données en fonction de la caractéristique sélectionnée
     feature_index_x = getFeatureIndex(getValeurXlabelTest())
     feature_index_y = getFeatureIndex(getValeurYlabelTest())
@@ -540,7 +540,7 @@ def tracer_grapheIris_train(kernel, testSize, C, gamma=0):
     model_tuple = trainModelSVMIris(kernel, testSize, C, gamma)
     svmmodelIris = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
-    fig = plt.figure(figsize=(3.6, 3.6))
+    fig = plt.figure(figsize=(4, 4))
     # Extraction des indices des vecteurs de support
     support_indices = svmmodelIris.support_()
     # Limiter le nombre de vecteurs de support à afficher
@@ -1083,9 +1083,9 @@ splash_root = tk.Tk()
 # Centrer la fenêtre au milieu de l'écran
 screen_width = splash_root.winfo_screenwidth()
 screen_height = splash_root.winfo_screenheight()
-x = int((screen_width / 2) - (1700 / 2))
-y = int((screen_height / 2) - (950 / 2))
-splash_root.geometry(f"1700x950+{x}+{y}")
+x = int((screen_width / 2) - (1750 / 2))
+y = int((screen_height / 2) - (980 / 2))
+splash_root.geometry(f"1750x980+{x}+{y}")
 splash_root.config(bg=BG_COLOR)
 # Rendre la fenêtre non-redimensionnable
 splash_root.resizable(width=False, height=False)
@@ -1096,11 +1096,11 @@ splash_canvas.pack()
 # icn_training = ImageTk.PhotoImage(icon_training)
 # Charger l'image et la convertir pour Tkinter
 image = Image.open("imgs/logo.png")
-largeur = 950
-hauteur = 780
+largeur = 1000
+hauteur = 800
 image_redimensionnee = image.resize((largeur, hauteur))
 photo = ImageTk.PhotoImage(image_redimensionnee)
-splash_canvas.create_image(650, 485, anchor=CENTER, image=photo)
+splash_canvas.create_image(760, 460, anchor=CENTER, image=photo)
 # Définissez le temps d'affichage du splash screen en millisecondes
 splash_time = 3000
 # Fermez la fenêtre du splash screen après le temps d'affichage
@@ -1119,9 +1119,9 @@ appSVM.title("Interface Home Machine")
 # Centrer la fenêtre au milieu de l'écran
 screen_width = appSVM.winfo_screenwidth()
 screen_height = appSVM.winfo_screenheight()
-x = int((screen_width / 2) - (1700 / 2))
-y = int((screen_height / 2) - (950 / 2))
-appSVM.geometry(f"1700x950+{x}+{y}")
+x = int((screen_width / 2) - (1750 / 2))
+y = int((screen_height / 2) - (980 / 2))
+appSVM.geometry(f"1750x980+{x}+{y}")
 appSVM.config(bg=BG_COLOR)
 # Rendre la fenêtre non-redimensionnable
 appSVM.resizable(width=False, height=False)
@@ -1137,13 +1137,13 @@ notebook.add(ongletPrincipale, text='Onglet Principale')
 
 
 # creation des frames
-f_description = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1200, height=70)
-f_parametre = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=420, height=760)
-f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1240, height=760)
-f_desc = tk.LabelFrame(f_parametre, bd=0, text="", bg=bg_color_frame, relief="groove", width=200, height=200)
+f_description = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1200, height=60)
+f_parametre = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=430, height=790)
+f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1260, height=790)
+f_desc = tk.LabelFrame(f_parametre, bd=0, text="", bg=bg_color_frame, relief="groove", width=210, height=200)
 f_descriptionDataset = tk.LabelFrame(f_desc, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
-f3_btn_train = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=420, height=720)
-f3_btn_test = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=800, height=720)
+f3_btn_train = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=430, height=760)
+f3_btn_test = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=820, height=760)
 f4_grp = tk.LabelFrame(f3_btn_test, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_graphetrain = tk.LabelFrame(f3_btn_train, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_graphetest = tk.LabelFrame(f4_grp, bd=0, text="", bg="#26333A", highlightthickness=0)
@@ -1172,19 +1172,19 @@ f3_btn_test.pack(side=tk.RIGHT, padx=5)
 f4_grp.pack(side=tk.BOTTOM)
 f_graphetrain.pack(side=tk.BOTTOM)
 f_graphetest.pack(side=tk.BOTTOM)
-f_comboboxTrain.place(x=-2, y=120)
-f_comboboxTest.place(x=98, y=120)
+f_comboboxTrain.place(x=-2, y=110)
+f_comboboxTest.place(x=98, y=110)
 f_comboboxTrainL1.pack(side=tk.TOP)
 f_comboboxTrainL2.pack(side=tk.BOTTOM)
 f_comboboxTestL1.pack(side=tk.TOP)
 f_comboboxTestL2.pack(side=tk.BOTTOM)
-f_labelsTest.place(x=98, y=210)
+f_labelsTest.place(x=215, y=210)
 f_accuracy.pack(side=tk.TOP)
 f_score.pack(side=tk.BOTTOM)
 f_precision.pack(side=tk.BOTTOM)
-f_labelsTrain.place(x=8, y=210)
+f_labelsTrain.place(x=110, y=205)
 f_accuracyTrain.pack(side=tk.TOP)
-f_scoreTrain.pack(side=tk.BOTTOM)
+f_scoreTrain.pack(side=tk.BOTTOM, pady=5)
 f_precisionTrain.pack(side=tk.BOTTOM)
 
 # Fixer la taille du cadre
@@ -1234,7 +1234,7 @@ notebook.pack(expand=True, fill="both")
 
 # creations des composants de frame des parametres
 descrProjetlabel = tk.Label(f_description, text="Notre interface graphique consiste à implémenter des models SVM pour des differentes datasets, "
-                                                "ainsi elle fournit desd ivers fonctionnalités à l'utilisitateur pour facilité l'implementation "
+                                                "ainsi elle fournit des divers fonctionnalités à l'utilisitateur pour faciliter l'implémentation "
                                                 "des modèles et la visualisation claire des données", fg="#d9d9d9", bg=bg_color_frame, wraplength=1100, font=("Helvetica", 14, "bold"))
 descrProjetlabel.pack(padx=50, pady=10)
 
@@ -1246,7 +1246,7 @@ descrProjetlabel.pack(padx=50, pady=10)
 # logo_canvas.pack()
 # logo_canvas.create_image(0, 0, anchor=CENTER, image=photo_logo)
 
-datalabel = tk.Label(f_desc, text="Choisir un dataset : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+datalabel = tk.Label(f_desc, text="Choisir un jeu de données : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 14, "bold"))
 datalabel.pack(padx=50, pady=10)
 
 
@@ -1255,113 +1255,113 @@ style.map("Custom.TCombobox", fieldbackground=[('readonly', 'red')])
 
 # Créer une liste déroulante hh
 datasets = ["Dataset Maladies Cardiaques", "Dataset Penguin", "Dataset Iris", "Dataset Diabets"]
-combo_box = ttk.Combobox(f_desc, values=datasets, font=("Helvetica", 12), width=35, style="Custom.TCombobox")
+combo_box = ttk.Combobox(f_desc, values=datasets, font=("Helvetica", 13), width=35, style="Custom.TCombobox")
 # Appliquer le style personnalisé au Combobox
 combo_box.state(["readonly"])
 combo_box.pack(padx=10, pady=5, ipady=2)
 
-description = tk.Label(f_desc, text="Description : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+description = tk.Label(f_desc, text="Description : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 14, "bold"))
 description.pack(padx=10, pady=5)
 
 # Création du Label pour afficher la valeur sélectionnée
-descriptiontxt = tk.Label(f_descriptionDataset, text=" ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 12), wraplength=360, justify="left")
+descriptiontxt = tk.Label(f_descriptionDataset, text=" ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13), wraplength=360, justify="left")
 descriptiontxt.pack(side=tk.TOP, padx=2, pady=2)
 
 # Création du bouton pour afficher plus de details
-bouton_onglet1 = Button(f_descriptionDataset, height=2, width=20, font=('Helvetica', 13, "bold"), fg='#FFFFFF', bg='#76B8E0', text="Voir plus de description", bd=0, command=afficher_description)
+bouton_onglet1 = Button(f_descriptionDataset, height=2, width=20, font=('Helvetica', 13, "bold"), fg='#FFFFFF', bg='#9ED8FA', text="Voir plus de description", bd=0, command=afficher_description)
 
-tstsize = tk.Label(f_parametre, text="La taille du test: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+tstsize = tk.Label(f_parametre, text="La taille du test: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 14, "bold"))
 tstsize.pack(padx=50, pady=10)
 
-testSize = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
+testSize = tk.Entry(f_parametre, width=40, font=("Helvetica", 13), background=ENTRY_BG_COLOR, bd=0, foreground="#FFFFFF")
 testSize.pack(padx=2, pady=8, ipady=5)
 
-parac = tk.Label(f_parametre, text="Paramètre C: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+parac = tk.Label(f_parametre, text="Paramètre C: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 14, "bold"))
 parac.pack(padx=50, pady=10)
 
-paramC = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
+paramC = tk.Entry(f_parametre, width=40, font=("Helvetica", 13), background=ENTRY_BG_COLOR, bd=0, foreground="#FFFFFF")
 paramC.pack(padx=2, pady=8, ipady=5)
 
-paramk = tk.Label(f_parametre, text="Paramètre Kernel: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+paramk = tk.Label(f_parametre, text="Paramètre Kernel: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 14, "bold"))
 paramk.pack(padx=50, pady=10)
 
 # Créer une liste déroulante
 kernels = ["linear", "rbf", "poly"]
-paramKernel = Combobox(f_parametre, values=kernels, font=("Helvetica", 12), width=35)
+paramKernel = Combobox(f_parametre, values=kernels, font=("Helvetica", 13), width=38)
 paramKernel.pack(padx=5, pady=5, ipady=2)
 paramKernel.state(["readonly"])
 
-paraGamma = tk.Label(f_parametre, text="Parametre Gamma: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 13, "bold"))
+paraGamma = tk.Label(f_parametre, text="Paramètre Gamma: ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 14, "bold"))
 
-paramGamma = tk.Entry(f_parametre, width=40, font=("Helvetica", 12), background=ENTRY_BG_COLOR, bd=0, foreground="#D8E9A8")
+paramGamma = tk.Entry(f_parametre, width=40, font=("Helvetica", 13), background=ENTRY_BG_COLOR, bd=0, foreground="#FFFFFF")
 
 # creation de boutton pour entrainer le modele
-btnTraining = Button(f3_btn_train, height=3, width=20, text="Entrainer", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#9ED8FA', bd=0, command=fitModel, state="disabled")
-btnTraining.pack(padx=20, pady=10, side=tk.TOP)
+btnTraining = Button(f3_btn_train, height=2, width=20, text="Entrainer", font=('Helvetica', 17, "bold"), fg='#FFFFFF', bg='#9ED8FA', bd=0, command=fitModel, state="disabled")
+btnTraining.pack(padx=20, pady=12, side=tk.TOP)
 
 # creation de boutton pour tester le modele   E87F39
-btnTesting = tk.Button(f3_btn_test, height=3, width=20, text="Tester", font=('Helvetica', 15, "bold"), fg='#FFFFFF', bg='#FA98D4', bd=0, command=tracerGraphe, state="disabled")
-btnTesting.pack(padx=20, pady=10, side=tk.TOP)
+btnTesting = tk.Button(f3_btn_test, height=2, width=20, text="Tester", font=('Helvetica', 17, "bold"), fg='#FFFFFF', bg='#FA98D4', bd=0, command=tracerGraphe, state="disabled")
+btnTesting.pack(padx=20, pady=12, side=tk.TOP)
 
-accuracyLbl = tk.Label(f_accuracy, text="Accuracy : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+accuracyLbl = tk.Label(f_accuracy, text="Accuracy : ", fg="#9ED8FA", bg="#26333A", font=("Helvetica", 14, "bold"))
 accuracyLbl.pack(padx=30, pady=10, side=tk.LEFT)
-accuracyLabel = tk.Label(f_accuracy, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+accuracyLabel = tk.Label(f_accuracy, text="", fg="#FFFFFF", bg="#26333A", font=("Helvetica", 14, "bold"))
 accuracyLabel.pack(padx=50, pady=10, side=tk.RIGHT)
 
-scoref1Lbl = tk.Label(f_score, text="F1_Score : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+scoref1Lbl = tk.Label(f_score, text="F1_Score : ", fg="#9ED8FA", bg="#26333A", font=("Helvetica", 14, "bold"))
 scoref1Lbl.pack(padx=30, pady=10, side=tk.LEFT)
-scoreLabel = tk.Label(f_score, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+scoreLabel = tk.Label(f_score, text="", fg="#FFFFFF", bg="#26333A", font=("Helvetica", 14, "bold"))
 scoreLabel.pack(padx=50, pady=10, side=tk.RIGHT)
 
-precisionLbl = tk.Label(f_precision, text="Precision : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+precisionLbl = tk.Label(f_precision, text="Precision : ", fg="#9ED8FA", bg="#26333A", font=("Helvetica", 14, "bold"))
 precisionLbl.pack(padx=30, pady=10, side=tk.LEFT)
-precisionLabel = tk.Label(f_precision, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+precisionLabel = tk.Label(f_precision, text="", fg="#FFFFFF", bg="#26333A", font=("Helvetica", 14, "bold"))
 precisionLabel.pack(padx=50, pady=10, side=tk.RIGHT)
 
-accuracyLbltrain = tk.Label(f_accuracyTrain, text="Accuracy : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+accuracyLbltrain = tk.Label(f_accuracyTrain, text="Accuracy : ", fg="#9ED8FA", bg="#26333A", font=("Helvetica", 14, "bold"))
 accuracyLbltrain.pack(padx=10, pady=10, side=tk.LEFT)
-accuracyLabeltrain = tk.Label(f_accuracyTrain, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+accuracyLabeltrain = tk.Label(f_accuracyTrain, text="", fg="#FFFFFF", bg="#26333A", font=("Helvetica", 14, "bold"))
 accuracyLabeltrain.pack(padx=10, pady=10, side=tk.RIGHT)
 
-scoref1Lbltrain = tk.Label(f_scoreTrain, text="F1_Score : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+scoref1Lbltrain = tk.Label(f_scoreTrain, text="F1_Score : ", fg="#9ED8FA", bg="#26333A", font=("Helvetica", 14, "bold"))
 scoref1Lbltrain.pack(padx=10, pady=10, side=tk.LEFT)
-scoreLabeltrain = tk.Label(f_scoreTrain, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+scoreLabeltrain = tk.Label(f_scoreTrain, text="", fg="#FFFFFF", bg="#26333A", font=("Helvetica", 14, "bold"))
 scoreLabeltrain.pack(padx=10, pady=10, side=tk.RIGHT)
 
-precisionLbltrain = tk.Label(f_precisionTrain, text="Precision : ", fg="#588AA8", bg="#26333A", font=("Helvetica", 13, "bold"))
+precisionLbltrain = tk.Label(f_precisionTrain, text="Precision : ", fg="#9ED8FA", bg="#26333A", font=("Helvetica", 14, "bold"))
 precisionLbltrain.pack(padx=10, pady=10, side=tk.LEFT)
-precisionLabeltrain = tk.Label(f_precisionTrain, text="", fg="#D8E9A8", bg="#26333A", font=("Helvetica", 12, "bold"))
+precisionLabeltrain = tk.Label(f_precisionTrain, text="", fg="#FFFFFF", bg="#26333A", font=("Helvetica", 14, "bold"))
 precisionLabeltrain.pack(padx=10, pady=10, side=tk.RIGHT)
 
-paramXlabelTrain = tk.Label(f_comboboxTrainL1, text="X label : ", fg="#d9d9d9", bg="#26333A", font=("Helvetica", 13, "bold"))
+paramXlabelTrain = tk.Label(f_comboboxTrainL1, text="X label : ", fg="#d9d9d9", bg="#26333A", font=("Helvetica", 14, "bold"))
 paramXlabelTrain.pack(padx=20, pady=10, side=tk.LEFT)
 
 # Créer une liste déroulante
-paraXtrain = Combobox(f_comboboxTrainL1, font=("Helvetica", 12), width=28)
+paraXtrain = Combobox(f_comboboxTrainL1, font=("Helvetica", 13), width=28)
 paraXtrain.pack(padx=2, pady=5, ipady=2, side=tk.RIGHT)
 paraXtrain.state(["readonly"])
 
-paramYlabelTrain = tk.Label(f_comboboxTrainL2, text="Y label : ", fg="#d9d9d9", bg="#26333A", font=("Helvetica", 13, "bold"))
+paramYlabelTrain = tk.Label(f_comboboxTrainL2, text="Y label : ", fg="#d9d9d9", bg="#26333A", font=("Helvetica", 14, "bold"))
 paramYlabelTrain.pack(padx=20, pady=10, side=tk.LEFT)
 
 # Créer une liste déroulante
-paraYtrain = Combobox(f_comboboxTrainL2, font=("Helvetica", 12), width=28)
+paraYtrain = Combobox(f_comboboxTrainL2, font=("Helvetica", 13), width=28)
 paraYtrain.pack(padx=2, pady=5, ipady=2, side=tk.RIGHT)
 paraYtrain.state(["readonly"])
 
-paramXlabelTest = tk.Label(f_comboboxTestL1, text="X label : ", fg="#d9d9d9", bg="#26333A", font=("Helvetica", 13, "bold"))
+paramXlabelTest = tk.Label(f_comboboxTestL1, text="X label : ", fg="#d9d9d9", bg="#26333A", font=("Helvetica", 14, "bold"))
 paramXlabelTest.pack(padx=30, pady=10, side=tk.LEFT)
 
 # Créer une liste déroulante
-paraXtest = Combobox(f_comboboxTestL1, font=("Helvetica", 12), width=35)
+paraXtest = Combobox(f_comboboxTestL1, font=("Helvetica", 13), width=35)
 paraXtest.pack(padx=2, pady=5, ipady=2, side=tk.RIGHT)
 paraXtest.state(["readonly"])
 
-paramYlabelTest = tk.Label(f_comboboxTestL2, text="Y label : ", fg="#d9d9d9", bg="#26333A", font=("Helvetica", 13, "bold"))
+paramYlabelTest = tk.Label(f_comboboxTestL2, text="Y label : ", fg="#d9d9d9", bg="#26333A", font=("Helvetica", 14, "bold"))
 paramYlabelTest.pack(padx=30, pady=10, side=tk.LEFT)
 
 # Créer une liste déroulante
-paraYtest = Combobox(f_comboboxTestL2, font=("Helvetica", 12), width=35)
+paraYtest = Combobox(f_comboboxTestL2, font=("Helvetica", 13), width=35)
 paraYtest.pack(padx=2, pady=5, ipady=2, side=tk.RIGHT)
 paraYtest.state(["readonly"])
 
