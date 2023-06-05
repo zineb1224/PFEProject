@@ -1253,7 +1253,7 @@ datalabel.pack(padx=50, pady=10)
 style = ttk.Style()
 style.map("Custom.TCombobox", fieldbackground=[('readonly', 'red')])
 
-# Créer une liste déroulante
+# Créer une liste déroulante hh
 datasets = ["Dataset Maladies Cardiaques", "Dataset Penguin", "Dataset Iris", "Dataset Diabets"]
 combo_box = ttk.Combobox(f_desc, values=datasets, font=("Helvetica", 12), width=35, style="Custom.TCombobox")
 # Appliquer le style personnalisé au Combobox
