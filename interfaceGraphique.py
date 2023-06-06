@@ -488,14 +488,12 @@ def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
     feature_index_y = getFeatureIndex(getValeurYlabelTest())
     # Extraction des indices des vecteurs de support
     support_indices = svmmodelIris.support_()
-    dual_coef = np.abs(svmmodelIris.dual_coef_())
     # Limiter le nombre de vecteurs de support à afficher
 
     num_support_vectors = 3  # Nombre souhaité de vecteurs de support à afficher par classe
     selected_support_vectors = []
 
     for class_label in np.unique(model_tuple[3]):
-        class_dual_coef = dual_coef[class_label - 1]
         class_support_indices = support_indices[np.where(model_tuple[3][support_indices] == class_label)]
         num_vectors = min(num_support_vectors, len(class_support_indices))
         random_indices = np.random.choice(class_support_indices, num_vectors, replace=False)
@@ -1139,11 +1137,11 @@ notebook.add(ongletPrincipale, text='Onglet Principale')
 # creation des frames
 f_description = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1200, height=60)
 f_parametre = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=430, height=790)
-f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1260, height=790)
+f_model = tk.LabelFrame(ongletPrincipale, bd=0, text="", bg=bg_color_frame, relief="groove", width=1270, height=798)
 f_desc = tk.LabelFrame(f_parametre, bd=0, text="", bg=bg_color_frame, relief="groove", width=210, height=200)
 f_descriptionDataset = tk.LabelFrame(f_desc, bd=0, text="", bg=bg_color_frame, highlightthickness=0)
-f3_btn_train = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=430, height=760)
-f3_btn_test = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=820, height=760)
+f3_btn_train = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=430, height=770)
+f3_btn_test = tk.LabelFrame(f_model, bd=0, text="", bg="#26333A", highlightthickness=0, width=830, height=770)
 f4_grp = tk.LabelFrame(f3_btn_test, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_graphetrain = tk.LabelFrame(f3_btn_train, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_graphetest = tk.LabelFrame(f4_grp, bd=0, text="", bg="#26333A", highlightthickness=0)
@@ -1162,7 +1160,7 @@ f_comboboxTrainL2 = tk.LabelFrame(f_comboboxTrain, bd=0, text="", bg="#26333A", 
 f_comboboxTestL1 = tk.LabelFrame(f_comboboxTest, bd=0, text="", bg="#26333A", highlightthickness=0)
 f_comboboxTestL2 = tk.LabelFrame(f_comboboxTest, bd=0, text="", bg="#26333A", highlightthickness=0)
 
-f_description.pack(side=tk.TOP, padx=20, pady=20, ipady=20)
+f_description.pack(side=tk.TOP, padx=20, pady=20, ipady=10)
 f_parametre.pack(side=tk.LEFT, padx=10, pady=15)
 f_model.pack(side=tk.RIGHT, padx=5, pady=15)
 f_desc.pack(padx=10, pady=20)
@@ -1178,7 +1176,7 @@ f_comboboxTrainL1.pack(side=tk.TOP)
 f_comboboxTrainL2.pack(side=tk.BOTTOM)
 f_comboboxTestL1.pack(side=tk.TOP)
 f_comboboxTestL2.pack(side=tk.BOTTOM)
-f_labelsTest.place(x=215, y=210)
+f_labelsTest.place(x=260, y=210)
 f_accuracy.pack(side=tk.TOP)
 f_score.pack(side=tk.BOTTOM)
 f_precision.pack(side=tk.BOTTOM)
