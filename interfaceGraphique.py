@@ -1090,8 +1090,7 @@ splash_root.resizable(width=False, height=False)
 # Créez un canvas pour ajouter une image
 splash_canvas = Canvas(splash_root, width=1350, height=950, bg=BG_COLOR, highlightthickness=0)
 splash_canvas.pack()
-# icon_training = Image.open("imgs/training_80px.gif")
-# icn_training = ImageTk.PhotoImage(icon_training)
+
 # Charger l'image et la convertir pour Tkinter
 image = Image.open("imgs/logo.png")
 largeur = 1000
@@ -1108,12 +1107,6 @@ splash_root.after(splash_time, splash_root.destroy)
 # Création de la principale fenetre
 appSVM = tk.Tk()  # nouvelle instance de Tk
 appSVM.title("Interface Home Machine")
-# logo_img = tk.PhotoImage(file="imgs/16x16.png")
-# Définition du logo pour la fenêtre
-# splash_root.iconphoto(True, logo_img)
-
-# Affichage de votre logo dans la barre de titre
-# splash_root.tk.call('wm', 'iconphoto', splash_root._w, logo_img)
 # Centrer la fenêtre au milieu de l'écran
 screen_width = appSVM.winfo_screenwidth()
 screen_height = appSVM.winfo_screenheight()
@@ -1235,18 +1228,6 @@ descrProjetlabel = tk.Label(f_description, text="Notre interface graphique consi
                                                 "ainsi elle fournit des divers fonctionnalités à l'utilisitateur pour faciliter l'implémentation "
                                                 "des modèles et la visualisation claire des données", fg="#d9d9d9", bg=bg_color_frame, wraplength=1100, font=("Helvetica", 14, "bold"))
 descrProjetlabel.pack(padx=50, pady=10)
-
-# Charger l'image et la convertir pour Tkinter
-# logo = Image.open("imgs/splashScreen.png")
-# photo_logo = ImageTk.PhotoImage(logo)
-# Créez un canvas pour ajouter une image
-# logo_canvas = Canvas(f_description, bg=bg_color_frame, highlightthickness=0)
-# logo_canvas.pack()
-# logo_canvas.create_image(0, 0, anchor=CENTER, image=photo_logo)
-
-datalabel = tk.Label(f_desc, text="Choisir un jeu de données : ", fg="#d9d9d9", bg=bg_color_frame, font=("Helvetica", 14, "bold"))
-datalabel.pack(padx=50, pady=10)
-
 
 style = ttk.Style()
 style.map("Custom.TCombobox", fieldbackground=[('readonly', 'red')])

@@ -4,7 +4,6 @@ import pandas as pd
 
 def import_dataDiabets(file_path):
     data = pd.read_csv(file_path)
-    # effectuer les opérations de prétraitement nécessaires
     return data
 
 
