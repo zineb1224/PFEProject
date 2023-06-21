@@ -672,9 +672,7 @@ def tracer_grapheDiabets_test(kernel, testSize, C, gamma=0):
     ax = plt.gca()
     xlim = ax.get_xlim()
     ylim = ax.get_ylim()
-    support_vectors_ = svmmodelDiabets.support_vectors_()
-    # Marquer les vecteurs de support d'une croix
-    ax.scatter(support_vectors_[:, 0], support_vectors_[:, 1], linewidth=1, facecolors='#FFAAAA', s=180)
+
     # Grille de points sur lesquels appliquer le modèle
     xx = np.linspace(xlim[0], xlim[1], 30)
     yy = np.linspace(ylim[0], ylim[1], 30)
@@ -684,8 +682,7 @@ def tracer_grapheDiabets_test(kernel, testSize, C, gamma=0):
     Z = svmmodelDiabets.decision_function(xy).reshape(XX.shape)
     # Afficher la frontière de décision et la marge
     ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
-    # Tracé du graphe avec les vecteurs de support et les marges
-    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+
     plt.xlabel(getValeurXlabelTest())
     plt.ylabel(getValeurYlabelTest())
     # Créer le canvas pour afficher le graphe
@@ -836,9 +833,7 @@ def tracer_grapheMaladie_test(kernel, testSize, C, gamma=0):
     ax = plt.gca()
     xlim = ax.get_xlim()
     ylim = ax.get_ylim()
-    support_vectors_ = svmmodelMaladieCardiaque.support_vectors_()
-    # Marquer les vecteurs de support d'une croix
-    ax.scatter(support_vectors_[:, 0], support_vectors_[:, 1], linewidth=1, facecolors='#FFAAAA', s=180)
+
     # Grille de points sur lesquels appliquer le modèle
     xx = np.linspace(xlim[0], xlim[1], 30)
     yy = np.linspace(ylim[0], ylim[1], 30)
@@ -848,8 +843,7 @@ def tracer_grapheMaladie_test(kernel, testSize, C, gamma=0):
     Z = svmmodelMaladieCardiaque.decision_function(xy).reshape(XX.shape)
     # Afficher la frontière de décision et la marge
     ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
-    # Tracé du graphe avec les vecteurs de support et les marges
-    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+
     plt.xlabel(getValeurXlabelTest())
     plt.ylabel(getValeurYlabelTest())
     # Créer le canvas pour afficher le graphe
@@ -1008,9 +1002,6 @@ def tracer_graphePenguin_test(kernel, testSize, C, gamma=0):
     ax = plt.gca()
     xlim = ax.get_xlim()
     ylim = ax.get_ylim()
-    support_vectors_ = svmmodelPenguin.support_vectors_()
-    # Marquer les vecteurs de support d'une croix
-    ax.scatter(support_vectors_[:, 0], support_vectors_[:, 1], linewidth=1, facecolors='#FFAAAA', s=180)
     # Grille de points sur lesquels appliquer le modèle
     xx = np.linspace(xlim[0], xlim[1], 30)
     yy = np.linspace(ylim[0], ylim[1], 30)
@@ -1020,8 +1011,7 @@ def tracer_graphePenguin_test(kernel, testSize, C, gamma=0):
     Z = svmmodelPenguin.decision_function(xy).reshape(XX.shape)
     # Afficher la frontière de décision et la marge
     ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
-    # Tracé du graphe avec les vecteurs de support et les marges
-    plt.scatter(support_vectors_[:, 0], support_vectors_[:, 1], s=100, facecolors='none', edgecolors='k')
+
     plt.xlabel(getValeurXlabelTest())
     plt.ylabel(getValeurYlabelTest())
     # Créer le canvas pour afficher le graphe

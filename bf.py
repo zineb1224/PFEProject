@@ -1,53 +1,57 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import datasets
+from sklearn import svm
 from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
 
-# Chargement des données d'iris
+# Chargement du jeu de données Iris
 iris = datasets.load_iris()
-X = iris.data[:, :2]  # On utilise seulement les deux premières caractéristiques pour faciliter la visualisation
+X = iris.data[:, :2]  # Nous prenons seulement les deux premières caractéristiques pour une visualisation en 2D
 y = iris.target
 
-# Division des données en ensembles d'entraînement et de test
+# Séparation des données en ensembles d'entraînement et de test
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Entraînement du modèle SVM avec le noyau RBF
-model = SVC(kernel='rbf')
-model.fit(X_train, y_train)
+# Création du modèle SVM
+svm_model = svm.SVC(kernel='linear')
+svm_model.fit(X_train, y_train)
 
-# Extraction des indices des vecteurs de support
-support_indices = model.support_
-dual_coef = np.abs(model.dual_coef_)
 
-# Limiter le nombre de vecteurs de support à afficher
-num_support_vectors = 3  # Nombre souhaité de vecteurs de support à afficher par classe
-selected_support_vectors = []
+# Obtenir les coefficients du modèle SVM
+w = svm_model.coef_[0]
+a = -w[0] / w[1]
+xx = np.linspace(np.min(X_train[:, 0]), np.max(X_train[:, 0]), 10)
+yy = a * xx - (svm_model.intercept_[0]) / w[1]
 
-for class_label in np.unique(y_train):
-    class_dual_coef = dual_coef[class_label - 1]
-    class_support_indices = support_indices[np.where(y_train[support_indices] == class_label)]
-    num_vectors = min(num_support_vectors, len(class_support_indices))
-    random_indices = np.random.choice(class_support_indices, num_vectors, replace=False)
-    selected_support_vectors.extend(X_train[random_indices])
+# Tracer l'hyperplan
+plt.plot(xx, yy, 'k-')
 
-selected_support_vectors = np.array(selected_support_vectors)
+# Tracer les marges
+margin = 1 / np.sqrt(np.sum(svm_model.coef_ ** 2))
+yy_down = yy - np.abs(a) * margin
+yy_up = yy + np.abs(a) * margin
+plt.plot(xx, yy_down, 'k--')
+plt.plot(xx, yy_up, 'k--')
 
-# Plot des données de test et des vecteurs de support sélectionnés
-plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap='viridis')
-plt.scatter(selected_support_vectors[:, 0], selected_support_vectors[:, 1], s=100, facecolors='none', edgecolors='k')
 
-# Calcul des coordonnées de l'hyperplan
-x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
-Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
-Z = Z.reshape(xx.shape)
+# Tracer les points de données de test
+plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap=plt.cm.Set1, marker='x')
 
-# Plot de l'hyperplan et des marges
-plt.contourf(xx, yy, Z, alpha=0.8, cmap='viridis')
-plt.scatter(selected_support_vectors[:, 0], selected_support_vectors[:, 1], s=100, facecolors='none', edgecolors='k')
-plt.xlabel('Caractéristique 1')
-plt.ylabel('Caractéristique 2')
-plt.title('Hyperplan et marges du modèle SVM')
+# Prédire les classes des données de test
+y_pred = svm_model.predict(X_test)
+
+# Tracer les vecteurs de support de test
+plt.scatter(X_test[y_pred != y_test, 0], X_test[y_pred != y_test, 1],
+            s=100, facecolors='none', edgecolors='r')
+
+# Paramètres du graphique
+plt.xlabel('Longueur des sépales')
+plt.ylabel('Largeur des sépales')
+plt.title('SVM avec marges et vecteurs de support')
+plt.xlim(np.min(X[:, 0]) - 0.5, np.max(X[:, 0]) + 0.5)
+plt.ylim(np.min(X[:, 1]) - 0.5, np.max(X[:, 1]) + 0.5)
+plt.xticks(())
+plt.yticks(())
+
+# Afficher le graphique
 plt.show()
