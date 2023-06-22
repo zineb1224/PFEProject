@@ -74,7 +74,7 @@ def getValeurYlabelTest():
     return val
 
 
-# fct pour afficher la description des differentes datasets (treeview pour affihcer 10 lignes aleatoire de dataset et
+# fct pour afficher la description des differentes datasets (treeview pour afficher 10 lignes aleatoire de dataset et
 # un treeview pour afficher les statistiques )
 def afficher_description():
     # Obtenir l'option sélectionnée dans le combobox
@@ -123,6 +123,7 @@ def afficher_description():
         tree.heading("Statistic", text="Statistic")
         for column in stats.columns:
             tree.heading(column, text=column)
+            tree.column(column, width=220)
 
         # Add rows to the Treeview
         for index, row in stats.iterrows():
@@ -135,7 +136,7 @@ def afficher_description():
         maladie_data = pd.read_csv('datasets/dataset_maladie.csv')
 
         # Obtenir 10 lignes aléatoires de l'ensemble de données Maladie
-        maladie_data_subset = maladie_data.sample(20)
+        maladie_data_subset = maladie_data.sample(10)
         for _, row in maladie_data_subset.iterrows():
             donnees_treeview.insert("", "end", values=row.tolist(), tags=("Custom.Treeview",))
 
@@ -163,8 +164,9 @@ def afficher_description():
         tree.heading("Statistic", text="Statistic")
         for column in column_headings:
             tree.heading(column, text=column)
+            tree.column(column, width=120)
 
-        # Add rows to the Treeview
+            # Add rows to the Treeview
         for index, row in statsMaladie.iterrows():
             values = [index.capitalize()] + list(row)
             tree.insert("", "end", values=values, tags=("Custom.Treeview",))
@@ -237,8 +239,9 @@ def afficher_description():
         tree.heading("Statistic", text="Statistic")
         for column in column_headings:
             tree.heading(column, text=column)
+            tree.column(column, width=160)
 
-        # Add rows to the Treeview
+            # Add rows to the Treeview
         for index, row in statsDiabet.iterrows():
             values = [index.capitalize()] + list(row)
             tree.insert("", "end", values=values, tags=("Custom.Treeview",))
@@ -341,7 +344,7 @@ def showGamma(event):
     check_fields()
 
 
-# fct pour entrainer les differents models de svm et afficher les graphe d'entrainement
+# fct globale pour entrainer les differents models de svm et afficher les graphe d'entrainement
 def fitModel():
     sizetest = getValeurTestSize()
     kernel = getValeurParamKernel()
@@ -394,8 +397,6 @@ def trainModelSVMIris(kernel, testsize, c, gamma=0):
     svmModelIris = SVMModelIris(kernel, c, gamma)
     # Chargement des données
     irisData = import_dataIris()
-    feature_index_x = getFeatureIndex(getValeurXlabelTest())
-    feature_index_y = getFeatureIndex(getValeurYlabelTest())
     # Séparation des données et de target
     X_iris = irisData.data[:, :2]  # Utiliser seulement les deux premières caractéristiques
     y_iris = irisData.target
@@ -482,6 +483,7 @@ def tracer_grapheIris_test(kernel, testSize, C, gamma=0):
     model_tuple = trainModelSVMIris(kernel, testSize, C, gamma)
     svmmodelIris = model_tuple[2]
     # Création du graphe avec la marge et les vecteurs de support
+    # creation de la figure
     fig = plt.figure(figsize=(4, 4))
     # Afficher les données en fonction de la caractéristique sélectionnée
     feature_index_x = getFeatureIndex(getValeurXlabelTest())
